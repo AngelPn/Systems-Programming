@@ -46,26 +46,30 @@ int compare_keys(void *a, void *b) {
 
 int HTGet(HTHash *hash, KeyType key, HTItem *pitem){ /*Function that searches the key in the hash and copies the item in pitem pointer*/
 	int h = Hash(hash, key); /*Find the index of key*/
-	List head= hash->HashTable[h]; /*head is the linked list of the key we are searching for*/
-    //List head= *(hash->HashTable[h]);
+	List head = hash->HashTable[h]; /*head is the linked list of the key we are searching for*/
+    //List head = *(hash->HashTable[h]);
 
-	Entry SItem=  {
-		.Key= malloc(sizeof(char)*(strlen(key)+1)),
-		.Item= 0
+	Entry SItem = {
+		.Key = malloc(sizeof(char)*(strlen(key)+1))
+		//.Item = 0
 	};
-	strcpy(SItem.Key,key);
-	LLNode P= LLFind(head, &SItem, compare_keys ); /*Pointer P points at the node of the linked list that has the key*/
+	strcpy(SItem.Key, key);
+    pitem = list_find(head, &SItem, compare_keys );
+    if (pitem == NULL) return 0;
+    else return 1;
+
+	// ListNode P= LLFind(head, &SItem, compare_keys ); /*Pointer P points at the node of the linked list that has the key*/
 	
-	if(P==NULL) return 0; /*If P is NULL, the key doesn't exist and return false*/
-	else {
-		Entry *e= LLGetItem(head, P);
-		*pitem= e->Item; /*Copy the item*/
-		return 1; /*Else, return true*/
-	}
+	// if(P==NULL) return 0; /*If P is NULL, the key doesn't exist and return false*/
+	// else {
+	// 	Entry *e= LLGetItem(head, P);
+	// 	*pitem= e->Item; /*Copy the item*/
+	// 	return 1; /*Else, return true*/
+	// }
 }
 
 HTHash *Reharshing(HTHash *phash){
-	int m= (phash->size)*2; /*Double the size of the array*/
+	int m = (phash->size)*2; /*Double the size of the array*/
 	HTHash *NewHash= HTCreateHash(m); /*Create a hash with the new size*/
 
 	int i;
@@ -94,15 +98,20 @@ HTHash *Reharshing(HTHash *phash){
 
 void HTInsert(HTHash **phash, KeyType key, HTItem item){
 	HTHash *hash= *phash;
+
+
+    HTItem pitem;
+    if (HTGet(hash, key, &pitem))
+
 	(hash->n)++;/*Increase the counter of entries*/
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
-	int h=Hash(hash, key); /*Find the index of key*/
+	int h = Hash(hash, key); /*Find the index of key*/
 	
-	LList *head= hash->HashTable[h]; /*head points at the linked list we are going to insert the item*/
+	List head= hash->HashTable[h]; /*head points at the linked list we are going to insert the item*/
 	HTItem pitem;
 
-	Entry NItem=  { /*Create new entry*/
-		.Key= malloc(sizeof(char)*(strlen(key)+1)),
+	Entry NItem = { /*Create new entry*/
+		.Key = malloc(sizeof(char)*(strlen(key)+1)),
 		.Item= item
 	};
 	strcpy(NItem.Key,key);

@@ -5,13 +5,9 @@
 
 typedef char *KeyType;
 
-typedef struct htitem{
-    int dummy;
-} HTItem;
-
 typedef struct entry{
 	char *Key;
-	HTItem Item;
+	void *Item;
 } Entry;
 
 typedef struct{

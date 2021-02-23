@@ -1,0 +1,4 @@
+889 John Papadopoulos Greece 52 COVID-19 YES 27-12-2020
+889 John Papadopoulos Greece 52 Η1Ν1 ΝΟ
+776 Maria Tortellini Italy 36 SARS-1 NO
+125 Jon Dupont USA 76 H1N1 YES 30-10-2020

@@ -4,21 +4,78 @@
 
 #include "../include/common_types.h"
 #include "../include/ADTList.h"
+#include "citizenRecord.h"
 
-// Function to print an integer
-void printInt(void * n) {
-	printf(" %d", *(int*)n); 
-} 
+#define MAXSTACK 100
 
 int main(void){
-    List list = list_create(NULL);
+    List citizens = list_create(destroy_record);
 
-	int num = 8;
-	list_insert_next(list, NULL, &num, sizeof(int));
-	printf("Print the list: ");
-	list_print(list, printInt);
-	printf("\n");
-	list_destroy(list);
+    FILE *frecords;
+    /*Open the file "citizenRecordsFile.txt" and read it*/
+    frecords = fopen("files/citizenRecordsFile.txt","r");
+    if (frecords == NULL){
+        printf("Error: fopen() failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char *line = NULL;
+    size_t len = 0;
+    int flag = 1;
+
+    while (getline(&line, &len, frecords) != -1)
+    {
+        char *id = strtok(line, " ");
+        char *firstname = strtok(NULL, " ");
+        char *lastname = strtok(NULL, " ");
+        char *country = strtok(NULL, " ");
+        char *age = strtok(NULL, " ");
+        char *virusName = strtok(NULL, " ");
+        char *vaccinated = strtok(NULL, " ");
+
+        if (strcmp(vaccinated, "YES") == 0){
+            char *date = strtok(NULL, " \n");
+        }
+            
+        
+        citizenRecord citizen;
+        init_record(&citizen, atoi(id), firstname, lastname, country, atoi(age));
+        //print_record(&citizen);
+        list_insert_next(citizens, list_first(citizens), &citizen, sizeof(citizen));
+        printf("%d", flag++);
+    }
+
+
+    /*Insert every record of file in citizens list*/
+    // citizenRecord citizen;
+    // int id, age;
+    // char *firstname[MAXSTACK], *lastname[MAXSTACK], *country[MAXSTACK], *virusName[MAXSTACK], *vaccinated[MAXSTACK], *date[MAXSTACK];
+    // while(true){
+    //     int fields = fscanf(frecords, "%d %s %s %s %d %s %s %s", &id, firstname, lastname, country, age, virusName, vaccinated, date);
+    //     if (fields == EOF) break;
+    //     else{
+    //         if (fields == 7){
+    //             int fields = fscanf(frecords, "%d %s %s %s %d %s %s", &id, firstname, lastname, country, age, virusName, vaccinated); 
+    //         }
+    //         init_record(&citizen, id, firstname, lastname, country, age);
+    //         list_insert_next(citizens, NULL, &citizen, sizeof(citizenRecord));
+    //     }
+        
+    // }
+
+    fclose(frecords);
+
+    list_print(citizens, print_record);
+    list_destroy(citizens);
+
+    
+
+	// int num = 8;
+	// list_insert_next(list, NULL, &num, sizeof(int));
+	// printf("Print the list: ");
+	// list_print(list, printInt);
+	// printf("\n");
+	// list_destroy(list);
 
 
 	return 0;
