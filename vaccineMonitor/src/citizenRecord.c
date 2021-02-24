@@ -49,12 +49,14 @@ void *get_key(citizenRecord rec, char *attrName){
 }
 
 void destroy_record(void *rec){
-    free(((citizenRecord)rec)->firstname);
-    free(((citizenRecord)rec)->lastname);
-    free(((citizenRecord)rec)->country);
-    free((citizenRecord)rec);
+    citizenRecord crec = rec;
+    free(crec->firstname);
+    free(crec->lastname);
+    free(crec->country);
+    free(crec);
 }
 
 void print_record(void *rec){
-    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", ((citizenRecord)rec)->citizenID, ((citizenRecord)rec)->firstname, ((citizenRecord)rec)->lastname, ((citizenRecord)rec)->age, ((citizenRecord)rec)->country);
+    citizenRecord crec = rec;
+    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, crec->country);
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIST_H
+#define LIST_H
 
 #include "common_types.h"
 
@@ -42,3 +43,5 @@ void * list_node_item(List list, ListNode node);
 void list_append(List list, List to_append);
 
 void list_print(List list, PrintItem print);
+
+#endif

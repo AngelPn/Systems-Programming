@@ -1,14 +1,14 @@
-/*File: HashTable.h*/
-#pragma once
+#ifndef HT_H
+#define HT_H
 
-#include "ADTList.h"
+#include "List.h"
 
 typedef char *KeyType;
 
 typedef struct entry{
-	char *Key;
-	void *Item;
-} Entry;
+	KeyType key;
+	void *item;
+} bucket;
 
 typedef struct{
 	int size; /*size of the array*/
@@ -16,14 +16,16 @@ typedef struct{
 	List *HashTable; /*A Hash Table of pointers to untyped linked list*/
 } HTHash;
 
-typedef void (*HTvisit)(HTHash *hash, KeyType key, HTItem item);
+typedef void (*HTvisit)(HTHash *hash, KeyType key, void item);
 
 HTHash *HTCreate();
 int HTSize(HTHash *hash);
-int HTGet(HTHash *hash, KeyType key, HTItem *pitem);
-void HTInsert(HTHash **phash, KeyType key, HTItem item);
+int HTSearch(HTHash *hash, KeyType key, void *pitem);
+void HTInsert(HTHash **phash, KeyType key, void item);
 void HTRemove(HTHash *phash, KeyType key);
 void HTVisit(HTHash *hash, HTvisit Function);
 void HTDestroy(HTHash *phash);
 
 int compare_keys(void *a, void *b);
+
+#endif
