@@ -4,16 +4,22 @@
 
 #include "../include/common_types.h"
 #include "../include/List.h"
+#include "../include/utils.h"
 #include "citizenRecord.h"
 
-#define MAXSTACK 100
+int main(int argc, char **argv){
 
-int main(void){
+    int bloom_size; char *filepath = NULL;
+    if(!argumentHandling(argc, argv, &bloom_size, &filepath))
+        exit(EXIT_FAILURE);
+
+    printf("%s, %d\n", filepath, bloom_size);	
+
     List citizens = list_create(destroy_record);
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
-    frecords = fopen("files/citizenRecordsFile.txt","r");
+    frecords = fopen(filepath,"r");
     if (frecords == NULL){
         printf("Error: fopen() failed\n");
         exit(EXIT_FAILURE);
@@ -41,6 +47,7 @@ int main(void){
         list_insert_next(citizens, list_first(citizens), citizen);
     }
     free(line);
+    free(filepath);
 
     fclose(frecords);
 
