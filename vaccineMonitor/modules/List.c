@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../include/ADTList.h"
+#include "../include/List.h"
 
 // List is pointer to this struct
 struct list{
@@ -43,24 +43,18 @@ ListNode list_last(List list){
 		return list->last;
 }
 
-void list_insert_next(List list, ListNode node, void *item, size_t item_sz){
-	printf("here");
+void list_insert_next(List list, ListNode node, void *item){
 	if (node == NULL)
 		node = list->dummy;
-	printf("here");
 
 	ListNode new_node = malloc(sizeof(struct list_node));
-	// new_node->item = malloc(sizeof(item_sz));
-	// memcpy(new_node->item, item, item_sz);
 	new_node->item = item;
-	printf("here");
 	new_node->next = node->next;
 	node->next = new_node;
 
 	list->length++;
 	if (list->last == node)
 		list->last = new_node;
-	printf("here");
 }
 
 void list_remove_next(List list, ListNode node){

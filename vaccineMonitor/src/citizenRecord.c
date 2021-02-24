@@ -4,13 +4,23 @@
 
 #include "../include/citizenRecord.h"
 
-void init_record(citizenRecord *rec,
+struct record
+{
+    int citizenID;
+    char *firstname;
+    char *lastname;
+    char *country;
+    int age;
+};
+
+citizenRecord create_record(
                 int citizenID,
                 char *firstname,
                 char *lastname,
                 char *country,
                 int age)
 {
+    citizenRecord rec = malloc(sizeof(struct record));
     rec->citizenID = citizenID;
     rec->age = age;
 
@@ -22,9 +32,11 @@ void init_record(citizenRecord *rec,
 
     rec->country = (char *)malloc(sizeof(char)*(strlen(country)+1));
     strcpy(rec->country, country);
+
+    return rec;
 }
 
-void *get_key(citizenRecord *rec, char *attrName){
+void *get_key(citizenRecord rec, char *attrName){
     if (strcmp("citizenID", attrName) == 0)
         return &(rec->citizenID);
     else if(strcmp("firstname", attrName) == 0)
@@ -37,13 +49,12 @@ void *get_key(citizenRecord *rec, char *attrName){
 }
 
 void destroy_record(void *rec){
-    free(((citizenRecord *)rec)->firstname);
-    free(((citizenRecord *)rec)->lastname);
-    free(((citizenRecord *)rec)->country);
-    free(rec);
+    free(((citizenRecord)rec)->firstname);
+    free(((citizenRecord)rec)->lastname);
+    free(((citizenRecord)rec)->country);
+    free((citizenRecord)rec);
 }
 
 void print_record(void *rec){
-    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", ((citizenRecord *)rec)->citizenID, ((citizenRecord *)rec)->firstname, ((citizenRecord *)rec)->lastname, ((citizenRecord *)rec)->age, ((citizenRecord *)rec)->country);
-    printf("printed ");
+    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", ((citizenRecord)rec)->citizenID, ((citizenRecord)rec)->firstname, ((citizenRecord)rec)->lastname, ((citizenRecord)rec)->age, ((citizenRecord)rec)->country);
 }

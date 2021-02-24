@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../include/common_types.h"
-#include "../include/ADTList.h"
+#include "../include/List.h"
 #include "citizenRecord.h"
 
 #define MAXSTACK 100
@@ -21,7 +21,6 @@ int main(void){
 
     char *line = NULL;
     size_t len = 0;
-    int flag = 1;
 
     while (getline(&line, &len, frecords) != -1)
     {
@@ -38,44 +37,15 @@ int main(void){
         }
             
         
-        citizenRecord citizen;
-        init_record(&citizen, atoi(id), firstname, lastname, country, atoi(age));
-        //print_record(&citizen);
-        list_insert_next(citizens, list_first(citizens), &citizen, sizeof(citizen));
-        printf("%d", flag++);
+        citizenRecord citizen = create_record(atoi(id), firstname, lastname, country, atoi(age));
+        list_insert_next(citizens, list_first(citizens), citizen);
     }
-
-
-    /*Insert every record of file in citizens list*/
-    // citizenRecord citizen;
-    // int id, age;
-    // char *firstname[MAXSTACK], *lastname[MAXSTACK], *country[MAXSTACK], *virusName[MAXSTACK], *vaccinated[MAXSTACK], *date[MAXSTACK];
-    // while(true){
-    //     int fields = fscanf(frecords, "%d %s %s %s %d %s %s %s", &id, firstname, lastname, country, age, virusName, vaccinated, date);
-    //     if (fields == EOF) break;
-    //     else{
-    //         if (fields == 7){
-    //             int fields = fscanf(frecords, "%d %s %s %s %d %s %s", &id, firstname, lastname, country, age, virusName, vaccinated); 
-    //         }
-    //         init_record(&citizen, id, firstname, lastname, country, age);
-    //         list_insert_next(citizens, NULL, &citizen, sizeof(citizenRecord));
-    //     }
-        
-    // }
+    free(line);
 
     fclose(frecords);
 
     list_print(citizens, print_record);
     list_destroy(citizens);
-
-    
-
-	// int num = 8;
-	// list_insert_next(list, NULL, &num, sizeof(int));
-	// printf("Print the list: ");
-	// list_print(list, printInt);
-	// printf("\n");
-	// list_destroy(list);
 
 
 	return 0;

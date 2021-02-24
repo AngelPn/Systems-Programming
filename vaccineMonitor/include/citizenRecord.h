@@ -3,18 +3,10 @@
 
 #include <stdbool.h>
 
+typedef struct record *citizenRecord;
 
-typedef struct record
-{
-    int citizenID;
-    char *firstname;
-    char *lastname;
-    char *country;
-    int age;
-} citizenRecord;
-
-/*Initializes record*/
-void init_record(citizenRecord *rec,
+/*created citizenRecord*/
+citizenRecord create_record(
                 int citizenID,
                 char *firstname,
                 char *lastname,
@@ -23,7 +15,7 @@ void init_record(citizenRecord *rec,
                 );
 
 /*Finds the key of record determined by attrName and returns a pointer to it*/
-void *get_key(citizenRecord *rec, char *attrName);
+void *get_key(citizenRecord rec, char *attrName);
 
 /*Deallocates memory of record*/
 void destroy_record(void *rec);

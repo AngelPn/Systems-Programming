@@ -16,7 +16,7 @@ ListNode list_first(List list);
 ListNode list_last(List list);
 
 //Insert new node after ListNode node or in the beginning if node == LIST_BOF
-void list_insert_next(List list, ListNode node, void * item, size_t item_sz);
+void list_insert_next(List list, ListNode node, void * item);
 
 //Removes the next node from ListNode node
 void list_remove_next(List list, ListNode node);
