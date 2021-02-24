@@ -2,6 +2,7 @@
 #define HT_H
 
 #include "List.h"
+#include "common_types.h"
 
 typedef char *KeyType;
 
@@ -20,12 +21,14 @@ typedef void (*HTvisit)(HTHash *hash, KeyType key, void item);
 
 HTHash *HTCreate();
 int HTSize(HTHash *hash);
-int HTSearch(HTHash *hash, KeyType key, void *pitem);
+void *HTSearch(HTHash *hash, KeyType key);
 void HTInsert(HTHash **phash, KeyType key, void item);
 void HTRemove(HTHash *phash, KeyType key);
-void HTVisit(HTHash *hash, HTvisit Function);
+// void HTVisit(HTHash *hash, HTvisit Function);
 void HTDestroy(HTHash *phash);
 
 int compare_keys(void *a, void *b);
+
+void destroy_bucket(void *b);
 
 #endif

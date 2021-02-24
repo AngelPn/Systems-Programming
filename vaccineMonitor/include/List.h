@@ -38,7 +38,7 @@ void list_destroy(List list);
 ListNode list_next(List list, ListNode node);
 
 //Returns content of node
-void * list_node_item(List list, ListNode node);
+void *list_node_item(List list, ListNode node);
 
 void list_append(List list, List to_append);
 

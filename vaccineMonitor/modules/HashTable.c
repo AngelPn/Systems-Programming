@@ -45,8 +45,9 @@ int compare_keys(void *a, void *b) {
 }
 
 
-/*Function that searches the key in the hash and copies the item in pitem pointer*/
-int HTGet(HTHash *hash, KeyType key, void *pitem){ //pitem is a pointer to bucket
+/*Function that searches the key in the hash and returns the pointer to this bucket*/
+void *HTSearch(HTHash *hash, KeyType key){
+
 	int h = Hash(hash, key); /*Find the index of key*/
 	List head = hash->HashTable[h]; /*head is the linked list of the key we are searching for*/
     //List head = *(hash->HashTable[h]);
@@ -60,8 +61,8 @@ int HTGet(HTHash *hash, KeyType key, void *pitem){ //pitem is a pointer to bucke
 
 	free(searching_node.key);
 
-    if (pitem == NULL) return 0;
-    else return 1;
+    if (pitem == NULL) return NULL;
+    else return pitem;
 
 	// ListNode P= LLFind(head, &SItem, compare_keys ); /*Pointer P points at the node of the linked list that has the key*/
 	
@@ -77,72 +78,54 @@ HTHash *Reharshing(HTHash *phash){
 	int m = (phash->size)*2; /*Double the size of the array*/
 	HTHash *NewHash= HTCreateHash(m); /*Create a hash with the new size*/
 
-	int i;
-	LList *P=NULL;
-	KeyType key=NULL;
+	List head = NULL;
+	KeyType key = NULL;
 
-	for (i=0; i< phash->size; i++){
-		P= phash->HashTable[i];
-		if(P!= NULL){
-			LLNode N= P->dummy->next;
-			while(N!=NULL){
-				bucket *e= LLGetItem(*P, N);
+	for (int i = 0; i < phash->size; i++){
+		head = phash->HashTable[i];
+		if(head != NULL){
 
-				key= malloc(sizeof(char)*(strlen(e->Key)+1));
-				strcpy(key, e->Key);
+			ListNode curr_node = head->dummy->next;
+			while( curr_node != NULL){
+				bucket *e= list_node_item(head, curr_node);
 
-				void item= e->Item;
-
-				HTInsert(&NewHash, key, item);
-				N= N->next;
+				HTInsert(&NewHash, e->key, e->item);
+				curr_node = curr_node->next;
 			}
 		}
 	}
+	HTDestroy(phash);
 	return NewHash;
 }
 
-void HTInsert(HTHash **phash, KeyType key, void item){
+void destroy_bucket(void *b){
+	bucket *nb = b;
+	free(nb->key);
+}
+
+void HTInsert(HTHash **phash, KeyType key, void *item){
 	HTHash *hash= *phash;
-
-
-    void pitem;
-    if (HTGet(hash, key, &pitem))
 
 	(hash->n)++;/*Increase the counter of entries*/
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
+
 	int h = Hash(hash, key); /*Find the index of key*/
 	
-	List head= hash->HashTable[h]; /*head points at the linked list we are going to insert the item*/
-	void pitem;
+	List head; /*head points at the linked list we are going to insert the item*/
+	if ( (head = hash->HashTable[h]) == NULL){
+		hash->HashTable[h] = list_create(destroy_bucket);
+		head = hash->HashTable[h];
+	}
 
-	bucket NItem = { /*Create new bucket*/
-		.Key = malloc(sizeof(char)*(strlen(key)+1)),
-		.Item= item
+	bucket new_bucket = { /*Create new bucket*/
+		.key = malloc(sizeof(char)*(strlen(key)+1)),
+		.item = item
 	};
-	strcpy(NItem.Key,key);
+	strcpy(new_bucket.key, key);
 
-	if(head!=NULL){
-		LList P= *head; /*P is the linked list we are going to insert the item*/
-		int exist= HTGet(hash, key, &pitem);
-		if(!exist) {
-			LLNode node= NULL;
-			node= LLInsertAfter(*head, node, &NItem);/*Else, insert the item as first node of the linked list*/
-		}
-		else{/*If there is the same key*/
-			LLNode S= LLFind(*head, &NItem, compare_keys); /*Find the node with the key*/
-			bucket *e= LLGetItem(P, S);
-			e->Item= item; /*Replace the item*/
-		}
-	}
-	else{
-		LList *L= LLCreate(sizeof(bucket)); /*Create the untyped linked list*/
-		
-		LLNode node= NULL;
-		node= LLInsertAfter(*L, node, &NItem);/*Else, insert the item as first node of the linked list*/
-		hash->HashTable[h]= L;
-	}
+	list_insert_next(head, list_last(head), &new_bucket);
 
-	if(LF>= 0.9){ /*Double the size of the array*/
+	if(LF >= 0.9){ /*Double the size of the array*/
 		*phash= Reharshing(hash);
 	}
 }
@@ -163,38 +146,37 @@ void HTRemove(HTHash *phash, KeyType key){
 		LLRemove(head, S);
 }
 
-void HTVisit(HTHash *hash, HTvisit Function){
-	int i;
-	LList *P=NULL;
-	KeyType key=NULL;
+// void HTVisit(HTHash *hash, HTvisit Function){
+// 	int i;
+// 	LList *P=NULL;
+// 	KeyType key=NULL;
 
-	for (i=0; i< hash->size; i++){
+// 	for (i=0; i< hash->size; i++){
 
-		P= hash->HashTable[i];
-		if(P!= NULL){
-			LList L= *P;
-			LLNode N= L.dummy->next;
-			while(N!=NULL){
-				bucket *e= LLGetItem(L, N);
+// 		P= hash->HashTable[i];
+// 		if(P!= NULL){
+// 			LList L= *P;
+// 			LLNode N= L.dummy->next;
+// 			while(N!=NULL){
+// 				bucket *e= LLGetItem(L, N);
 
-				key= malloc(sizeof(char)*strlen(e->Key +1));
-				strcpy(key, e->Key); 
-				void item= e->Item;
-				Function(hash, key, item);
-				N= N->next;
-			}
-		}
-	}
-}
+// 				key= malloc(sizeof(char)*strlen(e->Key +1));
+// 				strcpy(key, e->Key); 
+// 				void item= e->Item;
+// 				Function(hash, key, item);
+// 				N= N->next;
+// 			}
+// 		}
+// 	}
+// }
 
 void HTDestroy(HTHash *phash){
-	int i;
-	LList *P=NULL;
+	List P = NULL;
 
-	for (i=0; i< phash->size; i++){
-		P= phash->HashTable[i];
-		if(P!=NULL)
-			LLDestroy(*P);
+	for (int i = 0; i < phash->size; i++){
+		P = phash->HashTable[i];
+		if( P != NULL)
+			list_destroy(P);
 	}
 	free(phash->HashTable);
 	free(phash);
