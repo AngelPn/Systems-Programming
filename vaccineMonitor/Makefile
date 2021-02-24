@@ -10,24 +10,25 @@ CC = gcc
 #compile options
 CFLAGS = -Wall -g -I$(IDIR)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
-TARGETS = main
+TARGETS = vaccineMonitor
 
-_DEPS = ADTList.h citizenRecord.h
+_DEPS = List.h citizenRecord.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJS = $(MDIR)/ADTList.o $(SRC)/citizenRecord.o $(SRC)/main.o 
+_OBJS = $(MDIR)/List.o $(SRC)/citizenRecord.o $(SRC)/main.o 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 
 $(ODIR)/%.o: %.c $(DEPS)
-	@mkdir -p $(ODIR)
+	@mkdir -p $(ODIR)/$(SRC)
+	@mkdir -p $(ODIR)/$(MDIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 all: $(TARGETS)
 
-main: $(OBJS)
-	$(CC) -o $@ $^ -no-pie $(LIBS)
+vaccineMonitor: $(OBJS)
+	$(CC) -o $@ $^
 
 clean: 
-	rm -f $(ODIR)/*.o $(BDIR)/*
-	rmdir $(ODIR) $(BDIR)
+	rm -f $(ODIR)/$(SRC)/*.o $(ODIR)/$(MDIR)/*.o vaccineMonitor
+	rmdir $(ODIR)/$(SRC) $(ODIR)/$(MDIR) $(ODIR)
