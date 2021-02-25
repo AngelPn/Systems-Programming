@@ -4,6 +4,7 @@
 
 #include "../include/common_types.h"
 #include "../include/List.h"
+#include "../include/HashTable.h"
 #include "../include/utils.h"
 #include "../include/date.h"
 #include "citizenRecord.h"
@@ -17,6 +18,7 @@ int main(int argc, char **argv){
     printf("%s, %d\n", filepath, bloom_size);	
 
     List citizens = list_create(destroy_record);
+    HashTable HTcitizens = HTCreate();
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
@@ -55,12 +57,22 @@ int main(int argc, char **argv){
         
         citizenRecord citizen = create_record(atoi(id), firstname, lastname, country, atoi(age));
         list_insert_next(citizens, list_last(citizens), citizen);
+
+        bucket *searching_node = HTSearch(HTcitizens, id);
+        if (searching_node == NULL){
+            HTInsert(HTcitizens, id, citizen);
+        }
+            
     }
     free(line); free(error_line); free(filepath);
     fclose(frecords);
 
+    printf("Print list\n");
     list_print(citizens, print_record);
     list_destroy(citizens);
+
+    printf("Print Hash table\n");
+    HTPrint(HTcitizens, print_record);
 
 
 	return 0;

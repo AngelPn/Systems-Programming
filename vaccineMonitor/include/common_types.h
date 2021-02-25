@@ -17,6 +17,3 @@ typedef void (*DestroyFunc)(void * item);
 
 //pointer to function that prints an item
 typedef void (*PrintItem)(void * item);
-
-// Function to print an integer
-void printInt(void * n);

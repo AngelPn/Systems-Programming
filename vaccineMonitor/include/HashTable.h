@@ -5,30 +5,31 @@
 #include "common_types.h"
 
 typedef char *KeyType;
+typedef struct hashtable *HashTable;
+typedef struct entry *bucket;
 
-typedef struct entry{
+struct entry{
 	KeyType key;
 	void *item;
-} bucket;
+};
 
-typedef struct{
+struct hashtable{
 	int size; /*size of the array*/
 	int n; /*n is the number of entries*/
-	List *HashTable; /*A Hash Table of pointers to untyped linked list*/
-} HTHash;
+	List *chains; /*A Hash Table of pointers to untyped linked list*/
+};
 
-typedef void (*HTvisit)(HTHash *hash, KeyType key, void item);
-
-HTHash *HTCreate();
-int HTSize(HTHash *hash);
-void *HTSearch(HTHash *hash, KeyType key);
-void HTInsert(HTHash **phash, KeyType key, void item);
-void HTRemove(HTHash *phash, KeyType key);
-// void HTVisit(HTHash *hash, HTvisit Function);
-void HTDestroy(HTHash *phash);
+HashTable HTCreate();
+int HTSize(HashTable hash);
+void *HTSearch(HashTable hash, KeyType key);
+void HTInsert(HashTable hash, KeyType key, void *item);
+// void HTRemove(HashTable *phash, KeyType key);
+void HTPrint(HashTable hash, PrintItem print);
+void HTDestroy(HashTable phash);
 
 int compare_keys(void *a, void *b);
 
 void destroy_bucket(void *b);
+bucket create_bucket(KeyType key, void *item);
 
 #endif

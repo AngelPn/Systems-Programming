@@ -27,7 +27,7 @@ void list_remove(List list, ListNode node);
 ListNode list_find_node(List list, void * item, CompareFunc compare);
 
 //Returns the first item found equal with item
-void * list_find(List list, void * item, CompareFunc compare);
+void *list_find(List list, void *item, CompareFunc compare);
 
 DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item);
 
