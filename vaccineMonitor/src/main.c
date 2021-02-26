@@ -17,7 +17,6 @@ int main(int argc, char **argv){
 
     printf("%s, %d\n", filepath, bloom_size);	
 
-    //List citizens = list_create(destroy_record);
     HashTable HTcitizens = HTCreate(Integer, destroy_record);
 
     FILE *frecords;
@@ -55,9 +54,6 @@ int main(int argc, char **argv){
                 printf("ERROR IN RECORD %s\n", error_line);
         }
         free(error_line);
-        
-        
-        //list_insert_next(citizens, list_last(citizens), citizen);
 
         int citizenID = atoi(id);
         citizenRecord searching_node = HTSearch(HTcitizens, &citizenID, compare_citizen);
@@ -68,11 +64,7 @@ int main(int argc, char **argv){
             
     }
     free(line); free(filepath);
-    //free(error_line);
     fclose(frecords);
-
-    // printf("Print list\n");
-    // list_print(citizens, print_record);
     
 
     printf("Print Hash table\n");
@@ -80,9 +72,6 @@ int main(int argc, char **argv){
 
     printf("Destroy Hash table\n");
     HTDestroy(HTcitizens);
-
-    //list_destroy(citizens);
-
 
 	return 0;
 }
