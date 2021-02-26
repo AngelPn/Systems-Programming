@@ -17,8 +17,8 @@ int main(int argc, char **argv){
 
     printf("%s, %d\n", filepath, bloom_size);	
 
-    List citizens = list_create(destroy_record);
-    HashTable HTcitizens = HTCreate();
+    //List citizens = list_create(destroy_record);
+    HashTable HTcitizens = HTCreate(destroy_record);
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
@@ -53,10 +53,11 @@ int main(int argc, char **argv){
             char *error = strtok(NULL, "\n");
             if (error != NULL)
                 printf("ERROR IN RECORD %s\n", error_line);
-        }   
+        }
+        free(error_line);
         
         citizenRecord citizen = create_record(atoi(id), firstname, lastname, country, atoi(age));
-        list_insert_next(citizens, list_last(citizens), citizen);
+        //list_insert_next(citizens, list_last(citizens), citizen);
 
         bucket *searching_node = HTSearch(HTcitizens, id);
         if (searching_node == NULL){
@@ -64,15 +65,21 @@ int main(int argc, char **argv){
         }
             
     }
-    free(line); free(error_line); free(filepath);
+    free(line); free(filepath);
+    //free(error_line);
     fclose(frecords);
 
-    printf("Print list\n");
-    list_print(citizens, print_record);
-    list_destroy(citizens);
+    // printf("Print list\n");
+    // list_print(citizens, print_record);
+    
 
     printf("Print Hash table\n");
     HTPrint(HTcitizens, print_record);
+
+    printf("Destroy Hash table\n");
+    HTDestroy(HTcitizens);
+
+    //list_destroy(citizens);
 
 
 	return 0;

@@ -9,17 +9,26 @@ bucket create_bucket(KeyType key, void *item){
 	bucket b = (bucket)malloc(sizeof(struct entry));
 
 	b->key = (KeyType)malloc(sizeof(char)*(1+strlen(key)));
+	strcpy(b->key, key);
+
 	b->item = item;
 
 	return b;
 }
 
-HashTable HTCreateHash(int size){
+void destroy_bucket(void *b){
+	bucket nb = b;
+	free(nb->key);
+	free(nb);
+}
+
+HashTable HTCreateHash(int size, DestroyFunc destroy_item){
 	HashTable hash = (HashTable)malloc(sizeof(struct hashtable));
 
 	hash->size = size;
 	hash->n = 0;
 	hash->chains = (List *)malloc(sizeof(List)*size);
+	hash->destroy_item = destroy_item;
 
 	if(hash->chains == NULL){
 		printf("Sorry! System storage is exchausted\n");
@@ -32,8 +41,8 @@ HashTable HTCreateHash(int size){
 	return hash;
 }
 
-HashTable HTCreate(){
-	return HTCreateHash(7);
+HashTable HTCreate(DestroyFunc destroy_item){
+	return HTCreateHash(7, destroy_item);
 }
 
 int HTSize(HashTable hash){ /*Function that returns the number of elements in the hash*/
@@ -66,7 +75,7 @@ void *HTSearch(HashTable hash, KeyType key){
 
 		void *pitem = list_find(head, searching_node, compare_keys);
 
-		free(searching_node->key);
+		destroy_bucket(searching_node);
 
 		if (pitem == NULL) return NULL;
 		else return pitem;		
@@ -75,9 +84,11 @@ void *HTSearch(HashTable hash, KeyType key){
 
 }
 
+void HTDestroyOldHT(HashTable hash);
+
 HashTable Reharshing(HashTable phash){
 
-	HashTable NewHash= HTCreateHash((phash->size)*2); /*Create a hash with the new size*/
+	HashTable NewHash= HTCreateHash((phash->size)*2, phash->destroy_item); /*Create a hash with the new size*/
 
 	List head = NULL;
 
@@ -87,21 +98,15 @@ HashTable Reharshing(HashTable phash){
 
 			ListNode curr_node = list_first(head);
 			while( curr_node != NULL){
-				bucket e= list_node_item(head, curr_node);
+				bucket e = list_node_item(head, curr_node);
 
 				HTInsert(NewHash, e->key, e->item);
 				curr_node = list_next(head, curr_node);
 			}
 		}
 	}
-	HTDestroy(phash);
+	HTDestroyOldHT(phash);
 	return NewHash;
-}
-
-void destroy_bucket(void *b){
-	bucket nb = b;
-	free(nb->key);
-	free(nb);
 }
 
 void HTInsert(HashTable hash, KeyType key, void *item){
@@ -110,7 +115,6 @@ void HTInsert(HashTable hash, KeyType key, void *item){
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
 
 	int h = Hash(hash, key); /*Find the index of key*/
-	printf("index %d\n", h);
 	
 	List head; /*head points at the linked list we are going to insert the item*/
 	if ( (head = hash->chains[h]) == NULL){
@@ -156,45 +160,46 @@ void HTPrint(HashTable hash, PrintItem print){
 				bucket e= list_node_item(head, curr_node);
 
 				printf("Key: %s\n", e->key);
-				// print(e->item);
+				print(e->item);
 				curr_node = list_next(head, curr_node);
 			}
 		}		
 	}
 }
 
-// void HTVisit(HashTable *hash, HTvisit Function){
-// 	int i;
-// 	LList *P=NULL;
-// 	KeyType key=NULL;
+void HTDestroyOldHT(HashTable hash){
+	List head = NULL;
 
-// 	for (i=0; i< hash->size; i++){
-
-// 		P= hash->HashTable[i];
-// 		if(P!= NULL){
-// 			LList L= *P;
-// 			LLNode N= L.dummy->next;
-// 			while(N!=NULL){
-// 				bucket *e= LLGetItem(L, N);
-
-// 				key= malloc(sizeof(char)*strlen(e->Key +1));
-// 				strcpy(key, e->Key); 
-// 				void item= e->Item;
-// 				Function(hash, key, item);
-// 				N= N->next;
-// 			}
-// 		}
-// 	}
-// }
-
-void HTDestroy(HashTable phash){
-	List P = NULL;
-
-	for (int i = 0; i < phash->size; i++){
-		P = phash->chains[i];
-		if( P != NULL)
-			list_destroy(P);
+	for (int i = 0; i < hash->size; i++){
+		head = hash->chains[i];
+		if( head != NULL)
+			list_destroy(head);
 	}
-	free(phash->chains);
-	free(phash);
+	free(hash->chains);
+	free(hash);
+}
+
+void HTDestroy(HashTable hash){
+	List head = NULL;
+
+	for (int i = 0; i < hash->size; i++){
+		head = hash->chains[i];
+			
+		if(head != NULL){
+
+			ListNode curr_node = list_first(head);
+			while( curr_node != NULL){
+				bucket e = list_node_item(head, curr_node);
+
+				if (hash->destroy_item != NULL){
+					hash->destroy_item(e->item);
+				}
+					
+				curr_node = list_next(head, curr_node);
+			}
+			list_destroy(head);
+		}
+	}
+	free(hash->chains);
+	free(hash);
 }
