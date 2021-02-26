@@ -1,8 +1,8 @@
 #ifndef HT_H
 #define HT_H
 
-#include "List.h"
 #include "common_types.h"
+#include "List.h"
 
 enum key_type {String, Integer} KeyType;
 
@@ -15,9 +15,5 @@ void HTInsert(HashTable hash, void *item, GetKey key);
 // void HTRemove(HashTable *phash, KeyType key);
 void HTPrint(HashTable hash, PrintItem print);
 void HTDestroy(HashTable hash);
-
-int compare_keys(void *a, void *b);
-
-
 
 #endif
