@@ -38,7 +38,7 @@ citizenRecord create_record(
 
 void *get_citizenID(void *rec){
     citizenRecord crec = rec;
-    return crec->citizenID;
+    return &(crec->citizenID);
 }
 
 void destroy_record(void *rec){

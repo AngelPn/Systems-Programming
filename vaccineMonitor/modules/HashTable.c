@@ -42,7 +42,7 @@ int HTSize(HashTable hash){ /*Function that returns the number of elements in th
 }
 
 int Hash(HashTable hash, int keytype, void *key){/*Function that counts the index*/
-	if (keytype = String){
+	if (keytype == String){
 		char *k = key;
 		int h=0, a=33;
 		for(; *k!='\0'; k++)
@@ -55,12 +55,6 @@ int Hash(HashTable hash, int keytype, void *key){/*Function that counts the inde
 	}
 
 }
-
-// int compare_keys(void *a, void *b) {
-// 	bucket ap = a;
-// 	bucket bp = b;
-// 	return strcmp(ap->key, bp->key);
-// }
 
 
 /*Function that searches the key in the hash and returns the pointer to this bucket*/
