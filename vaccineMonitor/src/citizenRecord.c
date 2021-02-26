@@ -36,16 +36,9 @@ citizenRecord create_record(
     return rec;
 }
 
-void *get_key(citizenRecord rec, char *attrName){
-    if (strcmp("citizenID", attrName) == 0)
-        return &(rec->citizenID);
-    else if(strcmp("firstname", attrName) == 0)
-        return rec->firstname;
-    else if(strcmp("lastname", attrName) == 0)
-        return rec->lastname;
-    else if(strcmp("country", attrName) == 0)
-        return rec->country;
-    else return NULL;
+void *get_citizenID(void *rec){
+    citizenRecord crec = rec;
+    return crec->citizenID;
 }
 
 void destroy_record(void *rec){
@@ -59,4 +52,13 @@ void destroy_record(void *rec){
 void print_record(void *rec){
     citizenRecord crec = rec;
     printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, crec->country);
+}
+
+int compare_citizen(void *key, void *rec){
+    int k = *(int *)key;
+    citizenRecord crec = rec;
+
+    if (crec->citizenID == k) return 0;
+    else if (crec->citizenID > k) return -1;
+    else return 1;
 }

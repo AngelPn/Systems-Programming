@@ -5,30 +5,22 @@
 
 #include "../include/HashTable.h"
 
-bucket create_bucket(KeyType key, void *item){
-	bucket b = (bucket)malloc(sizeof(struct entry));
+struct hashtable{
+	int size; /*size of the array*/
+	int n; /*n is the number of entries*/
+	List *chains; /*A Hash Table of pointers to untyped linked list*/
+	int keytype;
+	DestroyFunc destroy_item;
+};
 
-	b->key = (KeyType)malloc(sizeof(char)*(1+strlen(key)));
-	strcpy(b->key, key);
-
-	b->item = item;
-
-	return b;
-}
-
-void destroy_bucket(void *b){
-	bucket nb = b;
-	free(nb->key);
-	free(nb);
-}
-
-HashTable HTCreateHash(int size, DestroyFunc destroy_item){
+HashTable HTCreateHash(int size, int keytype, DestroyFunc destroy_item){
 	HashTable hash = (HashTable)malloc(sizeof(struct hashtable));
 
 	hash->size = size;
 	hash->n = 0;
 	hash->chains = (List *)malloc(sizeof(List)*size);
 	hash->destroy_item = destroy_item;
+	hash->keytype = keytype;
 
 	if(hash->chains == NULL){
 		printf("Sorry! System storage is exchausted\n");
@@ -41,42 +33,45 @@ HashTable HTCreateHash(int size, DestroyFunc destroy_item){
 	return hash;
 }
 
-HashTable HTCreate(DestroyFunc destroy_item){
-	return HTCreateHash(7, destroy_item);
+HashTable HTCreate(int keytype, DestroyFunc destroy_item){
+	return HTCreateHash(7, keytype, destroy_item);
 }
 
 int HTSize(HashTable hash){ /*Function that returns the number of elements in the hash*/
 	return hash->n; /*n is the number of entries! */
 }
 
-int Hash(HashTable hash, KeyType key){/*Function that counts the index*/
-	int h=0, a=33;
-	for(; *key!='\0'; key++)
-		h=(a*h + *key)%(hash->size);
-	return h;
+int Hash(HashTable hash, int keytype, void *key){/*Function that counts the index*/
+	if (keytype = String){
+		char *k = key;
+		int h=0, a=33;
+		for(; *k!='\0'; k++)
+			h=(a*h + *k)%(hash->size);
+		return h;		
+	}
+	else{
+		int k = *(int *)key;
+		return k%(hash->size);
+	}
+
 }
 
-int compare_keys(void *a, void *b) {
-	bucket ap = a;
-	bucket bp = b;
-	return strcmp(ap->key, bp->key);
-}
+// int compare_keys(void *a, void *b) {
+// 	bucket ap = a;
+// 	bucket bp = b;
+// 	return strcmp(ap->key, bp->key);
+// }
 
 
 /*Function that searches the key in the hash and returns the pointer to this bucket*/
-void *HTSearch(HashTable hash, KeyType key){
+void *HTSearch(HashTable hash, void *key, CompareFunc compare){
 
-	int h = Hash(hash, key); /*Find the index of key*/
+	int h = Hash(hash, hash->keytype, key); /*Find the index of key*/
 	List head = hash->chains[h]; /*head is the linked list of the key we are searching for*/
     //List head = *(hash->chains[h]);
 
 	if (head != NULL){
-		bucket searching_node = create_bucket(key, NULL);
-
-		void *pitem = list_find(head, searching_node, compare_keys);
-
-		destroy_bucket(searching_node);
-
+		void *pitem = list_find(head, key, compare);
 		if (pitem == NULL) return NULL;
 		else return pitem;		
 	}
@@ -86,48 +81,46 @@ void *HTSearch(HashTable hash, KeyType key){
 
 void HTDestroyOldHT(HashTable hash);
 
-HashTable Reharshing(HashTable phash){
+HashTable Reharshing(HashTable hash, GetKey key){
 
-	HashTable NewHash= HTCreateHash((phash->size)*2, phash->destroy_item); /*Create a hash with the new size*/
+	HashTable NewHash= HTCreateHash((hash->size)*2, hash->keytype, hash->destroy_item); /*Create a hash with the new size*/
 
 	List head = NULL;
 
-	for (int i = 0; i < phash->size; i++){
-		head = phash->chains[i];
+	for (int i = 0; i < hash->size; i++){
+		head = hash->chains[i];
 		if(head != NULL){
 
 			ListNode curr_node = list_first(head);
 			while( curr_node != NULL){
-				bucket e = list_node_item(head, curr_node);
+				void *node_item = list_node_item(head, curr_node);
 
-				HTInsert(NewHash, e->key, e->item);
+				HTInsert(NewHash, node_item, key(node_item));
 				curr_node = list_next(head, curr_node);
 			}
 		}
 	}
-	HTDestroyOldHT(phash);
+	HTDestroyOldHT(hash);
 	return NewHash;
 }
 
-void HTInsert(HashTable hash, KeyType key, void *item){
+void HTInsert(HashTable hash, void *item, GetKey key){
 
 	(hash->n)++;/*Increase the counter of entries*/
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
 
-	int h = Hash(hash, key); /*Find the index of key*/
+	int h = Hash(hash, hash->keytype, key(item)); /*Find the index of key*/
 	
 	List head; /*head points at the linked list we are going to insert the item*/
 	if ( (head = hash->chains[h]) == NULL){
-		hash->chains[h] = list_create(destroy_bucket);
+		hash->chains[h] = list_create(hash->destroy_item);
 		head = hash->chains[h];
 	}
 
-	bucket new_bucket = create_bucket(key, item);
-
-	list_insert_next(head, list_last(head), new_bucket);
+	list_insert_next(head, list_last(head), item);
 
 	if(LF >= 0.9){ /*Double the size of the array*/
-		hash = Reharshing(hash);
+		hash = Reharshing(hash, key);
 	}
 }
 
@@ -154,15 +147,7 @@ void HTPrint(HashTable hash, PrintItem print){
 	for (int i = 0; i < hash->size; i++){
 		head = hash->chains[i];
 		if(head != NULL){
-
-			ListNode curr_node = list_first(head);
-			while( curr_node != NULL){
-				bucket e= list_node_item(head, curr_node);
-
-				printf("Key: %s\n", e->key);
-				print(e->item);
-				curr_node = list_next(head, curr_node);
-			}
+			list_print(head, print);
 		}		
 	}
 }
@@ -172,8 +157,11 @@ void HTDestroyOldHT(HashTable hash){
 
 	for (int i = 0; i < hash->size; i++){
 		head = hash->chains[i];
-		if( head != NULL)
+
+		if( head != NULL){
+			list_set_destroy_item(head, NULL);
 			list_destroy(head);
+		}
 	}
 	free(hash->chains);
 	free(hash);
@@ -186,17 +174,6 @@ void HTDestroy(HashTable hash){
 		head = hash->chains[i];
 			
 		if(head != NULL){
-
-			ListNode curr_node = list_first(head);
-			while( curr_node != NULL){
-				bucket e = list_node_item(head, curr_node);
-
-				if (hash->destroy_item != NULL){
-					hash->destroy_item(e->item);
-				}
-					
-				curr_node = list_next(head, curr_node);
-			}
 			list_destroy(head);
 		}
 	}

@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     printf("%s, %d\n", filepath, bloom_size);	
 
     //List citizens = list_create(destroy_record);
-    HashTable HTcitizens = HTCreate(destroy_record);
+    HashTable HTcitizens = HTCreate(Integer, destroy_record);
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
@@ -56,12 +56,14 @@ int main(int argc, char **argv){
         }
         free(error_line);
         
-        citizenRecord citizen = create_record(atoi(id), firstname, lastname, country, atoi(age));
+        
         //list_insert_next(citizens, list_last(citizens), citizen);
 
-        bucket *searching_node = HTSearch(HTcitizens, id);
+        int citizenID = atoi(id);
+        citizenRecord searching_node = HTSearch(HTcitizens, &citizenID, compare_citizen);
         if (searching_node == NULL){
-            HTInsert(HTcitizens, id, citizen);
+            citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
+            HTInsert(HTcitizens, citizen, get_citizenID);
         }
             
     }

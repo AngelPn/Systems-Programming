@@ -4,29 +4,14 @@
 #include "List.h"
 #include "common_types.h"
 
-typedef char *KeyType;
+enum key_type {String, Integer} KeyType;
+
 typedef struct hashtable *HashTable;
-typedef struct entry *bucket;
 
-struct entry{
-	KeyType key;
-	void *item;
-};
-
-struct hashtable{
-	int size; /*size of the array*/
-	int n; /*n is the number of entries*/
-	List *chains; /*A Hash Table of pointers to untyped linked list*/
-	DestroyFunc destroy_item;
-};
-
-bucket create_bucket(KeyType key, void *item);
-void destroy_bucket(void *b);
-
-HashTable HTCreate(DestroyFunc destroy_item);
+HashTable HTCreate(int keytype, DestroyFunc destroy_item);
 int HTSize(HashTable hash);
-void *HTSearch(HashTable hash, KeyType key);
-void HTInsert(HashTable hash, KeyType key, void *item);
+void *HTSearch(HashTable hash, void *key, CompareFunc compare);
+void HTInsert(HashTable hash, void *item, GetKey key);
 // void HTRemove(HashTable *phash, KeyType key);
 void HTPrint(HashTable hash, PrintItem print);
 void HTDestroy(HashTable hash);
