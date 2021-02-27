@@ -3,6 +3,8 @@
 #include <stdbool.h> 
 #include <stdio.h>
 
+enum key_type {String, Integer} KeyType;
+
 typedef unsigned int uint;
 
 /*pointer to function that compares 2 values a and b and returns:

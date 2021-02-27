@@ -4,8 +4,6 @@
 #include "common_types.h"
 #include "List.h"
 
-enum key_type {String, Integer} KeyType;
-
 typedef struct hashtable *HashTable;
 
 HashTable HTCreate(int keytype, DestroyFunc destroy_item);

@@ -24,7 +24,7 @@ HashTable HTCreateHash(int size, int keytype, DestroyFunc destroy_item){
 
 	if(hash->chains == NULL){
 		printf("Sorry! System storage is exchausted\n");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
     /*Create an array of lists of size 'size': Initialize the Hash Table with NULL*/
@@ -105,7 +105,8 @@ void HTInsert(HashTable hash, void *item, GetKey key){
 
 	int h = Hash(hash, hash->keytype, key(item)); /*Find the index of key*/
 	
-	List head; /*head points at the linked list we are going to insert the item*/
+	List head = NULL; 
+	/*head points at the linked list we are going to insert the item*/
 	if ( (head = hash->chains[h]) == NULL){
 		hash->chains[h] = list_create(hash->destroy_item);
 		head = hash->chains[h];

@@ -12,12 +12,15 @@ List list_create(DestroyFunc destroy_item);
 
 int list_length(List list);
 
-//Returns the first and the last node of list or LIST_BOF / LIST_EOF if list is empty
+//Returns the first and the last node of list or NULL if list is empty
 ListNode list_first(List list);
 ListNode list_last(List list);
 
-//Insert new node after ListNode node or in the beginning if node == LIST_BOF
+//Insert new node after ListNode node or in the beginning if node == NULL
 void list_insert_next(List list, ListNode node, void * item);
+
+//Insert new node in ascending order
+void list_insert_ordered(List list, void *item, int order_type, GetKey key);
 
 //Removes the next node from ListNode node
 void list_remove_next(List list, ListNode node);
@@ -28,6 +31,9 @@ ListNode list_find_node(List list, void * item, CompareFunc compare);
 
 //Returns the first item found equal with item
 void *list_find(List list, void *item, CompareFunc compare);
+
+//Returns the first item found from compare function with item beginning from node
+void *list_find_order(List list, ListNode node, void *item, CompareFunc compare);
 
 DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item);
 
