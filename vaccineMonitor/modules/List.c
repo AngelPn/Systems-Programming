@@ -148,12 +148,24 @@ void *list_find_order(List list, ListNode node, void *item, CompareFunc compare,
 			*found = true;
 			return node;
 		}
-		ListNode next_node = list_next(list, node);
+		ListNode next_node = node->next;
 		if (next_node != NULL){
-			if (compare(item, node->item) > 0 && compare(item, next_node) < 0)
+			//printf("compare with node: %d\n", compare(item, node->item));
+			//printf("compare with next node: %d\n", compare(item, node->item));
+			if (compare(item, node->item) > 0 && compare(item, next_node->item) < 0){
+				printf("ORDERED\n");
 				return node;
+			}
+			else{
+				printf("NOT ordered\n");
+			}	
 		}
-		else return node;
+		else{
+			if (compare(item, node->item) > 0)
+				return node;
+			else
+				return NULL;
+		}
 	}
 	return NULL;
 }

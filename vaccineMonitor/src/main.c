@@ -19,7 +19,7 @@ int main(int argc, char **argv){
     printf("%s, %d\n", filepath, bloom_size);	
 
     HashTable HTcitizens = HTCreate(Integer, destroy_record);
-    //SkipList dokimi = SLCreate(0.5, NULL);
+    SkipList dokimi = SLCreate(0.5, NULL);
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
@@ -48,7 +48,7 @@ int main(int argc, char **argv){
             char *str_date = strtok(NULL, " \n");
             date d;
             convert_str_to_date(str_date, &d);
-            print_date(d);
+            //print_date(d);
         }
         else{
             char *error = strtok(NULL, "\n");
@@ -62,7 +62,7 @@ int main(int argc, char **argv){
         if (searching_node == NULL){
             citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
             HTInsert(&HTcitizens, citizen, get_citizenID);
-            //SLInsert(dokimi, citizen, get_citizenID, compare_citizen);
+            SLInsert(dokimi, citizen, get_citizenID, compare_citizen, print_record);
         }
             
     }
@@ -70,14 +70,16 @@ int main(int argc, char **argv){
     fclose(frecords);
     
 
-    printf("Print Hash table\n");
-    HTPrint(HTcitizens, print_record);
+    // printf("Print Hash table\n");
+    // HTPrint(HTcitizens, print_record);
+
+    printf("Print Skip List\n");
+    SLPrint(dokimi, print_record);
 
     printf("Destroy Hash table\n");
     HTDestroy(HTcitizens);
-
     printf("Destroy Skip List\n");
-    //SLDestroy(dokimi);
+    SLDestroy(dokimi);
 
 	return 0;
 }

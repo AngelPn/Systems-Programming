@@ -67,30 +67,35 @@ double my_log(double x, int base) {
 } 
 
 
-void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
+void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print){
 
     /* Find the path */
-    ListNode *path = (ListNode *)malloc(sizeof(ListNode)*(sl->level + 1));
+    ListNode *path = (ListNode *)malloc(sizeof(ListNode)*(sl->level + 2));
 
-    for (int i = 0; i < sl->level + 1; i++)
+    for (int i = 0; i < sl->level + 2; i++)
         path[i] = NULL;
 
     List head = NULL;
     bool found = false;
-    for(int i = sl->level; i < 0; i--){
+
+    printf("\nSKIP LIST BEFORE\n");
+    SLPrint(sl, print);
+    printf("\n");
+
+    for(int i = sl->level; i >= 0; i--){
         printf("i = %d\n", i);
         if ((head = sl->layers[i]) == NULL){
             sl->layers[i] = list_create(NULL);
             break;
         }
-        path[i] = list_find_order(head, path[i-1], key(item), compare, &found);
+        path[i] = list_find_order(head, path[i+1], key(item), compare, &found);
 
         if (found == true){
             printf("The item is already in Skip List\n");
             return ;
         }
     }
-
+    
     /* Item must be added in Layer 0 */
     list_insert_next(sl->layers[0], path[0], item);
 
@@ -105,7 +110,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     
     /* Decide whether or not to add a Layer */
     double result = my_log((double)list_length(sl->layers[0]), (int)1/sl->p);
-    printf("result = %f\n", result);
     if ((int)result > sl->level + 1 && (int)result < sl->max_level){ /* Add Layer */
 
         (sl->level)++;
@@ -114,16 +118,30 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
         /* Flip a coin to every node of previous Layer to 
         decide whether or not to add the item the new Layer*/
         head = sl->layers[sl->level - 1];
+        List head_new = sl->layers[sl->level];
         for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
             if (rand()%2){
-                list_insert_next(sl->layers[sl->level], list_last(sl->layers[sl->level]), item);
+                list_insert_next(head_new, list_last(head_new), list_node_item(head_new, node));
             }
         }
     }
+
+    printf("\nSKIP LIST AFTER\n");
+    SLPrint(sl, print);
+    printf("\n");
 }
 
 // void SLRemove(SkipList *psl, KeyType key);
-void SLPrint(SkipList sl, PrintItem print);
+void SLPrint(SkipList sl, PrintItem print){
+    List head = NULL;
+
+    for (int i = 0; i < sl->level + 1; i++){
+        head = sl->layers[i];
+        printf("LAYER %d\n", i);
+        if (head != NULL)
+            list_print(head, print);
+    }
+}
 
 void SLDestroy(SkipList sl){
 
