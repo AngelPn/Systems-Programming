@@ -21,7 +21,7 @@ ListNode list_last(List list);
 void list_insert_next(List list, ListNode node, void *item);
 
 //Insert new node in ascending order
-void list_insert_ordered(List list, void *item, int order_type, GetKey key);
+// void list_insert_ordered(List list, void *item, int order_type, GetKey key);
 
 //Removes the next node from ListNode node
 void list_remove_next(List list, ListNode node);

@@ -5,6 +5,7 @@
 #include "../include/common_types.h"
 #include "../include/List.h"
 #include "../include/HashTable.h"
+#include "../include/SkipList.h"
 #include "../include/utils.h"
 #include "../include/date.h"
 #include "citizenRecord.h"
@@ -18,6 +19,7 @@ int main(int argc, char **argv){
     printf("%s, %d\n", filepath, bloom_size);	
 
     HashTable HTcitizens = HTCreate(Integer, destroy_record);
+    //SkipList dokimi = SLCreate(0.5, NULL);
 
     FILE *frecords;
     /*Open the file "citizenRecordsFile.txt" and read it*/
@@ -60,6 +62,8 @@ int main(int argc, char **argv){
         if (searching_node == NULL){
             citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
             HTInsert(HTcitizens, citizen, get_citizenID);
+            printf("here");
+            //SLInsert(dokimi, citizen, get_citizenID, compare_citizen);
         }
             
     }
@@ -72,6 +76,9 @@ int main(int argc, char **argv){
 
     printf("Destroy Hash table\n");
     HTDestroy(HTcitizens);
+
+    printf("Destroy Skip List\n");
+    //SLDestroy(dokimi);
 
 	return 0;
 }

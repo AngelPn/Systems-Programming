@@ -36,7 +36,7 @@ SkipList SLCreate_with_maxlevel(int max_level, float p, DestroyFunc destroy_item
 
     /*Create an array of lists of size 'max_level': Initialize the Skip Lists with NULL*/
 	for(int i = 0; i < max_level; i++)
-		sl->layers[max_level] = NULL;
+		sl->layers[i] = NULL;
 	return sl;
 }
 
@@ -62,6 +62,11 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare){
     return NULL;
 }
 
+double my_log(double x, int base) { 
+    return log(x) / log(base); 
+} 
+
+
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
 
     /* Find the path */
@@ -73,7 +78,7 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     List head = NULL;
     bool found = false;
     for(int i = sl->level; i < 0; i--){
-
+        printf("i = %d\n", i);
         if ((head = sl->layers[i]) == NULL){
             sl->layers[i] = list_create(NULL);
             break;
@@ -82,6 +87,7 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
 
         if (found == true){
             printf("The item is already in Skip List\n");
+            return ;
         }
     }
 
@@ -98,8 +104,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     free(path); 
     
     /* Decide whether or not to add a Layer */
-    double result = log(list_length(sl->layers[0]));
-    if ((int)result > sl->level && (int)result < sl->max_level){ /* Add Layer */
+    double result = my_log((double)list_length(sl->layers[0]), (int)1/sl->p);
+    printf("result = %f\n", result);
+    if ((int)result > sl->level + 1 && (int)result < sl->max_level){ /* Add Layer */
 
         (sl->level)++;
         sl->layers[sl->level] = list_create(NULL);

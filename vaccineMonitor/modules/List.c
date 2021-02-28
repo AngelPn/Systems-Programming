@@ -57,44 +57,44 @@ void list_insert_next(List list, ListNode node, void *item){
 		list->last = new_node;
 }
 
-int compare_integers(int k, int previous, int next){
-	if (k > previous && k < next) return 0;
-	else return -1;
-}
+// int compare_integers(int k, int previous, int next){
+// 	if (k > previous && k < next) return 0;
+// 	else return -1;
+// }
 
-int compare_integers(char *k, char *previous, char *next){
-	if (strcmp(k, previous) > 0 && strcmp(k, next) < 0) return 0;
-	else return -1;
-}
+// int compare_strings(char *k, char *previous, char *next){
+// 	if (strcmp(k, previous) > 0 && strcmp(k, next) < 0) return 0;
+// 	else return -1;
+// }
 
-void list_insert_ordered(List list, void *item, int order_type, GetKey key){
-	if (order_type = Integer){
-		int k = key(item);
-		if (k > key(list_node_item(list, list_last(list))))
-			list_insert_next(list, list_last(list), item);
-		else{
-			for (ListNode node = list->dummy->next; node != NULL; node = node->next){
-				if (compare_integers(k, key(node->item), key(list_next(list, node))) == 0){
-					list_insert_next(list, node, item);
-					break;
-				}
-			}
-		}
-	}
-	else{
-		char *k = key(item);
-		if (strcmp(k, key(list_node_item(list, list_last(list)))) > 0)
-			list_insert_next(list, list_last(list), item);
-		else{
-			for (ListNode node = list->dummy->next; node != NULL; node = node->next){
-				if (compare_strings(k, key(node->item), key(list_next(list, node))) == 0){
-					list_insert_next(list, node, item);
-					break;
-				}
-			}
-		}
-	}
-}
+// void list_insert_ordered(List list, void *item, int order_type, GetKey key){
+// 	if (order_type = Integer){
+// 		int k = key(item);
+// 		if (k > key(list_node_item(list, list_last(list))))
+// 			list_insert_next(list, list_last(list), item);
+// 		else{
+// 			for (ListNode node = list->dummy->next; node != NULL; node = node->next){
+// 				if (compare_integers(k, key(node->item), key(list_next(list, node))) == 0){
+// 					list_insert_next(list, node, item);
+// 					break;
+// 				}
+// 			}
+// 		}
+// 	}
+// 	else{
+// 		char *k = key(item);
+// 		if (strcmp(k, key(list_node_item(list, list_last(list)))) > 0)
+// 			list_insert_next(list, list_last(list), item);
+// 		else{
+// 			for (ListNode node = list->dummy->next; node != NULL; node = node->next){
+// 				if (compare_strings(k, key(node->item), key(list_next(list, node))) == 0){
+// 					list_insert_next(list, node, item);
+// 					break;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 void list_remove_next(List list, ListNode node){
 	if (node == NULL)
@@ -155,6 +155,7 @@ void *list_find_order(List list, ListNode node, void *item, CompareFunc compare,
 		}
 		else return node;
 	}
+	return NULL;
 }
 
 DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item){
