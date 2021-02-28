@@ -77,7 +77,7 @@ void HTDestroyOldHT(HashTable hash);
 
 HashTable Reharshing(HashTable hash, GetKey key){
 
-	HashTable NewHash= HTCreateHash((hash->size)*2, hash->keytype, hash->destroy_item); /*Create a hash with the new size*/
+	HashTable NewHash = HTCreateHash((hash->size)*2, hash->keytype, hash->destroy_item); /*Create a hash with the new size*/
 
 	List head = NULL;
 
@@ -89,36 +89,33 @@ HashTable Reharshing(HashTable hash, GetKey key){
 			while( curr_node != NULL){
 				void *node_item = list_node_item(head, curr_node);
 
-				HTInsert(NewHash, node_item, key(node_item));
+				HTInsert(&NewHash, node_item, key);
 				curr_node = list_next(head, curr_node);
 			}
 		}
 	}
-	//HTDestroyOldHT(hash);
+	HTDestroyOldHT(hash);
 	return NewHash;
 }
 
-void HTInsert(HashTable hash, void *item, GetKey key){
-
+void HTInsert(HashTable *phash, void *item, GetKey key){
+	HashTable hash = *phash;
 	(hash->n)++;/*Increase the counter of entries*/
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
-	printf("LF = %f\n", LF);
 
 	int h = Hash(hash, hash->keytype, key(item)); /*Find the index of key*/
-	
+
 	List head = NULL; 
 	/*head points at the linked list we are going to insert the item*/
 	if ( (head = hash->chains[h]) == NULL){
 		hash->chains[h] = list_create(hash->destroy_item);
 		head = hash->chains[h];
 	}
-
+	
 	list_insert_next(head, list_last(head), item);
 
 	if(LF >= 0.9){ /*Double the size of the array*/
-		printf("LF = %f\n", LF);
-		hash = Reharshing(hash, key);
-		printf("here\n");
+		*phash = Reharshing(hash, key);
 	}
 }
 
