@@ -137,15 +137,24 @@ void *list_find(List list, void *item, CompareFunc compare){
 	return node == NULL ? NULL : node->item;
 }
 
-void *list_find_order(List list, ListNode node, void *item, CompareFunc compare){
+void *list_find_order(List list, ListNode node, void *item, CompareFunc compare, bool *found){
 	ListNode begin_node;
 	if (node == NULL)
 		begin_node = list->dummy->next;
 	else begin_node = node;
-	for (ListNode node = begin_node; node != NULL; node = node->next)
-		if (compare(item, node->item) == 0 || (compare(item, node->item) > 0 && compare(item, list_next(list, node) < 0)))
-			return node;// found
-	return NULL;	//not found	
+
+	for (ListNode node = begin_node; node != NULL; node = node->next){
+		if (compare(item, node->item) == 0){
+			*found = true;
+			return node;
+		}
+		ListNode next_node = list_next(list, node);
+		if (next_node != NULL){
+			if (compare(item, node->item) > 0 && compare(item, next_node) < 0)
+				return node;
+		}
+		else return node;
+	}
 }
 
 DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item){
@@ -169,12 +178,12 @@ void list_destroy(List list){
 }
 
 ListNode list_next(List list, ListNode node){
-	assert(node != NULL);	// LCOV_EXCL_LINE
+	assert(node != NULL);
 	return node->next;
 }
 
-void * list_node_item(List list, ListNode node){
-	assert(node != NULL);	// LCOV_EXCL_LINE
+void *list_node_item(List list, ListNode node){
+	assert(node != NULL);
 	return node->item;
 }
 

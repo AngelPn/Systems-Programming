@@ -1,6 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <stdbool.h>
 #include "common_types.h"
 
 //"struct list" and "struct list_node" are incomplete structs
@@ -17,7 +18,7 @@ ListNode list_first(List list);
 ListNode list_last(List list);
 
 //Insert new node after ListNode node or in the beginning if node == NULL
-void list_insert_next(List list, ListNode node, void * item);
+void list_insert_next(List list, ListNode node, void *item);
 
 //Insert new node in ascending order
 void list_insert_ordered(List list, void *item, int order_type, GetKey key);
@@ -33,7 +34,7 @@ ListNode list_find_node(List list, void * item, CompareFunc compare);
 void *list_find(List list, void *item, CompareFunc compare);
 
 //Returns the first item found from compare function with item beginning from node
-void *list_find_order(List list, ListNode node, void *item, CompareFunc compare);
+void *list_find_order(List list, ListNode node, void *item, CompareFunc compare, bool *found);
 
 DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item);
 
