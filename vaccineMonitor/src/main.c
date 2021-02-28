@@ -62,7 +62,6 @@ int main(int argc, char **argv){
         if (searching_node == NULL){
             citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
             HTInsert(HTcitizens, citizen, get_citizenID);
-            printf("here");
             //SLInsert(dokimi, citizen, get_citizenID, compare_citizen);
         }
             

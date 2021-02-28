@@ -94,7 +94,7 @@ HashTable Reharshing(HashTable hash, GetKey key){
 			}
 		}
 	}
-	HTDestroyOldHT(hash);
+	//HTDestroyOldHT(hash);
 	return NewHash;
 }
 
@@ -102,6 +102,7 @@ void HTInsert(HashTable hash, void *item, GetKey key){
 
 	(hash->n)++;/*Increase the counter of entries*/
 	double LF= ((double) hash->n) / ((double) hash->size); /*Calculate the load factor*/
+	printf("LF = %f\n", LF);
 
 	int h = Hash(hash, hash->keytype, key(item)); /*Find the index of key*/
 	
@@ -115,7 +116,9 @@ void HTInsert(HashTable hash, void *item, GetKey key){
 	list_insert_next(head, list_last(head), item);
 
 	if(LF >= 0.9){ /*Double the size of the array*/
+		printf("LF = %f\n", LF);
 		hash = Reharshing(hash, key);
+		printf("here\n");
 	}
 }
 
