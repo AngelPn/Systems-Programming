@@ -20,7 +20,7 @@ citizenRecord create_record(
                 char *country,
                 int age)
 {
-    citizenRecord rec = malloc(sizeof(struct record));
+    citizenRecord rec = (citizenRecord)malloc(sizeof(struct record));
     rec->citizenID = citizenID;
     rec->age = age;
 

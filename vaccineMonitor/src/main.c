@@ -19,6 +19,7 @@ int main(int argc, char **argv){
     printf("%s, %d\n", filepath, bloom_size);	
 
     HashTable HTcitizens = HTCreate(Integer, destroy_record);
+    //HashTable HTviruses = HTCreate(String, );
     SkipList dokimi = SLCreate(0.5, NULL);
 
     FILE *frecords;
@@ -32,8 +33,8 @@ int main(int argc, char **argv){
     char *line = NULL, *error_line = NULL;
     size_t len = 0;
 
-    while (getline(&line, &len, frecords) != -1)
-    {
+    while (getline(&line, &len, frecords) != -1){
+
         char *error_line = (char *)malloc(sizeof(char)*(strlen(line)+1));
         strcpy(error_line, line);
         char *id = strtok(line, " ");
@@ -62,7 +63,7 @@ int main(int argc, char **argv){
         if (searching_node == NULL){
             citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
             HTInsert(&HTcitizens, citizen, get_citizenID);
-            SLInsert(dokimi, citizen, get_citizenID, print_record);
+            SLInsert(dokimi, citizen, get_citizenID, compare_citizen, print_record);
         }
             
     }
