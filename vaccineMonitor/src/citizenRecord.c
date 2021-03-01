@@ -38,7 +38,7 @@ citizenRecord create_record(
 
 void *get_citizenID(void *rec){
     citizenRecord crec = rec;
-    printf("get key: %d\n", crec->citizenID);
+    //printf("get key: %d\n", crec->citizenID);
     return &(crec->citizenID);
 }
 

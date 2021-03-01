@@ -18,7 +18,7 @@ ListNode list_first(List list);
 ListNode list_last(List list);
 
 //Insert new node after ListNode node or in the beginning if node == NULL
-void list_insert_next(List list, ListNode node, void *item);
+void *list_insert_next(List list, ListNode node, void *item);
 
 //Insert new node in ascending order
 // void list_insert_ordered(List list, void *item, int order_type, GetKey key);
