@@ -44,6 +44,8 @@ virus create_virus(char *virusName){
 
     v->vaccinated_persons = SLCreate(0.5, destroy_vaccinated);
     v->not_vaccinated_persons = SLCreate(0.5, NULL);
+
+    return v;
 }
 
 /*Returns pointer to key of virus_struckt*/

@@ -3,6 +3,9 @@
 #include <string.h>
 
 #include "../include/utils.h"
+#include "../include/date.h"
+#include "../include/virus.h"
+#include "../include/citizenRecord.h"
 
 /* Does proper error handling and stores variables from command prompt */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
@@ -44,54 +47,81 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
     return 1;
 }
 
-// int fileParse_and_buildStructs(char *filepath){
+int fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *viruses){
 
-// 	FILE *frecords;
-//     /*Open the file "citizenRecordsFile.txt" and read it*/
-//     frecords = fopen(filepath, "r");
-//     if (frecords == NULL){
-//         printf("Error: fopen() failed\n");
-//         exit(EXIT_FAILURE);
-//     }
+	FILE *frecords;
+    /* Open the file given from filepath and read it*/
+    frecords = fopen(filepath, "r");
 
-//     char *line = NULL, *error_line = NULL;
-//     size_t len = 0;
+    if (frecords == NULL){
+        printf("Error: fopen() failed\n");
+        exit(EXIT_FAILURE);
+    }
 
-//     while (getline(&line, &len, frecords) != -1){
-        
-//         char *error_line = (char *)malloc(sizeof(char)*(strlen(line)+1));
-//         strcpy(error_line, line);
-//         char *id = strtok(line, " ");
-//         char *firstname = strtok(NULL, " ");
-//         char *lastname = strtok(NULL, " ");
-//         char *country = strtok(NULL, " ");
-//         char *age = strtok(NULL, " ");
-//         char *virusName = strtok(NULL, " ");
-//         char *vaccinated = strtok(NULL, " ");
+	/* Parse the file and build the structs */
+    char *line = NULL, *error_line = NULL;
+    size_t len = 0;
+	citizenRecord citizen = NULL;
+	virus v = NULL;
+	
+    while (getline(&line, &len, frecords) != -1){
 
-//         if (strcmp(vaccinated, "YES") == 0){
-//             char *str_date = strtok(NULL, " \n");
-//             date d;
-//             convert_str_to_date(str_date, &d);
-//             //print_date(d);
-//         }
-//         else{
-//             char *error = strtok(NULL, "\n");
-//             if (error != NULL)
-//                 printf("ERROR IN RECORD %s\n", error_line);
-//         }
-//         free(error_line);
+         /* Save the line to print in case an input error occurs */
+        char *error_line = (char *)malloc(sizeof(char)*(strlen(line)+1));
+        strcpy(error_line, line);
 
-//         int citizenID = atoi(id);
-//         citizenRecord searching_node = HTSearch(HTcitizens, &citizenID, compare_citizen);
-//         if (searching_node == NULL){
-//             citizenRecord citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
-//             HTInsert(&HTcitizens, citizen, get_citizenID);
-//             SLInsert(dokimi, citizen, get_citizenID, print_record);
-//         }
+		/* Get citizen's information and build citizen's struct (citizenRecord) */
+        char *id = strtok(line, " ");
+        char *firstname = strtok(NULL, " ");
+        char *lastname = strtok(NULL, " ");
+        char *country = strtok(NULL, " ");
+        char *age = strtok(NULL, " ");
+
+		/* Check if citizen is already in database of citizens (HashTable citizens) */
+		/* If not, insert citizen in database of citizens */
+        int citizenID = atoi(id);
+
+		if ((citizen = HTSearch(citizens, &citizenID, compare_citizen)) == NULL){
+			citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
+			HTInsert(citizens, citizen, get_citizenID);
+		}
+
+		/* Get the name of virus and check if it is already in database of viruses (HashTable viruses) */
+		/* If not, insert virus (v) in database of viruses */
+        char *virusName = strtok(NULL, " ");
+
+		if ((v = HTSearch(viruses, virusName, compare_virusName)) == NULL){
+			v = create_virus(virusName);
+			HTInsert(viruses, v, get_virusName);
+		}
+
+		/* Check if citizen is vaccinated to virus or not */
+        char *vaccinated = strtok(NULL, " ");
+
+		/* If citizen is vaccinated, get the date and insert this information to vaccinated_persons skip list*/
+        if (strcmp(vaccinated, "YES") == 0){
+
+            char *str_date = strtok(NULL, " \n");
+            date d;
+            convert_str_to_date(str_date, &d);
+
+			vaccinated vaccinated_citizen = create_vaccinated(citizen, d);
+            //print_date(d);
+        }
+        else{
+            char *error = strtok(NULL, "\n");
+            if (error != NULL){
+				printf("ERROR IN RECORD %s\n", error_line);
+				continue;
+			}
+                
+        }
+        free(error_line);
+
+
             
-//     }
+    }
 
 
 
-// }
+}
