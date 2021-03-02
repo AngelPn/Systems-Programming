@@ -74,4 +74,9 @@ void print_virus_not_vaccinated_persons(void *v, PrintItem print){
 }
 
 /*Compares virusName*/
-int compare_virusName(void *key, void *v);
+int compare_virusName(void *key, void *v){
+    char *k = key;
+    virus nv = v;
+
+    return strcmp(k, nv->virusName);
+}

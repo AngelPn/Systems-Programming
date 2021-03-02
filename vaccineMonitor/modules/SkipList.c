@@ -66,28 +66,6 @@ SkipList SLCreate(float p, DestroyFunc destroy_item){
     return SLCreate_with_maxlevel(7, p, destroy_item);
 }
 
-void *SLSearch(SkipList sl, void *key, CompareFunc compare){
-
-    List head; ListNode node, lower_node = NULL;
-    bool found = false;
-    for(int i = sl->level; i < 0; i--){
-
-        head = sl->layers[i];
-        node = list_find_order(head, lower_node, key, compare, &found);
-        
-
-        if (found == true)
-            return list_node_item(head, node);
-
-        lower_node = node;     
-    }
-    return NULL;
-}
-
-double my_log(double x, int base) { 
-    return log(x) / log(base); 
-}
-
 int compare_keys(void *key, void *sl_node){
     int k = *(int *)key;
     SLNode node = sl_node;
@@ -95,6 +73,41 @@ int compare_keys(void *key, void *sl_node){
     if (node->key == k) return 0;
     else if (node->key > k) return -1;
     else return 1;
+}
+
+void *SLSearch(SkipList sl, void *key, CompareFunc compare){
+
+    List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
+    CompareFunc compare_function = compare_keys;
+    bool found = false;
+
+    for(int i = sl->level; i >= 0; i--){
+
+        /* Compare items in Layer 0 with compare passed by user as argument */
+        if (i == 0) compare_function = compare;
+
+        head = sl->layers[i];
+
+        if (node != NULL){
+            sl_node = list_node_item(sl->layers[i+1], node);
+            node = list_find_order(head, sl_node->lower_level, key, compare_function, &found);            
+        }
+        else
+            node = list_find_order(head, NULL, key, compare_function, &found);       
+
+        if (found == true){
+            for (int level = i; level > 0; level--){
+                sl_node = list_node_item(sl->layers[level], node);
+                node = sl_node->lower_level;
+            }
+            return list_node_item(head, node);
+        }
+    }
+    return NULL;
+}
+
+double my_log(double x, int base) { 
+    return log(x) / log(base); 
 }
 
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print){
