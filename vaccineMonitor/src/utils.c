@@ -96,14 +96,13 @@ int fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *v
 		}
 
 		/* Check if citizen is vaccinated to virus or not */
-        char *vaccinated = strtok(NULL, " ");
+        char *check_vaccinated = strtok(NULL, " ");
 
 		/* If citizen is vaccinated, get the date and insert this information to vaccinated_persons skip list*/
-        if (strcmp(vaccinated, "YES") == 0){
+        if (strcmp(check_vaccinated, "YES") == 0){
 
             char *str_date = strtok(NULL, " \n");
-            date d;
-            convert_str_to_date(str_date, &d);
+            date d = createdate(str_date);
 
 			vaccinated vaccinated_citizen = create_vaccinated(citizen, d);
             //print_date(d);

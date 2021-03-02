@@ -3,15 +3,11 @@
 
 #include <stdbool.h>
 
-typedef struct date_struct{
-  int day;
-  int month;
-  int year;
-} date;
+typedef struct date_struct *date;
+
+date create_date(char *str);
 
 void print_date(date d);
-
-void convert_str_to_date(char *str, date *d);
 
 int compare_dates(void *a, void *b);
 
