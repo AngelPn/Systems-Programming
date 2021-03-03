@@ -174,8 +174,7 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         List head_new = sl->layers[sl->level];
         for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
             if (rand()%2){
-                SLNode sl_node = list_node_item(head, node);
-                SLNode new_node = create_sl_node(&(sl_node->key), node);
+                SLNode new_node = create_sl_node(key(list_node_item(head, node)), node);
                 list_insert_next(head_new, list_last(head_new), new_node);
             }
         }

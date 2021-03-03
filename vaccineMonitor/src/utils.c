@@ -3,6 +3,9 @@
 #include <string.h>
 
 #include "../include/utils.h"
+#include "../include/SkipList.h"
+#include "../include/virus.h"
+#include "../include/citizenRecord.h"
 
 /* Does proper error handling and stores variables from command prompt */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
@@ -78,8 +81,8 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
 		/* If not, insert citizen in database of citizens */
         int citizenID = atoi(id);
 
-		if ((citizen = HTSearch(citizens, &citizenID, compare_citizen)) == NULL){
-			citizen = create_record(citizenID, firstname, lastname, country, atoi(age));
+		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
+			citizen = create_citizen(citizenID, firstname, lastname, country, atoi(age));
 			HTInsert(citizens, citizen, get_citizenID);
 		}
 
@@ -87,7 +90,7 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
 		/* If not, insert virus (v) in database of viruses */
         char *virusName = strtok(NULL, " ");
 
-		if ((v = HTSearch(viruses, virusName, compare_virusName)) == NULL){
+		if ((v = HTSearch(*viruses, virusName, compare_virusName)) == NULL){
 			v = create_virus(virusName);
 			HTInsert(viruses, v, get_virusName);
 		}
@@ -99,7 +102,7 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
         if (strcmp(check_vaccinated, "YES") == 0){
 
             char *str_date = strtok(NULL, " \n");
-            date d = createdate(str_date);
+            date d = create_date(str_date);
 
 			vaccinated vaccinated_citizen = create_vaccinated(citizen, d);
             

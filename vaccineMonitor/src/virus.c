@@ -30,7 +30,7 @@ int compare_vaccinated(void *key, void *v){
 
 void print_vaccinated(void *v){
     vaccinated nv = v;
-    print_record(nv->item);
+    print_citizen(nv->item);
     print_date(nv->dt);
 }
 
@@ -78,16 +78,16 @@ SkipList get_not_vaccinated_persons(void *v){
 }
 
 /*Prints the fields of record*/
-void print_virus_vaccinated_persons(void *v, PrintItem print){
+void print_virus(void *v){
     virus nv = v;
-    printf("virusName: %s\n", nv->virusName);
-    SLPrint(nv->vaccinated_persons, print);
-}
+    printf("\n-----------------------------------------------------------");
+    printf("\nvirusName: %s\n", nv->virusName);
 
-void print_virus_not_vaccinated_persons(void *v, PrintItem print){
-    virus nv = v;
-    printf("virusName: %s\n", nv->virusName);
-    SLPrint(nv->vaccinated_persons, print);
+    printf("\nvaccinated persons:\n");
+    SLPrint(nv->vaccinated_persons, print_vaccinated);
+
+    printf("\nnot vaccinated persons:\n");
+    SLPrint(nv->not_vaccinated_persons, print_citizen);
 }
 
 /*Compares virusName*/
@@ -104,4 +104,5 @@ void destroy_virus(void *v){
     free(nv->virusName);
     SLDestroy(nv->vaccinated_persons);
     SLDestroy(nv->not_vaccinated_persons);
+    free(nv);
 }

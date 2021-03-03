@@ -12,10 +12,10 @@ CFLAGS = -Wall -g -I$(IDIR)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 TARGETS = vaccineMonitor
 
-_DEPS = List.h citizenRecord.h utils.h date.h HashTable.h SkipList.h
+_DEPS = List.h HashTable.h SkipList.h citizenRecord.h utils.h date.h virus.h common_types.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJS = $(MDIR)/List.o $(MDIR)/HashTable.o $(MDIR)/SkipList.o $(SRC)/citizenRecord.o $(SRC)/main.o $(SRC)/utils.o $(SRC)/date.o 
+_OBJS = $(MDIR)/List.o $(MDIR)/HashTable.o $(MDIR)/SkipList.o $(SRC)/citizenRecord.o $(SRC)/main.o $(SRC)/utils.o $(SRC)/date.o $(SRC)/virus.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 
