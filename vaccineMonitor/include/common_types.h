@@ -1,5 +1,7 @@
-// Types used in multiple modules
-#pragma once
+/* Types used in multiple modules */
+#ifndef TYPES_H
+#define TYPES_H
+
 #include <stdbool.h> 
 #include <stdio.h>
 
@@ -22,3 +24,5 @@ typedef void *(*GetKey)(void *item);
 
 //pointer to function that prints an item
 typedef void (*PrintItem)(void *item);
+
+#endif

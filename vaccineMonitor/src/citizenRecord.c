@@ -13,13 +13,8 @@ struct record
     int age;
 };
 
-citizenRecord create_record(
-                int citizenID,
-                char *firstname,
-                char *lastname,
-                char *country,
-                int age)
-{
+citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, char *country, int age){
+
     citizenRecord rec = (citizenRecord)malloc(sizeof(struct record));
     rec->citizenID = citizenID;
     rec->age = age;
@@ -42,15 +37,7 @@ void *get_citizenID(void *rec){
     return &(crec->citizenID);
 }
 
-void destroy_record(void *rec){
-    citizenRecord crec = rec;
-    free(crec->firstname);
-    free(crec->lastname);
-    free(crec->country);
-    free(crec);
-}
-
-void print_record(void *rec){
+void print_citizen(void *rec){
     citizenRecord crec = rec;
     printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, crec->country);
 }
@@ -62,4 +49,12 @@ int compare_citizen(void *key, void *rec){
     if (crec->citizenID == k) return 0;
     else if (crec->citizenID > k) return -1;
     else return 1;
+}
+
+void destroy_citizen(void *rec){
+    citizenRecord crec = rec;
+    free(crec->firstname);
+    free(crec->lastname);
+    free(crec->country);
+    free(crec);
 }

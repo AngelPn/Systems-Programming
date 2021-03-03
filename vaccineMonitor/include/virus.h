@@ -4,27 +4,48 @@
 #include "common_types.h"
 #include "date.h"
 #include "citizenRecord.h"
+#include "SkipList.h"
 
-typedef struct virus_struct *virus;
+/* "struct vaccinated_struct" is incomplete struct */
 typedef struct vaccinated_struct *vaccinated;
 
+/* Creates vaccinated */
 vaccinated create_vaccinated(citizenRecord item, date dt);
 
+/* Finds the key of vaccinated_struct and returns a pointer to it */
+void *get_vaccinated_key(void *v);
+
+/* Prints vaccinated citizen's informations */
+void print_vaccinated(void *v);
+
+/* Compares key with vaccinated citizen's ID */
+int compare_vaccinated(void *key, void *v);
+
+/* Deallocates memory of vaccinated citizen */
 void destroy_vaccinated(void *vaccinated);
 
-/*create virus_struct*/
+/*---------------------------------------------------------------*/
+
+/* "struct virus_struct" is incomplete struct */
+typedef struct virus_struct *virus;
+
+/* Creates virus_struct */
 virus create_virus(char *virusName);
 
-/*Returns pointer to key of virus_struckt*/
-void *get_virusName(void *virus);
+/* Returns pointer to virusName of virus_struct */
+void *get_virusName(void *v);
 
-/*Deallocates memory of virus_struct*/
-void destroy_virus(void *virus);
+/* Returns skip lists of virus */
+SkipList get_vaccinated_persons(void *v);
+SkipList get_not_vaccinated_persons(void *v);
 
 /*Prints the fields of record*/
-void print_virus(void *virus);
+void print_virus(void *v);
 
-/*Compares virusName*/
-int compare_virusName(void *key, void *virus);
+/* Compares key with virusName of virus v */
+int compare_virusName(void *key, void *v);
+
+/* Deallocates memory of virus_struct */
+void destroy_virus(void *v);
 
 #endif

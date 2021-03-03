@@ -3,14 +3,6 @@
 #include <stdlib.h>
 
 #include "../include/virus.h"
-#include "../include/SkipList.h"
-
-struct virus_struct
-{
-    char *virusName;
-    SkipList vaccinated_persons;
-    SkipList not_vaccinated_persons;
-};
 
 struct vaccinated_struct
 {
@@ -26,6 +18,16 @@ vaccinated create_vaccinated(citizenRecord item, date dt){
     return v;
 }
 
+void *get_vaccinated_key(void *v){
+    vaccinated nv = v;
+    return get_citizenID(nv->item);
+}
+
+int compare_vaccinated(void *key, void *v){
+    vaccinated nv = v;
+    return compare_citizen(key, nv->item);
+}
+
 void print_vaccinated(void *v){
     vaccinated nv = v;
     print_record(nv->item);
@@ -33,8 +35,19 @@ void print_vaccinated(void *v){
 }
 
 void destroy_vaccinated(void *v){
+    vaccinated nv = v;
+    free(nv->dt);
     free(v);
 }
+
+/*-------------------------------------------------------------------*/
+
+struct virus_struct
+{
+    char *virusName;
+    SkipList vaccinated_persons;
+    SkipList not_vaccinated_persons;
+};
 
 virus create_virus(char *virusName){
     virus v = (virus)malloc(sizeof(struct virus_struct));
@@ -54,12 +67,14 @@ void *get_virusName(void *v){
     return nv->virusName; 
 }
 
-/*Deallocates memory of virus_struct*/
-void destroy_virus(void *v){
+SkipList get_vaccinated_persons(void *v){
     virus nv = v;
-    free(nv->virusName);
-    SLDestroy(nv->vaccinated_persons);
-    SLDestroy(nv->not_vaccinated_persons);
+    return nv->vaccinated_persons;
+}
+
+SkipList get_not_vaccinated_persons(void *v){
+    virus nv = v;
+    return nv->not_vaccinated_persons;
 }
 
 /*Prints the fields of record*/
@@ -81,4 +96,12 @@ int compare_virusName(void *key, void *v){
     virus nv = v;
 
     return strcmp(k, nv->virusName);
+}
+
+/*Deallocates memory of virus_struct*/
+void destroy_virus(void *v){
+    virus nv = v;
+    free(nv->virusName);
+    SLDestroy(nv->vaccinated_persons);
+    SLDestroy(nv->not_vaccinated_persons);
 }

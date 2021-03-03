@@ -3,9 +3,6 @@
 #include <string.h>
 
 #include "../include/utils.h"
-#include "../include/date.h"
-#include "../include/virus.h"
-#include "../include/citizenRecord.h"
 
 /* Does proper error handling and stores variables from command prompt */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
@@ -47,7 +44,7 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
     return 1;
 }
 
-int fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *viruses){
+void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *viruses){
 
 	FILE *frecords;
     /* Open the file given from filepath and read it*/
@@ -105,22 +102,23 @@ int fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *v
             date d = createdate(str_date);
 
 			vaccinated vaccinated_citizen = create_vaccinated(citizen, d);
-            //print_date(d);
+            
+			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
         }
+		/* If citizen is not vaccinated, insert this information to not_vaccinated_persons skip list*/
         else{
+			/* If there is date, then print ERROR */
             char *error = strtok(NULL, "\n");
             if (error != NULL){
 				printf("ERROR IN RECORD %s\n", error_line);
+				free(error_line);
 				continue;
 			}
-                
+			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);                
         }
-        free(error_line);
-
-
-            
+        free(error_line);      
     }
 
-
-
+	free(line); free(filepath);
+    fclose(frecords);
 }
