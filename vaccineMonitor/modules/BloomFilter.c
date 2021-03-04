@@ -20,7 +20,7 @@ struct bloom_filter
     size_t size;
 };
 
-BloomFilter create_bloom(size_t kilobytes){
+BloomFilter BloomCreate(size_t kilobytes){
 
     BloomFilter bloom = (BloomFilter)malloc(sizeof(struct bloom_filter));
 
@@ -35,7 +35,7 @@ unsigned long hash_i(unsigned char *str, unsigned int i);
 void BloomInsert(BloomFilter bf, void *item){
 
     for (int i = 0; i < K; i++){
-        unsigned int hash = hash_i((char *)item, i)%(bf->size);
+        unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
         SetBit(bf->array, hash);
     }
 }
@@ -43,7 +43,7 @@ void BloomInsert(BloomFilter bf, void *item){
 bool BloomTest(BloomFilter bf, void *item){
 
     for (int i = 0; i < K; i++){
-        unsigned int hash = hash_i((char *)item, i)%(bf->size);
+        unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
         if (!TestBit(bf->array, hash))
             return false;
     }
@@ -67,7 +67,7 @@ prime or not) has never been adequately explained.
 unsigned long djb2(unsigned char *str) {
 	unsigned long hash = 5381;
 	int c; 
-	while (c = *str++) {
+	while ((c = *str++)) {
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 	}
 	return hash;
@@ -88,7 +88,7 @@ unsigned long sdbm(unsigned char *str) {
 	unsigned long hash = 0;
 	int c;
 
-	while (c = *str++) {
+	while ((c = *str++)) {
 		hash = c + (hash << 6) + (hash << 16) - hash;
 	}
 

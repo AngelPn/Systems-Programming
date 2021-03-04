@@ -49,26 +49,33 @@ void destroy_vaccinated(void *v){
 struct virus_struct
 {
     char *virusName;
+    BloomFilter filter;
     SkipList vaccinated_persons;
     SkipList not_vaccinated_persons;
 };
 
-virus create_virus(char *virusName){
+virus create_virus(char *virusName, size_t kilobytes){
     virus v = (virus)malloc(sizeof(struct virus_struct));
 
     v->virusName = (char *)malloc(sizeof(char)*(strlen(virusName)+1));
     strcpy(v->virusName, virusName);
 
+    v->filter = BloomCreate(kilobytes);
     v->vaccinated_persons = SLCreate(0.5, destroy_vaccinated);
     v->not_vaccinated_persons = SLCreate(0.5, NULL);
 
     return v;
 }
 
-/*Returns pointer to key of virus_struckt*/
+/*Returns pointer to key of virus_struct*/
 void *get_virusName(void *v){
     virus nv = v;
     return nv->virusName; 
+}
+
+BloomFilter get_filter(void *v){
+    virus nv = v;
+    return nv->filter;
 }
 
 SkipList get_vaccinated_persons(void *v){
@@ -106,6 +113,7 @@ int compare_virusName(void *key, void *v){
 void destroy_virus(void *v){
     virus nv = v;
     free(nv->virusName);
+    BloomDestroy(nv->filter);
     SLDestroy(nv->vaccinated_persons);
     SLDestroy(nv->not_vaccinated_persons);
     free(nv);

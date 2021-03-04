@@ -25,8 +25,10 @@ citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, cha
     rec->lastname = (char *)malloc(sizeof(char)*(strlen(lastname)+1));
     strcpy(rec->lastname, lastname);
 
-    rec->country = (char *)malloc(sizeof(char)*(strlen(country)+1));
-    strcpy(rec->country, country);
+    rec->country = country;
+
+    // rec->country = (char *)malloc(sizeof(char)*(strlen(country)+1));
+    // strcpy(rec->country, country);
 
     return rec;
 }
@@ -55,6 +57,6 @@ void destroy_citizen(void *rec){
     citizenRecord crec = rec;
     free(crec->firstname);
     free(crec->lastname);
-    free(crec->country);
+    // free(crec->country);
     free(crec);
 }

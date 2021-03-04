@@ -5,6 +5,7 @@
 #include "date.h"
 #include "citizenRecord.h"
 #include "SkipList.h"
+#include "BloomFilter.h"
 
 /* "struct vaccinated_struct" is incomplete struct */
 typedef struct vaccinated_struct *vaccinated;
@@ -33,10 +34,13 @@ void destroy_vaccinated(void *vaccinated);
 typedef struct virus_struct *virus;
 
 /* Creates virus_struct */
-virus create_virus(char *virusName);
+virus create_virus(char *virusName, size_t kilobytes);
 
 /* Returns pointer to virusName of virus_struct */
 void *get_virusName(void *v);
+
+/* Returns bloom filter of virus */
+BloomFilter get_filter(void *v);
 
 /* Returns skip lists of virus */
 SkipList get_vaccinated_persons(void *v);

@@ -8,7 +8,7 @@
 typedef struct bloom_filter *BloomFilter;
 
 /* Creates bloom filter */
-BloomFilter create_bloom(size_t kilobytes);
+BloomFilter BloomCreate(size_t kilobytes);
 void BloomInsert(BloomFilter bf, void *item);
 bool BloomTest(BloomFilter bf, void *item);
 void BloomDestroy(BloomFilter bf);

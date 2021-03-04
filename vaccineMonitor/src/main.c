@@ -16,8 +16,9 @@ int main(int argc, char **argv){
 
     HashTable citizens = HTCreate(Integer, destroy_citizen);
     HashTable viruses = HTCreate(String, destroy_virus);
+    HashTable countries = HTCreate(String, free);
 
-    fileParse_and_buildStructs(filepath, &citizens, &viruses);
+    fileParse_and_buildStructs(filepath, bloom_size, &citizens, &viruses, &countries);
 
     queries(&citizens, &viruses);
 
@@ -28,8 +29,9 @@ int main(int argc, char **argv){
     HTPrint(viruses, print_virus);
 
     /* Deallocate memory */
+    HTDestroy(countries);
     HTDestroy(citizens);
-    HTDestroy(viruses);
+    HTDestroy(viruses); 
 
 	return 0;
 }

@@ -47,7 +47,17 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
     return 1;
 }
 
-void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *viruses){
+void *get_country(void *country){
+	return country;
+}
+
+int compare_countries(void *a, void *b){
+	char *country_a = a;
+	char *country_b = b;
+	return strcmp(country_a, country_b);
+}
+
+void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
 
 	FILE *frecords;
     /* Open the file given from filepath and read it*/
@@ -63,6 +73,7 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
     size_t len = 0;
 	citizenRecord citizen = NULL;
 	virus v = NULL;
+	char *country = NULL;
 	
     while (getline(&line, &len, frecords) != -1){
 
@@ -71,16 +82,25 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
         strcpy(error_line, line);
 
 		/* Get citizen's information and build citizen's struct (citizenRecord) */
-        int citizenID = atoi(strtok(line, " "));
+        char *id = strtok(line, " ");
         char *firstname = strtok(NULL, " ");
         char *lastname = strtok(NULL, " ");
-        char *country = strtok(NULL, " ");
+
+		/* Check if country is already in database of countries (HashTable countries) */
+		/* If not, insert country in database of countries */
+        char *country_name = strtok(NULL, " ");
+
+		if ((country = HTSearch(*countries, country_name, compare_countries)) == NULL ){
+			country = (char *)malloc(sizeof(char)*(strlen(country_name)+1));
+			strcpy(country, country_name);
+			HTInsert(countries, country, get_country);
+		}
+
         int age = atoi(strtok(NULL, " "));
 
 		/* Check if citizen is already in database of citizens (HashTable citizens) */
 		/* If not, insert citizen in database of citizens */
-        //int citizenID = atoi(id);
-
+		int citizenID = atoi(id);
 		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
 			citizen = create_citizen(citizenID, firstname, lastname, country, age);
 			HTInsert(citizens, citizen, get_citizenID);
@@ -91,7 +111,7 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
         char *virusName = strtok(NULL, " ");
 
 		if ((v = HTSearch(*viruses, virusName, compare_virusName)) == NULL){
-			v = create_virus(virusName);
+			v = create_virus(virusName, kilobytes);
 			HTInsert(viruses, v, get_virusName);
 		}
 
@@ -102,11 +122,12 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
         if (strcmp(check_vaccinated, "YES") == 0){
 
             char *str_date = strtok(NULL, " \n");
-            date d = create_date(str_date);
+            date dateVaccinated = create_date(str_date);
 
-			vaccinated vaccinated_citizen = create_vaccinated(citizen, d);
-            
+			vaccinated vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
 			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
+
+			BloomInsert(get_filter(v), id);
         }
 		/* If citizen is not vaccinated, insert this information to not_vaccinated_persons skip list*/
         else{
@@ -196,5 +217,5 @@ void queries(HashTable *citizens, HashTable *viruses){
 			break;
 		}		
 	}
-
+	free(line);
 }
