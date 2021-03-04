@@ -7,13 +7,13 @@
 struct vaccinated_struct
 {
     citizenRecord item;
-    date dt;
+    date dateVaccinated;
 };
 
-vaccinated create_vaccinated(citizenRecord item, date dt){
+vaccinated create_vaccinated(citizenRecord item, date dateVaccinated){
     vaccinated v = (vaccinated)malloc(sizeof(struct vaccinated_struct));
     v->item = item;
-    v->dt = dt;
+    v->dateVaccinated = dateVaccinated;
 
     return v;
 }
@@ -24,7 +24,7 @@ void *get_vaccinated_key(void *v){
 }
 
 void print_vaccinated_date(vaccinated v){
-    return print_date(v->dt);
+    return print_date(v->dateVaccinated);
 }
 
 int compare_vaccinated(void *key, void *v){
@@ -35,12 +35,12 @@ int compare_vaccinated(void *key, void *v){
 void print_vaccinated(void *v){
     vaccinated nv = v;
     print_citizen(nv->item);
-    print_date(nv->dt);
+    print_date(nv->dateVaccinated);
 }
 
 void destroy_vaccinated(void *v){
     vaccinated nv = v;
-    free(nv->dt);
+    free(nv->dateVaccinated);
     free(v);
 }
 
