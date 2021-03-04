@@ -16,13 +16,16 @@ typedef unsigned int uint;
 */
 typedef int (*CompareFunc)(void *a, void *b);
 
-//pointer to function that destroys an item
+/* pointer to function that destroys an item */
 typedef void (*DestroyFunc)(void *item);
 
-//pointer to function that gets the key
+/* pointer to function that visits an item */
+typedef void (*VisitFunc)(void *item, int key);
+
+/* pointer to function that gets the key */
 typedef void *(*GetKey)(void *item);
 
-//pointer to function that prints an item
+/* pointer to function that prints an item */
 typedef void (*PrintItem)(void *item);
 
 #endif

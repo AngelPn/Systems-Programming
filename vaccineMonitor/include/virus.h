@@ -18,6 +18,9 @@ void *get_vaccinated_key(void *v);
 /* Prints vaccinated citizen's informations */
 void print_vaccinated(void *v);
 
+/* Prints date of vaccination */
+void print_vaccinated_date(vaccinated v);
+
 /* Compares key with vaccinated citizen's ID */
 int compare_vaccinated(void *key, void *v);
 

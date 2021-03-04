@@ -23,6 +23,10 @@ void *get_vaccinated_key(void *v){
     return get_citizenID(nv->item);
 }
 
+void print_vaccinated_date(vaccinated v){
+    return print_date(v->dt);
+}
+
 int compare_vaccinated(void *key, void *v){
     vaccinated nv = v;
     return compare_citizen(key, nv->item);

@@ -71,18 +71,18 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
         strcpy(error_line, line);
 
 		/* Get citizen's information and build citizen's struct (citizenRecord) */
-        char *id = strtok(line, " ");
+        int citizenID = atoi(strtok(line, " "));
         char *firstname = strtok(NULL, " ");
         char *lastname = strtok(NULL, " ");
         char *country = strtok(NULL, " ");
-        char *age = strtok(NULL, " ");
+        int age = atoi(strtok(NULL, " "));
 
 		/* Check if citizen is already in database of citizens (HashTable citizens) */
 		/* If not, insert citizen in database of citizens */
-        int citizenID = atoi(id);
+        //int citizenID = atoi(id);
 
 		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
-			citizen = create_citizen(citizenID, firstname, lastname, country, atoi(age));
+			citizen = create_citizen(citizenID, firstname, lastname, country, age);
 			HTInsert(citizens, citizen, get_citizenID);
 		}
 
@@ -124,4 +124,70 @@ void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *
 
 	free(line); free(filepath);
     fclose(frecords);
+}
+
+void vaccineStatus(void *item, int citizenID){
+
+	virus v = item;
+	printf("%s ", (char *)get_virusName(v));
+
+	vaccinated vaccinated_citizen = NULL;
+	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+		printf("YES ");
+		print_vaccinated_date(vaccinated_citizen);
+	}
+	else printf("NO\n");
+
+}
+
+void queries(HashTable *citizens, HashTable *viruses){
+
+	/* Read input from stdin */
+	char *line = NULL;
+    size_t len = 0;
+	//citizenRecord citizen = NULL;
+	//vaccinated vaccinated_citizen = NULL;
+	virus v = NULL;
+
+	while (getline(&line, &len, stdin) != -1){
+
+		char *query = strtok(line, " \n");
+
+		if (strcmp(query, "/vaccineStatusBloom") == 0){
+
+		}
+		else if (strcmp(query, "/vaccineStatus") == 0){
+			
+			int citizenID = atoi(strtok(NULL, " \n"));
+			char *virusName = strtok(NULL, " \n");
+
+			if (virusName != NULL){
+				v = HTSearch(*viruses, virusName, compare_virusName);
+				vaccineStatus(v, citizenID);
+			}
+			else
+				HTVisit(*viruses, vaccineStatus, citizenID);
+
+		}
+		else if (strcmp(query, "/populationStatus") == 0){
+
+		}
+		else if (strcmp(query, "/popStatusByAge") == 0){
+
+		}
+		else if (strcmp(query, "/insertCitizenRecord") == 0){
+
+		}
+		else if (strcmp(query, "/vaccineNow") == 0){
+
+		}
+		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
+
+		}
+		else if (strcmp(query, "/exit") == 0){
+			printf("exiting\n");
+			break;
+		}		
+	}
+
 }

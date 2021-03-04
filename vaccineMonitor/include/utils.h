@@ -8,4 +8,6 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath);
 
 void fileParse_and_buildStructs(char *filepath, HashTable *citizens, HashTable *viruses);
 
+void queries(HashTable *citizens, HashTable *viruses);
+
 #endif

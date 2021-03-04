@@ -19,16 +19,16 @@ int main(int argc, char **argv){
 
     fileParse_and_buildStructs(filepath, &citizens, &viruses);
 
+    queries(&citizens, &viruses);
+
     printf("Print hash table of citizens:\n");
     HTPrint(citizens, print_citizen);
 
     printf("\nPrint hash table of viruses:\n");
     HTPrint(viruses, print_virus);
 
-    printf("Destroy hash table of citizens\n");
+    /* Deallocate memory */
     HTDestroy(citizens);
-
-    printf("Destroy hash table of viruses\n");
     HTDestroy(viruses);
 
 	return 0;

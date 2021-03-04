@@ -136,6 +136,20 @@ void HTInsert(HashTable *pht, void *item, GetKey key){
 // 		LLRemove(head, S);
 // }
 
+void HTVisit(HashTable ht, VisitFunc visit, int key){
+
+	List head = NULL;
+
+	for (int i = 0; i < ht->size; i++){
+		head = ht->chains[i];
+		if(head != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+				visit(list_node_item(head, node), key);
+			}
+		}		
+	}
+}
+
 void HTPrint(HashTable ht, PrintItem print){
 
 	List head = NULL;
