@@ -183,6 +183,13 @@ void queries(HashTable *citizens, HashTable *viruses){
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
 
+			char *virusName = strtok(NULL, " \n");
+			if (virusName != NULL){
+				v = HTSearch(*viruses, virusName, compare_virusName);
+				SLPrint(get_not_vaccinated_persons(v), print_citizen);
+			}
+			else printf("Error! Enter new command: \n");
+
 		}
 		else if (strcmp(query, "/exit") == 0){
 			printf("exiting\n");
