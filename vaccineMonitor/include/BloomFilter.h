@@ -10,7 +10,7 @@ typedef struct bloom_filter *BloomFilter;
 /* Creates bloom filter */
 BloomFilter BloomCreate(size_t kilobytes);
 void BloomInsert(BloomFilter bf, void *item);
-bool BloomTest(BloomFilter bf, void *item);
+bool BloomSearch(BloomFilter bf, void *item);
 void BloomDestroy(BloomFilter bf);
 
 #endif

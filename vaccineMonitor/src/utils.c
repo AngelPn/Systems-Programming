@@ -161,7 +161,87 @@ void vaccineStatus(void *item, int citizenID){
 
 }
 
-void queries(HashTable *citizens, HashTable *viruses){
+void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
+
+	citizenRecord citizen = NULL;
+	virus v = NULL;
+	char *country = NULL;
+
+	/* Get citizen's information and build citizen's struct (citizenRecord) */
+	char *id = args[0];
+	char *firstname = args[1];
+	char *lastname = args[2];
+
+	/* Check if country is already in database of countries (HashTable countries) */
+	/* If not, insert country in database of countries */
+	char *country_name = args[3];
+
+	if ((country = HTSearch(*countries, country_name, compare_countries)) == NULL ){
+		country = (char *)malloc(sizeof(char)*(strlen(country_name)+1));
+		strcpy(country, country_name);
+		HTInsert(countries, country, get_country);
+	}
+
+	int age = args[4];
+
+	/* Check if citizen is already in database of citizens (HashTable citizens) */
+	/* If not, insert citizen in database of citizens */
+	int citizenID = atoi(id);
+	if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
+		citizen = create_citizen(citizenID, firstname, lastname, country, age);
+		HTInsert(citizens, citizen, get_citizenID);
+	}
+
+	/* Get the name of virus and check if it is already in database of viruses (HashTable viruses) */
+	/* If not, insert virus (v) in database of viruses */
+	char *virusName = args[5];
+	if ((v = HTSearch(*viruses, virusName, compare_virusName)) == NULL){
+		v = create_virus(virusName, kilobytes);
+		HTInsert(viruses, v, get_virusName);
+	}
+
+	/* Check if citizen is vaccinated to virus or not */
+	char *check_vaccinated = args[6];
+	char *str_date = args[7];
+
+	/* If citizen is vaccinated, get the date and insert this information to vaccinated_persons skip list*/
+	if (strcmp(check_vaccinated, "YES") == 0 || strcmp(check_vaccinated, "vaccinateNow") == 0){
+
+		vaccinated vaccinated_citizen = NULL;
+
+		if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, get_vaccinated_key)) != NULL){
+			printf("ERROR: CITIZEN %d ALREADY VACCINATED ON ", citizenID);
+			print_vaccinated_date(vaccinated_citizen);
+		}
+		else{
+			date dateVaccinated = NULL;
+
+			if (str_date != NULL)
+				dateVaccinated = create_date(str_date);
+			else{
+				
+			}
+
+			vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
+			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
+
+			BloomInsert(get_filter(v), id);
+		}
+
+	}
+	/* If citizen is not vaccinated, insert this information to not_vaccinated_persons skip list*/
+	else{
+		/* If there is date, then print ERROR */
+		if (str_date != NULL){
+			printf("ERROR IN RECORD %s %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+		}
+		SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);                
+	}
+
+
+}
+
+void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
 
 	/* Read input from stdin */
 	char *line = NULL;
@@ -175,6 +255,18 @@ void queries(HashTable *citizens, HashTable *viruses){
 		char *query = strtok(line, " \n");
 
 		if (strcmp(query, "/vaccineStatusBloom") == 0){
+
+			char *citizenID = strtok(NULL, " \n");
+			char *virusName = strtok(NULL, " \n");
+
+			if (virusName != NULL){
+				v = HTSearch(*viruses, virusName, compare_virusName);
+				if (BloomSearch(get_filter(v), citizenID))
+					printf("MAYBE\n");
+				else printf("NOT VACCINATED\n");
+			}
+			else
+				printf("Error in input\n");
 
 		}
 		else if (strcmp(query, "/vaccineStatus") == 0){
@@ -200,6 +292,10 @@ void queries(HashTable *citizens, HashTable *viruses){
 
 		}
 		else if (strcmp(query, "/vaccineNow") == 0){
+
+			char *args[8];
+      		for (int i = 0; i < 8; ++i)
+        		args[i] = strtok(NULL, " \n");
 
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){

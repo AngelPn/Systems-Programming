@@ -40,7 +40,7 @@ void BloomInsert(BloomFilter bf, void *item){
     }
 }
 
-bool BloomTest(BloomFilter bf, void *item){
+bool BloomSearch(BloomFilter bf, void *item){
 
     for (int i = 0; i < K; i++){
         unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
