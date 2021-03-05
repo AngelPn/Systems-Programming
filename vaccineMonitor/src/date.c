@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../include/date.h"
 
@@ -24,6 +25,27 @@ date create_date(char *str){
   d->year  = atoi(strtok(NULL, "-"));
 
   free(buf);
+
+  return d;
+}
+
+date current_date(){
+
+  date d = (date)malloc(sizeof(struct date_struct));
+
+  time_t now; /* time_t is arithmetic time type */
+ 
+  /* Obtain current time */
+  time(&now);
+
+  /* localtime converts a time_t value to calendar time and
+     returns a pointer to a tm structure with its members
+     filled with the corresponding values */
+  struct tm *local = localtime(&now);
+
+  d->day = local->tm_mday;            /* get day of month (1 to 31) */
+  d->month = local->tm_mon + 1;       /* get month of year (0 to 11) */
+  d->year = local->tm_year + 1900;    /* get year since 1900 */
 
   return d;
 }

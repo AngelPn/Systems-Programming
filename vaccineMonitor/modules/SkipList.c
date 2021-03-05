@@ -185,7 +185,45 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
     // printf("\n");
 }
 
-// void SLRemove(SkipList *psl, KeyType key);
+void SLRemove(SkipList sl, void *key, CompareFunc compare){
+
+    List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
+    CompareFunc compare_function = compare_keys;
+    bool found = false;
+
+    for(int i = sl->level; i >= 0; i--){
+
+        /* Compare items in Layer 0 with compare passed by user as argument */
+        if (i == 0) compare_function = compare;
+
+        head = sl->layers[i];
+        
+        if (node != NULL){
+            SLNode node = list_node_item(sl->layers[i+1], node);
+            node = list_find_order(head, node->lower_level, key, compare_function, &found);                
+        }
+        else{
+            node = list_find_order(head, NULL, key, compare_function, &found); 
+        }
+
+        if (found == true){
+            ListNode next_node = NULL;
+            for (int level = i; level >= 0; level--){
+
+                head = sl->layers[level];
+
+                sl_node = list_node_item(head, node);
+                next_node = sl_node->lower_level;
+
+                list_remove(head, node);
+
+                //TODO: check if list in level is empty to remove the entire list
+            }
+            return;
+        }
+    }      
+}
+
 void SLPrint(SkipList sl, PrintItem print){ 
 
     printf("LAYER 0\n");

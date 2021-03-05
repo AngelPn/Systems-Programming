@@ -151,7 +151,7 @@ void *list_find(List list, void *item, CompareFunc compare)
 	return node == NULL ? NULL : node->item;
 }
 
-void *list_find_order(List list, ListNode node, void *item, CompareFunc compare, bool *found)
+void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, bool *found)
 {
 	ListNode begin_node;
 	if (node == NULL)
@@ -161,7 +161,7 @@ void *list_find_order(List list, ListNode node, void *item, CompareFunc compare,
 
 	for (ListNode node = begin_node; node != NULL; node = node->next){
 
-		int compared = compare(item, node->item);
+		int compared = compare(key, node->item);
 		if (compared == 0){
 			*found = true;
 			return node;
@@ -171,13 +171,13 @@ void *list_find_order(List list, ListNode node, void *item, CompareFunc compare,
 		else{
 			ListNode next_node = node->next;
 			if (next_node != NULL){
-				if (compare(item, node->item) > 0 && compare(item, next_node->item) < 0)
+				if (compare(key, node->item) > 0 && compare(key, next_node->item) < 0)
 					return node;
 				else
 					continue;
 			}
 			else{
-				if (compare(item, node->item) > 0)
+				if (compare(key, node->item) > 0)
 					return node;
 				else
 					return NULL;

@@ -57,6 +57,8 @@ int compare_countries(void *a, void *b){
 	return strcmp(country_a, country_b);
 }
 
+void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries);
+
 void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
 
 	FILE *frecords;
@@ -69,78 +71,18 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citize
     }
 
 	/* Parse the file and build the structs */
-    char *line = NULL, *error_line = NULL;
+    char *line = NULL;
     size_t len = 0;
-	citizenRecord citizen = NULL;
-	virus v = NULL;
-	char *country = NULL;
 	
     while (getline(&line, &len, frecords) != -1){
 
-         /* Save the line to print in case an input error occurs */
-        char *error_line = (char *)malloc(sizeof(char)*(strlen(line)+1));
-        strcpy(error_line, line);
+		char *args[8];
 
-		/* Get citizen's information and build citizen's struct (citizenRecord) */
-        char *id = strtok(line, " ");
-        char *firstname = strtok(NULL, " ");
-        char *lastname = strtok(NULL, " ");
+		args[0] = strtok(line, " ");
+		for (int i = 1; i < 8; ++i)
+			args[i] = strtok(NULL, " \n");
 
-		/* Check if country is already in database of countries (HashTable countries) */
-		/* If not, insert country in database of countries */
-        char *country_name = strtok(NULL, " ");
-
-		if ((country = HTSearch(*countries, country_name, compare_countries)) == NULL ){
-			country = (char *)malloc(sizeof(char)*(strlen(country_name)+1));
-			strcpy(country, country_name);
-			HTInsert(countries, country, get_country);
-		}
-
-        int age = atoi(strtok(NULL, " "));
-
-		/* Check if citizen is already in database of citizens (HashTable citizens) */
-		/* If not, insert citizen in database of citizens */
-		int citizenID = atoi(id);
-		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
-			citizen = create_citizen(citizenID, firstname, lastname, country, age);
-			HTInsert(citizens, citizen, get_citizenID);
-		}
-
-		/* Get the name of virus and check if it is already in database of viruses (HashTable viruses) */
-		/* If not, insert virus (v) in database of viruses */
-        char *virusName = strtok(NULL, " ");
-
-		if ((v = HTSearch(*viruses, virusName, compare_virusName)) == NULL){
-			v = create_virus(virusName, kilobytes);
-			HTInsert(viruses, v, get_virusName);
-		}
-
-		/* Check if citizen is vaccinated to virus or not */
-        char *check_vaccinated = strtok(NULL, " ");
-
-		/* If citizen is vaccinated, get the date and insert this information to vaccinated_persons skip list*/
-        if (strcmp(check_vaccinated, "YES") == 0){
-
-            char *str_date = strtok(NULL, " \n");
-            date dateVaccinated = create_date(str_date);
-
-			vaccinated vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
-			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
-
-			BloomInsert(get_filter(v), id);
-        }
-		/* If citizen is not vaccinated, insert this information to not_vaccinated_persons skip list*/
-        else{
-			/* If there is date, then print ERROR */
-            char *error = strtok(NULL, "\n");
-            if (error != NULL){
-				printf("ERROR IN RECORD %s\n", error_line);
-				free(error_line);
-				continue;
-			}
-			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);                
-        }
-        free(error_line);      
+		insertCitizen(args, kilobytes, citizens, viruses, countries);   
     }
 
 	free(line); free(filepath);
@@ -182,13 +124,13 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 		HTInsert(countries, country, get_country);
 	}
 
-	int age = args[4];
+	char *age = args[4];
 
 	/* Check if citizen is already in database of citizens (HashTable citizens) */
 	/* If not, insert citizen in database of citizens */
 	int citizenID = atoi(id);
 	if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
-		citizen = create_citizen(citizenID, firstname, lastname, country, age);
+		citizen = create_citizen(citizenID, firstname, lastname, country, atoi(age));
 		HTInsert(citizens, citizen, get_citizenID);
 	}
 
@@ -205,11 +147,11 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 	char *str_date = args[7];
 
 	/* If citizen is vaccinated, get the date and insert this information to vaccinated_persons skip list*/
-	if (strcmp(check_vaccinated, "YES") == 0 || strcmp(check_vaccinated, "vaccinateNow") == 0){
+	if (strcmp(check_vaccinated, "YES") == 0 || strcmp(check_vaccinated, "/vaccinateNow") == 0){
 
 		vaccinated vaccinated_citizen = NULL;
 
-		if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, get_vaccinated_key)) != NULL){
+		if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
 			printf("ERROR: CITIZEN %d ALREADY VACCINATED ON ", citizenID);
 			print_vaccinated_date(vaccinated_citizen);
 		}
@@ -218,13 +160,12 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 
 			if (str_date != NULL)
 				dateVaccinated = create_date(str_date);
-			else{
-				
-			}
+			else
+				dateVaccinated = current_date();
 
 			vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
 			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
-
+			//TODO: search first if it is in not_vaccinated_persons to remove it or dismiss insertion
 			BloomInsert(get_filter(v), id);
 		}
 
@@ -233,11 +174,10 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 	else{
 		/* If there is date, then print ERROR */
 		if (str_date != NULL){
-			printf("ERROR IN RECORD %s %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+			printf("ERROR IN RECORD %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, check_vaccinated, str_date);
 		}
 		SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);                
 	}
-
 
 }
 
@@ -290,12 +230,23 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 		}
 		else if (strcmp(query, "/insertCitizenRecord") == 0){
 
-		}
-		else if (strcmp(query, "/vaccineNow") == 0){
-
 			char *args[8];
-      		for (int i = 0; i < 8; ++i)
-        		args[i] = strtok(NULL, " \n");
+      		for (int i = 0; i < 8; i++){
+				args[i] = strtok(NULL, " \n");
+			}
+			insertCitizen(args, kilobytes, citizens, viruses, countries);
+
+		}
+		else if (strcmp(query, "/vaccinateNow") == 0){
+			//printf("1\n");
+			char *args[8];
+      		for (int i = 0; i < 6; i++){
+				args[i] = strtok(NULL, " \n");
+			}
+			args[6] = query;
+			args[7] = NULL;
+			//printf("2 %s %s %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+			insertCitizen(args, kilobytes, citizens, viruses, countries);
 
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
@@ -311,7 +262,8 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 		else if (strcmp(query, "/exit") == 0){
 			printf("exiting\n");
 			break;
-		}		
+		}
+		else printf("Error in command\n");
 	}
 	free(line);
 }

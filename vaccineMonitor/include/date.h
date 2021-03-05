@@ -7,6 +7,9 @@ typedef struct date_struct *date;
 /* Creates date from the string passed as argument */
 date create_date(char *str);
 
+/* Creates date with current date */
+date current_date();
+
 /* Prints date */
 void print_date(date d);
 

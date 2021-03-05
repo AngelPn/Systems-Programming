@@ -20,7 +20,7 @@ int main(int argc, char **argv){
 
     fileParse_and_buildStructs(filepath, bloom_size, &citizens, &viruses, &countries);
 
-    queries(&citizens, &viruses);
+    queries(bloom_size, &citizens, &viruses, &countries);
 
     printf("Print hash table of citizens:\n");
     HTPrint(citizens, print_citizen);
