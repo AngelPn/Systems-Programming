@@ -8,6 +8,7 @@ struct  country_struct
 {
     char *country_name;
     int population;
+    int vaccinated_persons;
 };
 
 country create_country(char *country_name){
@@ -18,12 +19,14 @@ country create_country(char *country_name){
     strcpy(c->country_name, country_name);
 
     c->population = 1;
+    c->vaccinated_persons = 0;
 
     return c;
 }
 
-char *get_country_name(country c){
-    c->country_name;
+void *get_country_name(void *c){
+    country nc = c;
+    return nc->country_name;
 }
 
 int get_population(country c){
@@ -32,6 +35,14 @@ int get_population(country c){
 
 void increase_population(country c){
     (c->population)++;
+}
+
+void increase_vaccinated_persons(country c){
+    (c->vaccinated_persons)++;
+}
+
+void reset_vaccinated_persons(country c){
+    c->vaccinated_persons = 0;
 }
 
 int compare_countries(void *key, void *b){

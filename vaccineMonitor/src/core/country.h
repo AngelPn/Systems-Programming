@@ -8,11 +8,14 @@ typedef struct country_struct *country;
 country create_country(char *country_name);
 
 /* Returns a pointer to country's name */
-char *get_country_name(country c);
+void *get_country_name(void *c);
 
 int get_population(country c);
 
 void increase_population(country c);
+
+void increase_vaccinated_persons(country c);
+void reset_vaccinated_persons(country c);
 
 /* Compares countries */
 int compare_countries(void *key, void *b);

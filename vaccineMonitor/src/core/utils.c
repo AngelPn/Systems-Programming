@@ -10,6 +10,15 @@
 #include "country.h"
 #include "citizenRecord.h"
 
+#define RED   "\033[1;31m"
+#define GRN   "\033[1;32m"
+#define YEL   "\033[1;33m"
+#define BLU   "\033[1;34m"
+#define MAG   "\033[1;35m"
+#define CYN   "\033[1;36m"
+#define WHT   "\033[1;37m"
+#define RESET "\033[0m"
+
 /* Does proper error handling and stores variables from command prompt */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 
@@ -196,9 +205,8 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 	/* Read input from stdin */
 	char *line = NULL;
     size_t len = 0;
-	//citizenRecord citizen = NULL;
-	//vaccinated vaccinated_citizen = NULL;
 	virus v = NULL;
+	bool broke = false;
 
 	while (getline(&line, &len, stdin) != -1){
 
@@ -209,31 +217,59 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			char *citizenID = strtok(NULL, " \n");
 			char *virusName = strtok(NULL, " \n");
 
-			if (virusName != NULL){
+			if (citizenID != NULL && virusName != NULL){
 				v = HTSearch(*viruses, virusName, compare_virusName);
 				if (BloomSearch(get_filter(v), citizenID))
 					printf("MAYBE\n");
 				else printf("NOT VACCINATED\n");
 			}
 			else
-				printf("Error in input\n");
+				printf( RED "\nERROR: No valid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/vaccineStatusBloom citizenID virusName\n"
+						GRN "\nEnter command:\n" RESET);
 
 		}
 		else if (strcmp(query, "/vaccineStatus") == 0){
 			
-			int citizenID = atoi(strtok(NULL, " \n"));
+			char *citizenID = strtok(NULL, " \n");
 			char *virusName = strtok(NULL, " \n");
 
-			if (virusName != NULL){
-				v = HTSearch(*viruses, virusName, compare_virusName);
-				vaccineStatus(v, citizenID);
+			if (citizenID == NULL)
+				printf( RED "\nERROR: No valid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/vaccineStatus citizenID [virusName]\n"
+						GRN "\nEnter command:\n" RESET);				
+			else{
+				if (virusName != NULL){
+					v = HTSearch(*viruses, virusName, compare_virusName);
+					vaccineStatus(v, atoi(citizenID));
+				}
+				else
+					HTVisit(*viruses, vaccineStatus, atoi(citizenID));				
 			}
-			else
-				HTVisit(*viruses, vaccineStatus, citizenID);
-
 		}
 		else if (strcmp(query, "/populationStatus") == 0){
 
+			char *args[4];
+			for (int i = 0; i < 4; i++){
+				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL && i < 2){
+					printf( RED "\nERROR: No valid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/populationStatus [country] virusName date1 date2\n"
+							GRN "\nEnter command:\n" RESET);
+					broke = true;
+					break;
+				}
+			}
+			if (broke) continue;
+			else{
+				if (args[3] == NULL){
+
+				}
+			}
 		}
 		else if (strcmp(query, "/popStatusByAge") == 0){
 
@@ -245,11 +281,17 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 				args[i] = strtok(NULL, " \n");
 
 				if (args[i] == NULL && i < 7){
-					printf("Error: No valid input. Enter new command:\n");
-					continue;
+					printf( RED "\nERROR: No valid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/insertCitizenRecord citizenID firstName lastName country age virusName YES/NO date\n"
+							GRN "\nEnter command:\n" RESET);
+					broke = true;
+					break;
 				}
 			}
-			insertCitizen(args, kilobytes, citizens, viruses, countries, false);
+			if (broke) continue;
+			else
+				insertCitizen(args, kilobytes, citizens, viruses, countries, false);
 
 		}
 		else if (strcmp(query, "/vaccinateNow") == 0){
@@ -260,10 +302,16 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 				args[i] = strtok(NULL, " \n");
 
 				if (args[i] == NULL){
-					printf("Error: No valid input. Enter new command:\n");
-					continue;
+					printf( RED "\nERROR: No valid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/vaccinateNow citizenID firstName lastName country age virusName\n"
+							GRN "\nEnter command:\n" RESET);
+					broke = true;
+					break;
 				}
 			}
+			if (broke) continue;
+
 			args[6] = query;
 			args[7] = NULL;
 			//printf("2 %s %s %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
@@ -277,14 +325,28 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 				v = HTSearch(*viruses, virusName, compare_virusName);
 				SLPrint(get_not_vaccinated_persons(v), print_citizen);
 			}
-			else printf("Error: No valid input. Enter new command:\n");
+			else
+				printf(RED "\nERROR: No valid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/list-nonVaccinated-Persons virusName\n"
+						GRN "\nEnter command:\n" RESET);
 
 		}
 		else if (strcmp(query, "/exit") == 0){
 			printf("exiting\n");
 			break;
 		}
-		else printf("Error in command\n");
+		else
+			printf( RED "\nERROR: No valid input\n" RESET
+				YEL "Input format for every command:\n" RESET
+				"/vaccineStatusBloom citizenID virusName\n"
+				"/vaccineStatus citizenID [virusName]\n"
+				"/populationStatus [country] virusName date1 date2\n"
+				"/insertCitizenRecord citizenID firstName lastName country age virusName YES/NO date\n"
+				"/vaccinateNow citizenID firstName lastName country age virusName\n"
+				"/list-nonVaccinated-Persons virusName\n"
+				"/exit\n"
+				GRN "\nEnter command:\n" RESET);
 	}
 	free(line);
 }

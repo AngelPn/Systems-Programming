@@ -15,7 +15,7 @@ CFLAGS = -Wall -g -I$(CORE)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 OBJS =  $(SRC)/main.o
-OBJS += $(CORE)/citizenRecord.o $(CORE)/utils.o $(CORE)/virus.o
+OBJS += $(CORE)/citizenRecord.o $(CORE)/utils.o $(CORE)/virus.o $(CORE)/country.o
 include $(MODULES)/LinkedList/make.inc
 include $(MODULES)/SkipList/make.inc
 include $(MODULES)/HashTable/make.inc
