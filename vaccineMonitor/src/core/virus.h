@@ -1,11 +1,10 @@
 #ifndef VIRUS_H
 #define VIRUS_H
 
-#include "../../include/common_types.h"
-#include "../../mylib/Date/date.h"
+#include "date.h"
 #include "citizenRecord.h"
-#include "../../mylib/SkipList/SkipList.h"
-#include "../../mylib/BloomFilter/BloomFilter.h"
+#include "SkipList.h"
+#include "BloomFilter.h"
 
 /* "struct vaccinated_struct" is incomplete struct */
 typedef struct vaccinated_struct *vaccinated;

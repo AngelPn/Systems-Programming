@@ -1,5 +1,4 @@
 #paths
-IDIR = include
 SRC = src
 MODULES = mylib
 ODIR = build
@@ -12,7 +11,7 @@ CC = gcc
 EXEC = vaccineMonitor
 
 #compile options
-CFLAGS = -Wall -g -I$(IDIR) -I$(CORE)
+CFLAGS = -Wall -g -I$(CORE)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 OBJS =  $(SRC)/main.o

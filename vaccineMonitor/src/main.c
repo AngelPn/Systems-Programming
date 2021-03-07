@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core/utils.h"
-#include "core/virus.h"
-#include "core/citizenRecord.h"
+#include "utils.h"
+#include "virus.h"
+#include "country.h"
+#include "citizenRecord.h"
 
 int main(int argc, char **argv){
 
@@ -16,7 +17,7 @@ int main(int argc, char **argv){
 
     HashTable citizens = HTCreate(Integer, destroy_citizen);
     HashTable viruses = HTCreate(String, destroy_virus);
-    HashTable countries = HTCreate(String, free);
+    HashTable countries = HTCreate(String, destroy_country);
 
     fileParse_and_buildStructs(filepath, bloom_size, &citizens, &viruses, &countries);
 

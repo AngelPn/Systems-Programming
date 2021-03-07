@@ -2,7 +2,7 @@
 #define LIST_H
 
 #include <stdbool.h>
-#include "../include/common_types.h"
+#include "common_types.h"
 
 //"struct list" and "struct list_node" are incomplete structs
 typedef struct list *List;

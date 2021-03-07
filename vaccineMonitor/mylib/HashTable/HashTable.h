@@ -1,8 +1,7 @@
 #ifndef HT_H
 #define HT_H
 
-#include "../include/common_types.h"
-#include "../LinkedList/List.h"
+#include "List.h"
 
 typedef struct hashtable *HashTable;
 

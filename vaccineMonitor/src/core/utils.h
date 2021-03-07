@@ -1,8 +1,7 @@
 #ifndef _ARGHAND_H_
 #define _ARGHAND_h_
 
-#include "../../mylib/HashTable/HashTable.h"
-#include "../../include/common_types.h"
+#include "HashTable.h"
 
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath);
 
