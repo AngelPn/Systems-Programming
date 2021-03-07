@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "../include/date.h"
+#include "date.h"
 
 typedef struct date_struct
 {

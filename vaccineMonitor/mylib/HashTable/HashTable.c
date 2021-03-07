@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../include/HashTable.h"
+#include "HashTable.h"
 
 struct hashtable
 {

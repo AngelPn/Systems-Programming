@@ -3,10 +3,11 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../include/utils.h"
-#include "../include/SkipList.h"
-#include "../include/virus.h"
-#include "../include/citizenRecord.h"
+#include "utils.h"
+#include "../../mylib/SkipList/SkipList.h"
+#include "../../mylib/Date/date.h"
+#include "virus.h"
+#include "citizenRecord.h"
 
 /* Does proper error handling and stores variables from command prompt */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
@@ -158,7 +159,8 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 		}
 		else{
 			/* Search first if citizen is in not_vaccinated_persons to remove it or dismiss insertion */
-			if ((citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen)) != NULL){
+			citizenRecord search_citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
+			if (search_citizen != NULL){
 
 				/* If process is file parsing, then this record is considered inconsistent */
 				if (fileparse){
@@ -178,8 +180,9 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 				dateVaccinated = create_date(str_date);
 			else
 				dateVaccinated = current_date();
-
+			print_date(dateVaccinated);
 			vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
+			print_vaccinated(vaccinated_citizen);
 			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
 			BloomInsert(get_filter(v), id);
 		}

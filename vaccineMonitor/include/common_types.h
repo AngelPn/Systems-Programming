@@ -5,6 +5,7 @@
 #include <stdbool.h> 
 #include <stdio.h>
 
+/* enumeration to determine the key type of hash table in mylib */
 enum key_type {String, Integer} KeyType;
 
 typedef unsigned int uint;

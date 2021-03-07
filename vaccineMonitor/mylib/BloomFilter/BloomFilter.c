@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "../include/BloomFilter.h"
+#include "BloomFilter.h"
 
 #define K 16
 

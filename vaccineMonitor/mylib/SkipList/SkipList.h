@@ -1,8 +1,8 @@
 #ifndef SKIPLIST_H
 #define SKIPLIST_H
 
-#include "common_types.h"
-#include "List.h"
+#include "../include/common_types.h"
+#include "../LinkedList/List.h"
 
 //"struct skiplist" and "struct skiplist_node" are incomplete structs
 typedef struct skiplist *SkipList;

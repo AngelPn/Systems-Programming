@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../include/List.h"
+#include "List.h"
 
 // List is pointer to this struct
 struct list

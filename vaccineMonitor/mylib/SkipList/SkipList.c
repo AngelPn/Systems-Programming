@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "../include/SkipList.h"
+#include "SkipList.h"
 
 struct skiplist
 {
@@ -122,9 +122,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
     CompareFunc compare_function = compare_keys;
     bool found = false;
 
-    // printf("\nSKIP LIST BEFORE\n");
-    // SLPrint(sl, print);
-    // printf("\n");
+    printf("\nSKIP LIST BEFORE\n");
+    SLPrint(sl, print);
+    printf("\n");
 
     for(int i = sl->level; i >= 0; i--){
 
@@ -180,9 +180,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         }
     }
 
-    // printf("\nSKIP LIST AFTER\n");
-    // SLPrint(sl, print);
-    // printf("\n");
+    printf("\nSKIP LIST AFTER\n");
+    SLPrint(sl, print);
+    printf("\n");
 }
 
 void SLRemove(SkipList sl, void *key, CompareFunc compare){
@@ -199,8 +199,8 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
         head = sl->layers[i];
         
         if (node != NULL){
-            SLNode node = list_node_item(sl->layers[i+1], node);
-            node = list_find_order(head, node->lower_level, key, compare_function, &found);                
+            SLNode sl_node = list_node_item(sl->layers[i+1], node);
+            node = list_find_order(head, sl_node->lower_level, key, compare_function, &found);                
         }
         else{
             node = list_find_order(head, NULL, key, compare_function, &found); 

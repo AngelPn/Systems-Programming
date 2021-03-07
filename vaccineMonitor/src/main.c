@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/utils.h"
-#include "../include/virus.h"
-#include "../include/citizenRecord.h"
+#include "core/utils.h"
+#include "core/virus.h"
+#include "core/citizenRecord.h"
 
 int main(int argc, char **argv){
 
