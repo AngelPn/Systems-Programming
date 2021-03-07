@@ -2,7 +2,7 @@
 IDIR = include
 SRC = src
 MDIR = modules
-ODIR = bin
+ODIR = build
 
 #compiler
 CC = gcc

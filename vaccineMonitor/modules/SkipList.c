@@ -217,7 +217,11 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
 
                 list_remove(head, node);
 
-                //TODO: check if list in level is empty to remove the entire list
+                if (list_length(head) == 0 && level > 0){
+                    (sl->level)--;
+                    list_destroy(head);
+                    sl->layers[level] = NULL;
+                }
             }
             return;
         }

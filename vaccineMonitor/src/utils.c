@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "../include/utils.h"
 #include "../include/SkipList.h"
@@ -14,7 +15,7 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 		
 		if(strcmp(argv[i],"-c") == 0){
 			if(i+1 < argc){
-                char filecat[50] = "files/";
+                char filecat[50] = "test/";
                 strcat(filecat, argv[i+1]);
                 strcat(filecat, ".txt");
                 *filepath = (char *)malloc(sizeof(char)*(strlen(filecat)+1));
@@ -57,7 +58,7 @@ int compare_countries(void *a, void *b){
 	return strcmp(country_a, country_b);
 }
 
-void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries);
+void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries, bool fileparse);
 
 void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
 
@@ -82,7 +83,7 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citize
 		for (int i = 1; i < 8; ++i)
 			args[i] = strtok(NULL, " \n");
 
-		insertCitizen(args, kilobytes, citizens, viruses, countries);   
+		insertCitizen(args, kilobytes, citizens, viruses, countries, true);   
     }
 
 	free(line); free(filepath);
@@ -103,7 +104,7 @@ void vaccineStatus(void *item, int citizenID){
 
 }
 
-void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
+void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries, bool fileparse){
 
 	citizenRecord citizen = NULL;
 	virus v = NULL;
@@ -156,8 +157,23 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 			print_vaccinated_date(vaccinated_citizen);
 		}
 		else{
+			/* Search first if citizen is in not_vaccinated_persons to remove it or dismiss insertion */
+			if ((citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen)) != NULL){
+
+				/* If process is file parsing, then this record is considered inconsistent */
+				if (fileparse){
+					printf("ERROR IN RECORD %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+					return;
+				}
+				/* If process is queries, then remove citizen from not_vaccinated persons skip list */
+				else{
+					SLRemove(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
+				}
+			}
 			date dateVaccinated = NULL;
 
+			/* If user gave date, create date from given input */
+			/* Else, vaccinated date is current date */
 			if (str_date != NULL)
 				dateVaccinated = create_date(str_date);
 			else
@@ -165,7 +181,6 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 
 			vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
 			SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
-			//TODO: search first if it is in not_vaccinated_persons to remove it or dismiss insertion
 			BloomInsert(get_filter(v), id);
 		}
 
@@ -175,6 +190,7 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 		/* If there is date, then print ERROR */
 		if (str_date != NULL){
 			printf("ERROR IN RECORD %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+			return;
 		}
 		SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);                
 	}
@@ -233,20 +249,31 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			char *args[8];
       		for (int i = 0; i < 8; i++){
 				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL && i < 7){
+					printf("Error: No valid input. Enter new command:\n");
+					continue;
+				}
 			}
-			insertCitizen(args, kilobytes, citizens, viruses, countries);
+			insertCitizen(args, kilobytes, citizens, viruses, countries, false);
 
 		}
 		else if (strcmp(query, "/vaccinateNow") == 0){
 			//printf("1\n");
 			char *args[8];
+
       		for (int i = 0; i < 6; i++){
 				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL){
+					printf("Error: No valid input. Enter new command:\n");
+					continue;
+				}
 			}
 			args[6] = query;
 			args[7] = NULL;
 			//printf("2 %s %s %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-			insertCitizen(args, kilobytes, citizens, viruses, countries);
+			insertCitizen(args, kilobytes, citizens, viruses, countries, false);
 
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
@@ -256,7 +283,7 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 				v = HTSearch(*viruses, virusName, compare_virusName);
 				SLPrint(get_not_vaccinated_persons(v), print_citizen);
 			}
-			else printf("Error! Enter new command: \n");
+			else printf("Error: No valid input. Enter new command:\n");
 
 		}
 		else if (strcmp(query, "/exit") == 0){
