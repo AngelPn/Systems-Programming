@@ -15,6 +15,12 @@ vaccinated create_vaccinated(citizenRecord item, date dt);
 /* Finds the key of vaccinated_struct and returns a pointer to it */
 void *get_vaccinated_key(void *v);
 
+/* Returns date of vaccination */
+date get_vaccinated_date(vaccinated v);
+
+/* Returns vaccinated citizen */
+citizenRecord get_citizen(vaccinated v);
+
 /* Prints vaccinated citizen's informations */
 void print_vaccinated(void *v);
 

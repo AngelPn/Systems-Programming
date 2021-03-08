@@ -12,6 +12,8 @@ void *get_country_name(void *c);
 
 int get_population(country c);
 
+int get_vaccinated_persons_num(country c);
+
 void increase_population(country c);
 
 void increase_vaccinated_persons(country c);

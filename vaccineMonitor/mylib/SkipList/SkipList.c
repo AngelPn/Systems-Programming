@@ -66,6 +66,10 @@ SkipList SLCreate(float p, DestroyFunc destroy_item){
     return SLCreate_with_maxlevel(7, p, destroy_item);
 }
 
+List get_bottom_level(SkipList sl){
+    return sl->layers[0];
+}
+
 int compare_keys(void *key, void *sl_node){
     int k = *(int *)key;
     SLNode node = sl_node;

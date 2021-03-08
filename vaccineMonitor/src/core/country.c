@@ -33,6 +33,10 @@ int get_population(country c){
     return c->population;
 }
 
+int get_vaccinated_persons_num(country c){
+    return c->vaccinated_persons;
+}
+
 void increase_population(country c){
     (c->population)++;
 }

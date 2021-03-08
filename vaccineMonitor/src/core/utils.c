@@ -106,6 +106,17 @@ void vaccineStatus(void *item, int citizenID){
 
 }
 
+void populationStatus(void *item, int key){
+
+	country c = item;
+
+	int vaccinated_persons = get_vaccinated_persons_num(c);
+	if (vaccinated_persons){
+		printf("%s %d %d%%\n", (char *)get_country_name(c), vaccinated_persons, vaccinated_persons/get_population(c));
+		reset_vaccinated_persons(c);
+	}
+}
+
 void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries, bool fileparse){
 
 	/* Get data from arguments with right order */
@@ -139,7 +150,7 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 		/* If not, insert citizen in database of citizens */
 		int citizenID = atoi(id);
 		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
-			citizen = create_citizen(citizenID, firstname, lastname, get_country_name(c), atoi(age));
+			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
 			HTInsert(citizens, citizen, get_citizenID);
 
 			/* New citizen's record: increase the population of country */
@@ -266,8 +277,49 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			}
 			if (broke) continue;
 			else{
+				/* Country is not given */
 				if (args[3] == NULL){
+					char *virusName = args[0];
+					date begin_date = create_date(args[1]);
+					date end_date = create_date(args[2]);
 
+					virus v = HTSearch(*viruses, virusName, compare_virusName);
+
+					List head = get_bottom_level(get_vaccinated_persons(v));
+					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+						vaccinated vaccinated_person = list_node_item(head, node);
+						
+						if (date_between(get_vaccinated_date(vaccinated_person), begin_date, end_date)){
+							increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
+						}
+					}
+					
+					HTVisit(*countries, populationStatus, 0);
+				}
+				else{
+					char *country_name = args[0];
+					char *virusName = args[1];
+					date begin_date = create_date(args[2]);
+					date end_date = create_date(args[3]);
+
+					virus v = HTSearch(*viruses, virusName, compare_virusName);
+					country c = NULL;
+
+					List head = get_bottom_level(get_vaccinated_persons(v));
+					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+						vaccinated vaccinated_person = list_node_item(head, node);
+						c = get_country(get_citizen(vaccinated_person));
+						if (compare_countries(country_name, c) && date_between(get_vaccinated_date(vaccinated_person), begin_date, end_date)){
+							increase_vaccinated_persons(c);
+						}
+					}
+
+					c = HTSearch(*countries, country_name, compare_countries);
+					int vaccinated_persons = get_vaccinated_persons_num(c);
+					printf("%s %d %d%%\n", (char *)get_country_name(c), vaccinated_persons, vaccinated_persons/get_population(c));
+					reset_vaccinated_persons(c);
 				}
 			}
 		}

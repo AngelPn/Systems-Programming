@@ -9,11 +9,11 @@ struct record
     int citizenID;
     char *firstname;
     char *lastname;
-    char *country;
+    country cntry;
     int age;
 };
 
-citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, char *country, int age){
+citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, country cntry, int age){
 
     citizenRecord rec = (citizenRecord)malloc(sizeof(struct record));
     rec->citizenID = citizenID;
@@ -25,7 +25,7 @@ citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, cha
     rec->lastname = (char *)malloc(sizeof(char)*(strlen(lastname)+1));
     strcpy(rec->lastname, lastname);
 
-    rec->country = country;
+    rec->cntry = cntry;
 
     // rec->country = (char *)malloc(sizeof(char)*(strlen(country)+1));
     // strcpy(rec->country, country);
@@ -39,9 +39,13 @@ void *get_citizenID(void *rec){
     return &(crec->citizenID);
 }
 
+country get_country(citizenRecord rec){
+    return rec->cntry;
+}
+
 void print_citizen(void *rec){
     citizenRecord crec = rec;
-    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, crec->country);
+    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, get_country_name(crec->cntry));
 }
 
 int compare_citizen(void *key, void *rec){

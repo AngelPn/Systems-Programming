@@ -1,6 +1,8 @@
 #ifndef RECORD_H
 #define RECORD_H
 
+#include "country.h"
+
 /* "struct record" is incomplete struct */
 typedef struct record *citizenRecord;
 
@@ -9,6 +11,8 @@ citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, cha
 
 /* Finds the key of citizen's record and returns a pointer to it */
 void *get_citizenID(void *rec);
+
+country get_country(citizenRecord rec);
 
 /* Prints the fields of record */
 void print_citizen(void *rec);

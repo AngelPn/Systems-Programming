@@ -13,6 +13,7 @@ void destroy_sl_node(void *node);
 
 SkipList SLCreate_with_maxlevel(int max_level, float p, DestroyFunc destroy_item);
 SkipList SLCreate(float p, DestroyFunc destroy_item);
+List get_bottom_level(SkipList sl);
 void *SLSearch(SkipList sl, void *key, CompareFunc compare);
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print);
 void SLRemove(SkipList sl, void *key, CompareFunc compare);

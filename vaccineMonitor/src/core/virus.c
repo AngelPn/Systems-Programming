@@ -23,6 +23,14 @@ void *get_vaccinated_key(void *v){
     return get_citizenID(nv->item);
 }
 
+date get_vaccinated_date(vaccinated v){
+    return v->dateVaccinated;
+}
+
+citizenRecord get_citizen(vaccinated v){
+    return v->item;
+}
+
 void print_vaccinated_date(vaccinated v){
     return print_date(v->dateVaccinated);
 }
