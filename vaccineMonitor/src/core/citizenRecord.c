@@ -43,6 +43,10 @@ country get_country(citizenRecord rec){
     return rec->cntry;
 }
 
+int get_age(citizenRecord rec){
+    return rec->age;
+}
+
 void print_citizen(void *rec){
     citizenRecord crec = rec;
     printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, get_country_name(crec->cntry));

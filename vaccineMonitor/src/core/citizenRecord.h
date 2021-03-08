@@ -14,6 +14,8 @@ void *get_citizenID(void *rec);
 
 country get_country(citizenRecord rec);
 
+int get_age(citizenRecord rec);
+
 /* Prints the fields of record */
 void print_citizen(void *rec);
 

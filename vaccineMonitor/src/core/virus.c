@@ -27,6 +27,10 @@ date get_vaccinated_date(vaccinated v){
     return v->dateVaccinated;
 }
 
+int get_vaccinated_citizen_age(vaccinated v){
+    return get_age(v->item);
+}
+
 citizenRecord get_citizen(vaccinated v){
     return v->item;
 }
