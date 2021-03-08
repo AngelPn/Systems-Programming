@@ -19,7 +19,7 @@
 #define WHT   "\033[1;37m"
 #define RESET "\033[0m"
 
-/* Does proper error handling and stores variables from command prompt */
+/* Does proper argument handling and stores variables from command prompt to vars bloomsize, filepath */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 
 	for(int i = 1; i < argc; i = i + 2){
@@ -60,9 +60,10 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 }
 
 
-void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries, bool fileparse);
+void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse);
 
-void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
+/* Does file parsing and builds structs in dataStore */
+void fileParse_and_buildStructs(char *filepath, int kilobytes, dataStore *ds){
 
 	FILE *frecords;
     /* Open the file given from filepath and read it*/
@@ -85,7 +86,7 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, HashTable *citize
 		for (int i = 1; i < 8; ++i)
 			args[i] = strtok(NULL, " \n");
 
-		insertCitizen(args, kilobytes, citizens, viruses, countries, true);   
+		insertCitizen(args, kilobytes, ds, true);   
     }
 
 	free(line); free(filepath);
@@ -132,7 +133,7 @@ void popStatusByAge(void *item, int key){
 	}
 }
 
-void population_queries(char *args[5], HashTable *citizens, HashTable *viruses, HashTable *countries){
+void population_queries(char *args[5], dataStore *ds){
 	/* Country is not given */
 	if (args[3] == NULL){
 		char *virusName = args[0];
@@ -187,7 +188,7 @@ void population_queries(char *args[5], HashTable *citizens, HashTable *viruses, 
 	}
 }
 
-void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries, bool fileparse){
+void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
@@ -209,29 +210,29 @@ void insertCitizen(char *args[8], int kilobytes, HashTable *citizens, HashTable 
 		citizenRecord citizen = NULL;
 		virus v = NULL;
 		
-		/* Check if country is already in database of countries (HashTable countries) */
-		/* If not, insert country in database of countries */
-		if ((c = HTSearch(*countries, country_name, compare_countries)) == NULL ){
+		/* Check if country is already in hash table of countries */
+		/* If not, insert country in hash table of countries */
+		if ((c = HTSearch(*(ds->countries), country_name, compare_countries)) == NULL ){
 			c = create_country(country_name);
-			HTInsert(countries, c, get_country_name);
+			HTInsert(ds->countries, c, get_country_name);
 		}
 
-		/* Check if citizen is already in database of citizens (HashTable citizens) */
-		/* If not, insert citizen in database of citizens */
+		/* Check if citizen is already in hash table of citizens (HashTable citizens) */
+		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
-		if ((citizen = HTSearch(*citizens, &citizenID, compare_citizen)) == NULL){
+		if ((citizen = HTSearch(*(ds->citizens), &citizenID, compare_citizen)) == NULL){
 			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
-			HTInsert(citizens, citizen, get_citizenID);
+			HTInsert(ds->citizens, citizen, get_citizenID);
 
 			/* New citizen's record: increase the population of country */
 			increase_population(c);
 		}
 
-		/* Check if virus is already in database of viruses (HashTable viruses) */
-		/* If not, insert virus (v) in database of viruses */
-		if ((v = HTSearch(*viruses, virusName, compare_virusName)) == NULL){
+		/* Check if virus is already in hash table of viruses */
+		/* If not, insert virus (v) in hash table of viruses */
+		if ((v = HTSearch(*(ds->viruses), virusName, compare_virusName)) == NULL){
 			v = create_virus(virusName, kilobytes);
-			HTInsert(viruses, v, get_virusName);
+			HTInsert(ds->viruses, v, get_virusName);
 		}
 
 		/* If citizen is vaccinated, insert citizen to vaccinated_persons skip list*/

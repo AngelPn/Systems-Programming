@@ -3,9 +3,7 @@
 #include <string.h>
 
 #include "utils.h"
-#include "virus.h"
-#include "country.h"
-#include "citizenRecord.h"
+#include "dataStore.h"
 
 int main(int argc, char **argv){
 
@@ -15,24 +13,21 @@ int main(int argc, char **argv){
 
     //printf("%s, %d\n", filepath, bloom_size);	
 
-    HashTable citizens = HTCreate(Integer, destroy_citizen);
-    HashTable viruses = HTCreate(String, destroy_virus);
-    HashTable countries = HTCreate(String, destroy_country);
+    dataStore ds;
+    create_structs(&ds);
 
-    fileParse_and_buildStructs(filepath, bloom_size, &citizens, &viruses, &countries);
+    fileParse_and_buildStructs(filepath, bloom_size, &ds);
 
-    queries(bloom_size, &citizens, &viruses, &countries);
+    queries(bloom_size, &ds);
 
-    printf("Print hash table of citizens:\n");
-    HTPrint(citizens, print_citizen);
+    // printf("Print hash table of citizens:\n");
+    // HTPrint(citizens, print_citizen);
 
-    printf("\nPrint hash table of viruses:\n");
-    HTPrint(viruses, print_virus);
+    // printf("\nPrint hash table of viruses:\n");
+    // HTPrint(viruses, print_virus);
 
     /* Deallocate memory */
-    HTDestroy(countries);
-    HTDestroy(citizens);
-    HTDestroy(viruses); 
+    destroy_structs(&ds);
 
 	return 0;
 }
