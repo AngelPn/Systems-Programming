@@ -18,6 +18,7 @@ void *get_vaccinated_key(void *v);
 /* Returns date of vaccination */
 date get_vaccinated_date(vaccinated v);
 
+/* Returns age of vaccinated citizen */
 int get_vaccinated_citizen_age(vaccinated v);
 
 /* Returns vaccinated citizen */

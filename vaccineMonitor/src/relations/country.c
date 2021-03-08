@@ -18,7 +18,7 @@ country create_country(char *country_name){
     c->country_name = (char *)malloc(sizeof(char)*(strlen(country_name)+1));
     strcpy(c->country_name, country_name);
 
-    c->population = 1;
+    c->population = 0;
     c->popByAge = NULL;
 
     return c;
@@ -47,6 +47,7 @@ void increase_population(country c){
     (c->population)++;
 }
 
+/* If query is /populationStatus, then count the total of vaccinated persons */
 void increase_vaccinated_persons(country c){
 
     if (c->popByAge == NULL){
@@ -56,6 +57,7 @@ void increase_vaccinated_persons(country c){
     (c->popByAge[0])++;
 }
 
+/* If query is /popStatusByAge, then count vaccinated persons by age */
 void increase_popByAge(country c, int age){
 
     if (c->popByAge == NULL){

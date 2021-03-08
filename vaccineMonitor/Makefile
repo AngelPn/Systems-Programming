@@ -18,11 +18,6 @@ CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(RDIR) -I$(TDIR)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 OBJS =  $(SRC)/main.o
-# include $(MODULES)/LinkedList/make.inc
-# include $(MODULES)/SkipList/make.inc
-# include $(MODULES)/HashTable/make.inc
-# include $(MODULES)/BloomFilter/make.inc
-# include $(MODULES)/Date/make.inc
 OBJS += $(RDIR)/citizenRecord.o $(RDIR)/virus.o $(RDIR)/country.o
 OBJS += $(TDIR)/dataStore.o $(TDIR)/utils.o
 OBJS += $(MODULES)/BloomFilter/BloomFilter.o

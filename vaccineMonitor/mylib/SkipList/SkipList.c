@@ -211,13 +211,13 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
         }
 
         if (found == true){
-
+            ListNode next_node = NULL;
             for (int level = i; level >= 0; level--){
 
                 head = sl->layers[level];
 
                 sl_node = list_node_item(head, node);
-                ListNode next_node = sl_node->lower_level;
+                next_node = sl_node->lower_level;
 
                 list_remove(head, node);
 
@@ -226,6 +226,8 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
                     list_destroy(head);
                     sl->layers[level] = NULL;
                 }
+
+                node = next_node;
             }
             return;
         }

@@ -1,4 +1,5 @@
 889 John Papadopoulos Greece 52 COVID-19 YES 15-12-2020
+889 John Papadopoulos Greece 52 COVID-19 YES 28-02-2020
 889 John Papadopoulos Greece 52 H1N1 ΝΟ
 776 Maria Tortellini Italy 36 SARS-1 NO
 776 Maria Tortellini Italy 36 SARS-1 NO 27-12-2020
