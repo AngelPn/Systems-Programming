@@ -126,9 +126,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
     CompareFunc compare_function = compare_keys;
     bool found = false;
 
-    printf("\nSKIP LIST BEFORE\n");
-    SLPrint(sl, print);
-    printf("\n");
+    // printf("\nSKIP LIST BEFORE\n");
+    // SLPrint(sl, print);
+    // printf("\n");
 
     for(int i = sl->level; i >= 0; i--){
 
@@ -184,9 +184,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         }
     }
 
-    printf("\nSKIP LIST AFTER\n");
-    SLPrint(sl, print);
-    printf("\n");
+    // printf("\nSKIP LIST AFTER\n");
+    // SLPrint(sl, print);
+    // printf("\n");
 }
 
 void SLRemove(SkipList sl, void *key, CompareFunc compare){
@@ -211,13 +211,13 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
         }
 
         if (found == true){
-            ListNode next_node = NULL;
+
             for (int level = i; level >= 0; level--){
 
                 head = sl->layers[level];
 
                 sl_node = list_node_item(head, node);
-                next_node = sl_node->lower_level;
+                ListNode next_node = sl_node->lower_level;
 
                 list_remove(head, node);
 

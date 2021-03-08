@@ -12,17 +12,24 @@ CC = gcc
 EXEC = vaccineMonitor
 
 #compile options
-CFLAGS = -Wall -g -I$(RDIR) -I$(TDIR)
+CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable 
+CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(RDIR) -I$(TDIR)
+
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 OBJS =  $(SRC)/main.o
+# include $(MODULES)/LinkedList/make.inc
+# include $(MODULES)/SkipList/make.inc
+# include $(MODULES)/HashTable/make.inc
+# include $(MODULES)/BloomFilter/make.inc
+# include $(MODULES)/Date/make.inc
 OBJS += $(RDIR)/citizenRecord.o $(RDIR)/virus.o $(RDIR)/country.o
 OBJS += $(TDIR)/dataStore.o $(TDIR)/utils.o
-include $(MODULES)/LinkedList/make.inc
-include $(MODULES)/SkipList/make.inc
-include $(MODULES)/HashTable/make.inc
-include $(MODULES)/BloomFilter/make.inc
-include $(MODULES)/Date/make.inc
+OBJS += $(MODULES)/BloomFilter/BloomFilter.o
+OBJS += $(MODULES)/Date/date.o
+OBJS += $(MODULES)/HashTable/HashTable.o
+OBJS += $(MODULES)/LinkedList/List.o
+OBJS += $(MODULES)/SkipList/SkipList.o
 
 $(EXEC): clean $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC) -lm

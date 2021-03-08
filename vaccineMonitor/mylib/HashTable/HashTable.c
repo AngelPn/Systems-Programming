@@ -57,7 +57,6 @@ int Hash(HashTable ht, int keytype, void *key){/*Function that counts the index*
 
 }
 
-
 /*Function that searches the key in the hash and returns the pointer to this bucket*/
 void *HTSearch(HashTable ht, void *key, CompareFunc compare){
 
@@ -119,22 +118,6 @@ void HTInsert(HashTable *pht, void *item, GetKey key){
 		*pht = Reharshing(ht, key);
 	}
 }
-
-// void HTRemove(HashTable *phash, KeyType key){
-// 	(phash->n)--;/*Decrease the counter of entries*/
-// 	int h=Hash(phash, key);/*Find the index of key*/
-// 	LList head= *(phash->chains[h]);
-
-// 	bucket SItem=  {
-// 		.Key= malloc(sizeof(char)*(strlen(key)+1)),
-// 		.Item= 0
-// 	};
-// 	strcpy(SItem.Key,key);
-// 	LLNode S= LLFind(head, &SItem, compare_keys );
-
-// 	if(S!=NULL)
-// 		LLRemove(head, S);
-// }
 
 void HTVisit(HashTable ht, VisitFunc visit, int key){
 

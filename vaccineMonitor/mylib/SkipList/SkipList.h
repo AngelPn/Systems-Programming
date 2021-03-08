@@ -3,7 +3,7 @@
 
 #include "List.h"
 
-//"struct skiplist" and "struct skiplist_node" are incomplete structs
+/* "struct skiplist" and "struct skiplist_node" are incomplete structs */
 typedef struct skiplist *SkipList;
 typedef struct skiplist_node *SLNode;
 

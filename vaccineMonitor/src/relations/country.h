@@ -21,6 +21,8 @@ void increase_vaccinated_persons(country c);
 void increase_popByAge(country c, int age);
 void reset_vaccinated_persons(country c);
 
+void print_country(void *c);
+
 /* Compares countries */
 int compare_countries(void *key, void *b);
 

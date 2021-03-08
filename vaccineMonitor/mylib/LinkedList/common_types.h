@@ -8,8 +8,6 @@
 /* enumeration to determine the key type of hash table in mylib */
 enum key_type {String, Integer} KeyType;
 
-typedef unsigned int uint;
-
 /*pointer to function that compares 2 values a and b and returns:
   <0 if a<b
   0 if a==b

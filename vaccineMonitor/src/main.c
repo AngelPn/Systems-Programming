@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "utils.h"
 #include "dataStore.h"
@@ -20,11 +19,7 @@ int main(int argc, char **argv){
 
     queries(bloom_size, &ds);
 
-    // printf("Print hash table of citizens:\n");
-    // HTPrint(citizens, print_citizen);
-
-    // printf("\nPrint hash table of viruses:\n");
-    // HTPrint(viruses, print_virus);
+    print_ht_viruses(&ds);
 
     /* Deallocate memory */
     destroy_structs(&ds);

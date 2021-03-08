@@ -13,6 +13,10 @@ typedef struct  data_store
 
 void create_structs(dataStore *ds);
 
+void print_ht_citizens(dataStore *ds);
+void print_ht_countries(dataStore *ds);
+void print_ht_viruses(dataStore *ds);
+
 void destroy_structs(dataStore *ds);
 
 

@@ -79,6 +79,11 @@ void reset_vaccinated_persons(country c){
     free(c->popByAge);
 }
 
+void print_country(void *c){
+    country nc = c;
+    printf("%s", nc->country_name);
+}
+
 int compare_countries(void *key, void *b){
 	char *k = key;
 	country country_b = b;
