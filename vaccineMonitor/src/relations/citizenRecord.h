@@ -7,7 +7,7 @@
 typedef struct record *citizenRecord;
 
 /* Creates citizenRecord */
-citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, char *country, int age);
+citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, country cntry, int age);
 
 /* Finds the key of citizen's record and returns a pointer to it */
 void *get_citizenID(void *rec);

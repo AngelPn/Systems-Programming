@@ -16,7 +16,7 @@ CFLAGS = -Wall -g -I$(RDIR) -I$(TDIR)
 VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 OBJS =  $(SRC)/main.o
-OBJS += $(RDIR)/citizenRecord.o $(RDIR)/utils.o $(RDIR)/virus.o $(RDIR)/country.o
+OBJS += $(RDIR)/citizenRecord.o $(RDIR)/virus.o $(RDIR)/country.o
 OBJS += $(TDIR)/dataStore.o $(TDIR)/utils.o
 include $(MODULES)/LinkedList/make.inc
 include $(MODULES)/SkipList/make.inc

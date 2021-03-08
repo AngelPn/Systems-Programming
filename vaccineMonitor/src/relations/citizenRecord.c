@@ -49,7 +49,7 @@ int get_age(citizenRecord rec){
 
 void print_citizen(void *rec){
     citizenRecord crec = rec;
-    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, get_country_name(crec->cntry));
+    printf("ID: %d, Name: %s, Surname: %s, Age: %d, Country: %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, (char *)get_country_name(crec->cntry));
 }
 
 int compare_citizen(void *key, void *rec){

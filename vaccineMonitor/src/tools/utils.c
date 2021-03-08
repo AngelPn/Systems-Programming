@@ -140,7 +140,7 @@ void population_queries(char *args[5], dataStore *ds){
 		date begin_date = create_date(args[1]);
 		date end_date = create_date(args[2]);
 
-		virus v = HTSearch(*viruses, virusName, compare_virusName);
+		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
 
 		List head = get_bottom_level(get_vaccinated_persons(v));
 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
@@ -155,9 +155,9 @@ void population_queries(char *args[5], dataStore *ds){
 			}
 		}
 		if (strcmp(args[4], "/popStatusByAge") == 0)
-			HTVisit(*countries, popStatusByAge, 0);
+			HTVisit(ds->countries, popStatusByAge, 0);
 		else
-			HTVisit(*countries, populationStatus, 0);
+			HTVisit(ds->countries, populationStatus, 0);
 	}
 	else{
 		char *country_name = args[0];
@@ -165,7 +165,7 @@ void population_queries(char *args[5], dataStore *ds){
 		date begin_date = create_date(args[2]);
 		date end_date = create_date(args[3]);
 
-		virus v = HTSearch(*viruses, virusName, compare_virusName);
+		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
 		country c = NULL; country curr_c = NULL;
 
 		List head = get_bottom_level(get_vaccinated_persons(v));
@@ -212,17 +212,17 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 		
 		/* Check if country is already in hash table of countries */
 		/* If not, insert country in hash table of countries */
-		if ((c = HTSearch(*(ds->countries), country_name, compare_countries)) == NULL ){
+		if ((c = HTSearch(ds->countries, country_name, compare_countries)) == NULL ){
 			c = create_country(country_name);
-			HTInsert(ds->countries, c, get_country_name);
+			HTInsert(&(ds->countries), c, get_country_name);
 		}
 
 		/* Check if citizen is already in hash table of citizens (HashTable citizens) */
 		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
-		if ((citizen = HTSearch(*(ds->citizens), &citizenID, compare_citizen)) == NULL){
+		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
 			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
-			HTInsert(ds->citizens, citizen, get_citizenID);
+			HTInsert(&(ds->citizens), citizen, get_citizenID);
 
 			/* New citizen's record: increase the population of country */
 			increase_population(c);
@@ -230,9 +230,9 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
 		/* Check if virus is already in hash table of viruses */
 		/* If not, insert virus (v) in hash table of viruses */
-		if ((v = HTSearch(*(ds->viruses), virusName, compare_virusName)) == NULL){
+		if ((v = HTSearch(ds->viruses, virusName, compare_virusName)) == NULL){
 			v = create_virus(virusName, kilobytes);
-			HTInsert(ds->viruses, v, get_virusName);
+			HTInsert(&(ds->viruses), v, get_virusName);
 		}
 
 		/* If citizen is vaccinated, insert citizen to vaccinated_persons skip list*/
@@ -282,7 +282,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 	}
 }
 
-void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *countries){
+void queries(int kilobytes, dataStore *ds){
 
 	/* Read input from stdin */
 	char *line = NULL;
@@ -300,7 +300,7 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			char *virusName = strtok(NULL, " \n");
 
 			if (citizenID != NULL && virusName != NULL){
-				v = HTSearch(*viruses, virusName, compare_virusName);
+				v = HTSearch(ds->viruses, virusName, compare_virusName);
 				if (BloomSearch(get_filter(v), citizenID))
 					printf("MAYBE\n");
 				else printf("NOT VACCINATED\n");
@@ -324,11 +324,11 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 						GRN "\nEnter command:\n" RESET);				
 			else{
 				if (virusName != NULL){
-					v = HTSearch(*viruses, virusName, compare_virusName);
+					v = HTSearch(ds->viruses, virusName, compare_virusName);
 					vaccineStatus(v, atoi(citizenID));
 				}
 				else
-					HTVisit(*viruses, vaccineStatus, atoi(citizenID));				
+					HTVisit(ds->viruses, vaccineStatus, atoi(citizenID));				
 			}
 		}
 		else if (strcmp(query, "/populationStatus") == 0 || strcmp(query, "/popStatusByAge") == 0){
@@ -352,7 +352,7 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			}
 			if (broke) continue;
 			else{
-				population_queries(args, citizens, viruses, countries);
+				population_queries(args, ds);
 			}
 		}
 		else if (strcmp(query, "/insertCitizenRecord") == 0){
@@ -372,7 +372,7 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			}
 			if (broke) continue;
 			else
-				insertCitizen(args, kilobytes, citizens, viruses, countries, false);
+				insertCitizen(args, kilobytes, ds, false);
 
 		}
 		else if (strcmp(query, "/vaccinateNow") == 0){
@@ -396,14 +396,14 @@ void queries(int kilobytes, HashTable *citizens, HashTable *viruses, HashTable *
 			args[6] = query;
 			args[7] = NULL;
 			//printf("2 %s %s %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-			insertCitizen(args, kilobytes, citizens, viruses, countries, false);
+			insertCitizen(args, kilobytes, ds, false);
 
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
 
 			char *virusName = strtok(NULL, " \n");
 			if (virusName != NULL){
-				v = HTSearch(*viruses, virusName, compare_virusName);
+				v = HTSearch(ds->viruses, virusName, compare_virusName);
 				SLPrint(get_not_vaccinated_persons(v), print_citizen);
 			}
 			else
