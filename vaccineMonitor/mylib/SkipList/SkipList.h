@@ -17,6 +17,7 @@ List get_bottom_level(SkipList sl);
 void *SLSearch(SkipList sl, void *key, CompareFunc compare);
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print);
 void SLRemove(SkipList sl, void *key, CompareFunc compare);
+void SLPrint_BottomLevel(SkipList sl, PrintItem print);
 void SLPrint(SkipList sl, PrintItem print);
 void SLDestroy(SkipList sl);
 

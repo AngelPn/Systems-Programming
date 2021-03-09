@@ -125,12 +125,15 @@ void popStatusByAge(void *item, int key){
 
 	int *vaccinated_persons = get_popByAge(c);
 	if (vaccinated_persons != NULL){
-		printf("%s\n", (char *)get_country_name(c));
+		printf("\n%s\n", (char *)get_country_name(c));
 		printf("0-20 %d %.2f%%\n", vaccinated_persons[0], (double)vaccinated_persons[0]/(double)get_population(c)*100);
 		printf("20-40 %d %.2f%%\n", vaccinated_persons[1], (double)vaccinated_persons[1]/(double)get_population(c)*100);
 		printf("40-60 %d %.2f%%\n", vaccinated_persons[2], (double)vaccinated_persons[2]/(double)get_population(c)*100);
 		printf("60+ %d %.2f%%\n", vaccinated_persons[3], (double)vaccinated_persons[3]/(double)get_population(c)*100);
 		reset_vaccinated_persons(c);
+	}
+	else{
+		printf("\nNobody in country %s is vaccinated for this virus\n", (char *)get_country_name(c));
 	}
 }
 
@@ -178,7 +181,11 @@ void population_queries(char *args[5], dataStore *ds){
 			printf(RED "\nERROR: virusName not in database\n" RESET);
 			return;
 		}
-
+		if (HTSearch(ds->countries, country_name, compare_countries) == NULL){
+			printf(RED "\nERROR: country not in database\n" RESET);
+			return;
+		}
+		
 		country c = NULL; country curr_c = NULL;
 
 		List head = get_bottom_level(get_vaccinated_persons(v));
@@ -196,7 +203,7 @@ void population_queries(char *args[5], dataStore *ds){
 			}
 		}
 		if (c == NULL){
-			printf(RED "\nERROR: country not in database\n" RESET);
+			printf("Nobody in country %s is vaccinated for virus %s\n", country_name, virusName);
 			return;
 		}
 		if (strcmp(args[4], "/popStatusByAge") == 0)
@@ -433,7 +440,7 @@ void queries(int kilobytes, dataStore *ds){
 			char *virusName = strtok(NULL, " \n");
 			if (virusName != NULL){
 				v = HTSearch(ds->viruses, virusName, compare_virusName);
-				SLPrint(get_not_vaccinated_persons(v), print_citizen);
+				SLPrint_BottomLevel(get_not_vaccinated_persons(v), print_citizen);
 			}
 			else
 				printf(RED "\nERROR: No valid input\n" RESET

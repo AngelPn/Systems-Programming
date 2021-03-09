@@ -234,6 +234,10 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
     }      
 }
 
+void SLPrint_BottomLevel(SkipList sl, PrintItem print){ 
+    list_print(sl->layers[0], print);
+}
+
 void SLPrint(SkipList sl, PrintItem print){ 
 
     printf("LAYER 0\n");

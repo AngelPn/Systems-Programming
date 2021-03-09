@@ -79,6 +79,7 @@ void increase_popByAge(country c, int age){
 
 void reset_vaccinated_persons(country c){
     free(c->popByAge);
+    c->popByAge = NULL;
 }
 
 void print_country(void *c){
