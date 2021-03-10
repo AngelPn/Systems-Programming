@@ -31,6 +31,9 @@ $(EXEC): clean $(OBJS)
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(ODIR)
 
+valgrind:
+	valgrind $(VALFLAGS) ./$(EXEC)
+
 # delete executable & object files
 clean:
 	rm -f $(EXEC)

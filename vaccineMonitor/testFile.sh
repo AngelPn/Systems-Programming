@@ -8,10 +8,13 @@ if [ "$#" -ne 4 ]; then
 fi
 
 # Keep arguments
-virusesFile=tests/$1
-countriesFile=tests/$2
+virusesFile=$1
+countriesFile=$2
 numLines=$3
 duplicatesAllowed=$4
+
+# Go to tests directory
+cd tests
 
 # Check if virusesFile and countriesFile exists
 # and if the two numbers given are greater than 0
@@ -26,6 +29,22 @@ fi
 # Create arrays with the viruses and countries
 viruses+=($(cat ${virusesFile}))
 countries+=($(cat ${countriesFile}))
+
+# Create array of IDs
+# If duplicates are not allowed, generate unique IDs
+if [ ${duplicatesAllowed} -eq "0" ]; then
+    ids=($(shuf -i 1-9999 -n $numLines))
+else
+    duplicateID=$((RANDOM % 9999 + 1))
+    for ((i = 0; i < numLines; i++)); do
+        if [ $((RANDOM % 2)) -eq "0" ]; then
+            ids[i]=$((RANDOM % 9999 + 1))
+            duplicateID=${ids[i]}
+        else
+            ids[i]=$duplicateID
+        fi
+    done
+fi
 
 # Return random string of letters of length given in argument
 function rand-str() {
@@ -42,26 +61,12 @@ function yes-no() {
     fi
 }
 
-# Go to test directory
-cd tests
-
 # Create inputFiles
 touch inputFiles.txt
 
-# For the number of lines
-for ((i = 0; i < numLines; i++)); do
-    # Create citizen's record
-    id=$((RANDOM % 9999 + 1))
-    firstname=$(rand-str $((RANDOM % 12 + 3)))
-    lastname=$(rand-str $((RANDOM % 12 + 3)))
-
-    index_country=$((RANDOM % ${#countries[@]}))
-    country=${countries[index_country]}
-
-    age=$((RANDOM % 120 + 1))
-
+function write-in-File(){
     index_virus=$((RANDOM % ${#viruses[@]}))
-    virus=${countries[index-virus]}
+    virus=${viruses[index_virus]}
 
     vaccinated=$(yes-no $((RANDOM % 2)))
 
@@ -71,10 +76,32 @@ for ((i = 0; i < numLines; i++)); do
         mm=$((RANDOM % 12 + 1))
         yyyy=$((RANDOM % 4 + 2018))
         date=$dd-$mm-$yyyy
-        echo $id $firstname $lastname $country $age $vaccinated $date >> inputFiles.txt
+        echo $1 $virus $vaccinated $date >> inputFiles.txt
     else
-        echo $id $firstname $lastname $country $age $vaccinated >> inputFiles.txt
+        echo $1 $virus $vaccinated >> inputFiles.txt
     fi
+}
+
+# For the number of lines
+for ((i=0; i<numLines; i++)); do
+    # Create citizen's record
+    id=${ids[i]}
+    firstname=$(rand-str $((RANDOM % 12 + 3)))
+    lastname=$(rand-str $((RANDOM % 12 + 3)))
+
+    index_country=$((RANDOM % ${#countries[@]}))
+    country=${countries[index_country]}
+
+    age=$((RANDOM % 120 + 1))
+
+    write-in-File "$id $firstname $lastname $country $age"
+
+    # For every time this citizen is duplicated, write in file
+    while [ $(( $i + 1 )) -le ${numLines} -a "$id" = "${ids[i+1]}" ]; do
+        write-in-File "$id $firstname $lastname $country $age"
+        i=$(( $i + 1 ))
+    done
+
 done
 
 cd ../
