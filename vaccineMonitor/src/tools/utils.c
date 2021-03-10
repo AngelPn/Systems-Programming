@@ -26,7 +26,7 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 		
 		if(strcmp(argv[i],"-c") == 0){
 			if(i+1 < argc){
-                char filecat[50] = "test/";
+                char filecat[50] = "tests/";
                 strcat(filecat, argv[i+1]);
                 strcat(filecat, ".txt");
                 *filepath = (char *)malloc(sizeof(char)*(strlen(filecat)+1));
