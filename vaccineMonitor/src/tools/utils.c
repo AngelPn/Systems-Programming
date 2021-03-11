@@ -139,7 +139,44 @@ void popStatusByAge(void *item, int key){
 
 void population_queries(char *args[5], dataStore *ds){
 
+	virus v = NULL;
+	country c = NULL;
 	date start_date = NULL, end_date = NULL;
+	char *virusName = NULL, *country_name = NULL;
+
+	if ((v = HTSearch(ds->viruses, args[0], compare_virusName)) != NULL){
+
+		virusName = args[0];
+
+		if ((start_date = create_date(args[1])) != NULL){
+			if((end_date = create_date(args[2])) == NULL){
+				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
+				return;
+			}
+		}
+		List head = get_bottom_level(get_vaccinated_persons(v));
+		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+			vaccinated vaccinated_person = list_node_item(head, node);
+			
+			if (date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
+				if (strcmp(args[4], "/popStatusByAge") == 0)
+					increase_popByAge(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
+				else
+					increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
+			}
+		}
+		if (strcmp(args[4], "/popStatusByAge") == 0)
+			HTVisit(ds->countries, popStatusByAge, 0);
+		else
+			HTVisit(ds->countries, populationStatus, 0);		
+	}
+		
+	if ((c = HTSearch(ds->countries, args[0], compare_countries)) != NULL){
+		country_name = args[0];
+	}
+
+	
 
 	/* Country is not given */
 	if (args[3] == NULL){
@@ -384,7 +421,7 @@ void queries(int kilobytes, dataStore *ds){
 				args[i] = strtok(NULL, " \n");
 			}
 			args[4] = query;
-			
+
 			printf("args: %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4]);
 			population_queries(args, ds);
 		}

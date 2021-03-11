@@ -17,6 +17,8 @@ date create_date(char *str){
 
   date d = (date)malloc(sizeof(struct date_struct));
 
+  if (str == NULL) return NULL;
+
   char *buf = strdup(str);
 
   /* Make sure given str is in right format */
@@ -85,8 +87,14 @@ int compare_dates(void *a, void *b){
   return 0;
 }
 
-bool date_between(date curr_date, date begin_date, date end_date){
-  if (compare_dates(curr_date, begin_date) >= 0 && compare_dates(end_date, curr_date) >= 0)
+bool date_between(date curr_date, date start_date, date end_date){
+
+  if (start_date == NULL || end_date == NULL) /* No date interval has been set, return true*/
     return true;
-  else return false;
+
+  else if (compare_dates(curr_date, start_date) >= 0 && compare_dates(end_date, curr_date) >= 0)
+    return true;
+
+  else
+    return false;
 }
