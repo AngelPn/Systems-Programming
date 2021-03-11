@@ -7,12 +7,6 @@
 typedef struct skiplist *SkipList;
 typedef struct skiplist_node *SLNode;
 
-
-// SLNode create_sl_node(void *key, ListNode lower_level);
-// void print_sl_node(SLNode node, PrintItem print);
-// void destroy_sl_node(void *node);
-
-
 /* Creates and returns a new Skip List. 
     If destroy_item!=NULL, the destroy_item(item) is called every time an item is removed */
 SkipList SLCreate_with_maxlevel(int max_level, float p, DestroyFunc destroy_item);

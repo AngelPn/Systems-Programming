@@ -6,18 +6,23 @@
 
 #include "BloomFilter.h"
 
-#define K 16
+#define K 16 /* K is the number of hash functions */
 
-/* Macro to set the nth bit of the filter where n is the hash */
+/* Macro to set the nth bit of the filter where n is the index of hash function */
+/* n/8: array index */
+/* n%8: bit position in array[n/8] */
+/* (1 << (n % 8)): shift n positions (000..0010...00) */
+/* array[i] | flag: set the bit at the nth position in array[i] */
 #define SetBit(array, n) (array[n/8] |= (1 << (n % 8)))
 
 /* Macro to test the bit at the nth position in array[i] */
+/* array[i] & flag: test the bit at the nth position in array[i] */
 #define TestBit(array, n) (array[n/8] & (1 << (n % 8)))
 
 struct bloom_filter
 {
-    uint8_t *array;
-    size_t size;
+    uint8_t *array; /* array of unsigned integer type with width of exactly 8 bits (1 byte) */
+    size_t size;    /* the size of bloom filter in bytes */
 };
 
 BloomFilter BloomCreate(size_t kilobytes){
@@ -33,7 +38,7 @@ BloomFilter BloomCreate(size_t kilobytes){
 unsigned long hash_i(unsigned char *str, unsigned int i);
 
 void BloomInsert(BloomFilter bf, void *item){
-
+    /* Set bit for every index that is returned by hash function */
     for (int i = 0; i < K; i++){
         unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
         SetBit(bf->array, hash);
@@ -41,9 +46,10 @@ void BloomInsert(BloomFilter bf, void *item){
 }
 
 bool BloomSearch(BloomFilter bf, void *item){
-
+    /* For every index returned by hash function */
     for (int i = 0; i < K; i++){
         unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
+        /* If at least one of index's bit is 0, item is not in bloom filter, return false */
         if (!TestBit(bf->array, hash))
             return false;
     }
