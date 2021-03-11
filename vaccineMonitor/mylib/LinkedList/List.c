@@ -21,12 +21,15 @@ struct list_node
 
 List list_create(DestroyFunc destroy_item){
 
-	List list = malloc(sizeof(struct list));
-	list->length = 0;
-	list->destroy_item = destroy_item;
+	List list = (List)malloc(sizeof(struct list));
+
 	list->dummy = malloc(sizeof(struct list_node));
 	list->dummy->next = NULL;
 	list->last = list->dummy;
+
+	list->length = 0;
+	list->destroy_item = destroy_item;	
+
 	return list;
 }
 
@@ -66,7 +69,7 @@ void list_remove_next(List list, ListNode node){
 		node = list->dummy;
 
 	ListNode removed = node->next;
-	assert(removed != NULL); // LCOV_EXCL_LINE
+	assert(removed != NULL);
 
 	if (list->destroy_item != NULL)
 		list->destroy_item(removed->item);
@@ -74,29 +77,28 @@ void list_remove_next(List list, ListNode node){
 	node->next = removed->next;
 	free(removed);
 
-	list->length--;
+	(list->length)--;
 	if (list->last == removed)
 		list->last = node;
 }
 
 void list_remove(List list, ListNode node){
 	ListNode prev_node = list->dummy;
-	for (ListNode temp = list_first(list); temp != NULL; temp = list_next(list, temp))
-	{
-		if (temp == node)
-		{
+
+	for (ListNode curr_node = list_first(list); curr_node != NULL; curr_node = list_next(list, curr_node)){
+		if (curr_node == node){
 			list_remove_next(list, prev_node);
 			return;
 		}
-		prev_node = temp;
+		prev_node = curr_node;
 	}
 }
 
 ListNode list_find_node(List list, void *item, CompareFunc compare){
 	for (ListNode node = list->dummy->next; node != NULL; node = node->next)
 		if (compare(item, node->item) == 0)
-			return node; // found
-	return NULL;		 //not found
+			return node;
+	return NULL; /* return NULL if not found */
 }
 
 void *list_find(List list, void *item, CompareFunc compare){
@@ -104,25 +106,28 @@ void *list_find(List list, void *item, CompareFunc compare){
 	return node == NULL ? NULL : node->item;
 }
 
-/* Fincds the right order to place key */
 void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, bool *found){
 
-	ListNode begin_node;
+	/* Begin searching from start_node */
+	ListNode start_node;
 	if (node == NULL)
-		begin_node = list->dummy->next;
+		start_node = list->dummy->next;
 	else
-		begin_node = node;
+		start_node = node;
 
-	for (ListNode node = begin_node; node != NULL; node = node->next){
+	for (ListNode node = start_node; node != NULL; node = node->next){
 
+		/* Compare given key with node's item */
 		int compared = compare(key, node->item);
+
 		if (compared == 0){
-			*found = true;
+			*found = true; /* this given key is already in list, return node */
 			return node;
 		}
 		else if (compared < 0)
-			return NULL;
+			return NULL; /* the given key has the smallest value from items in list, return NULL */
 		else{
+			/* Return node that key(node) < given key < key(next_node) */
 			ListNode next_node = node->next;
 			if (next_node != NULL){
 				if (compare(key, node->item) > 0 && compare(key, next_node->item) < 0)
@@ -141,16 +146,13 @@ void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, 
 	return NULL;
 }
 
-DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item){
-	DestroyFunc old = list->destroy_item;
+void list_set_destroy_item(List list, DestroyFunc destroy_item){
 	list->destroy_item = destroy_item;
-	return old;
 }
 
 void list_destroy(List list){
 	ListNode node = list->dummy;
-	while (node != NULL)
-	{
+	while (node != NULL){
 		ListNode next = node->next;
 
 		if (node != list->dummy && list->destroy_item != NULL)

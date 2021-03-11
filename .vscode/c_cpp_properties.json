@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/vaccineMonitor/mylib/BloomFilter"
+                "${workspaceFolder}/vaccineMonitor/mylib/BloomFilter",
+                "${workspaceFolder}/vaccineMonitor/mylib/Date"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

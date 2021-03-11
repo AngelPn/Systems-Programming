@@ -12,6 +12,7 @@ typedef struct list_node *ListNode;
     If destroy_item!=NULL, the destroy_item(item) is called every time an item is removed */
 List list_create(DestroyFunc destroy_item);
 
+/* Returns size of list */
 int list_length(List list);
 
 /* Returns the first and the last node of list or NULL if list is empty */
@@ -29,11 +30,13 @@ void list_remove(List list, ListNode node);
 ListNode list_find_node(List list, void * item, CompareFunc compare);
 void *list_find(List list, void *item, CompareFunc compare);
 
-/* Returns the first item found from compare function with item beginning from node */
+/* Returns the node to insert new node after (in ascending order) */
 void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, bool *found);
 
-DestroyFunc list_set_destroy_item(List list, DestroyFunc destroy_item);
+/* Sets or changes the destroy item */
+void list_set_destroy_item(List list, DestroyFunc destroy_item)
 
+/* Destroys list */
 void list_destroy(List list);
 
 /* Returns the node after the ListNode node or NULL if the node was the last */

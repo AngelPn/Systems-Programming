@@ -8,18 +8,20 @@
 
 struct skiplist
 {
-    int max_level; /* Maximum level for this skip list */
-    float p; /* P is the fraction of the nodes with level i pointers also having level i+1 pointers */
-    int level; /* Current level of skip list */
-    List *layers; /*A Skip List of pointers to untyped linked list*/
+    int max_level;  /* Maximum level for skip list */
+    float p;        /* P is the fraction of the nodes with level i pointers also having level i+1 pointers */
+    int level;      /* Current number of levels in skip list */
+    List *layers;   /*Skip List is array pointers to untyped linked list*/
 };
 
+/* Layer i (i > 0) has skiplist_node for item */
 struct skiplist_node
 {
     int key;
     ListNode lower_level;
 };
 
+/* Creates skip list's node for Layer i (i > 0) */
 SLNode create_sl_node(void *key, ListNode lower_level){
     SLNode new = (SLNode)malloc(sizeof(struct skiplist_node));
 
@@ -29,15 +31,28 @@ SLNode create_sl_node(void *key, ListNode lower_level){
     return new;
 }
 
+/* Prints key of skip list's node */
 void print_sl_node_key(void *node){
     SLNode sl_node = node;
     printf("%d\n", sl_node->key);
 }
 
+/* Destroys skiplist_node */
 void destroy_sl_node(void *node){
     SLNode sl_node = node;
     free(sl_node);
 }
+
+int compare_keys(void *key, void *sl_node){
+    int k = *(int *)key;
+    SLNode node = sl_node;
+
+    if (node->key == k) return 0;
+    else if (node->key > k) return -1;
+    else return 1;
+}
+
+/*-----------------------------------------------------------------------------*/
 
 SkipList SLCreate_with_maxlevel(int max_level, float p, DestroyFunc destroy_item){
 
@@ -68,15 +83,6 @@ SkipList SLCreate(float p, DestroyFunc destroy_item){
 
 List get_bottom_level(SkipList sl){
     return sl->layers[0];
-}
-
-int compare_keys(void *key, void *sl_node){
-    int k = *(int *)key;
-    SLNode node = sl_node;
-
-    if (node->key == k) return 0;
-    else if (node->key > k) return -1;
-    else return 1;
 }
 
 void *SLSearch(SkipList sl, void *key, CompareFunc compare){
@@ -114,7 +120,7 @@ double my_log(double x, int base) {
     return log(x) / log(base); 
 }
 
-void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print){
+void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
 
     /* Find the path */
     ListNode *path = (ListNode *)malloc(sizeof(ListNode)*(sl->level + 2));
@@ -125,10 +131,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
     List head = NULL;
     CompareFunc compare_function = compare_keys;
     bool found = false;
-
-    // printf("\nSKIP LIST BEFORE\n");
-    // SLPrint(sl, print);
-    // printf("\n");
 
     for(int i = sl->level; i >= 0; i--){
 
@@ -183,10 +185,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
             }
         }
     }
-
-    // printf("\nSKIP LIST AFTER\n");
-    // SLPrint(sl, print);
-    // printf("\n");
 }
 
 void SLRemove(SkipList sl, void *key, CompareFunc compare){

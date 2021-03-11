@@ -2,11 +2,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <stdbool.h> 
 #include <stdio.h>
-
-/* enumeration to determine the key type of hash table in mylib */
-enum key_type {String, Integer} KeyType;
 
 /*pointer to function that compares 2 values a and b and returns:
   <0 if a<b
