@@ -7,8 +7,7 @@
 struct  country_struct
 {
     char *country_name;
-    int population;
-    int *popByAge;
+    int *popQuery;      /* used for population queries */
 };
 
 country create_country(char *country_name){
@@ -18,8 +17,7 @@ country create_country(char *country_name){
     c->country_name = (char *)malloc(sizeof(char)*(strlen(country_name)+1));
     strcpy(c->country_name, country_name);
 
-    c->population = 0;
-    c->popByAge = NULL;
+    c->popQuery = NULL;
 
     return c;
 }
@@ -29,57 +27,83 @@ void *get_country_name(void *c){
     return nc->country_name;
 }
 
-int get_population(country c){
-    return c->population;
-}
-
 int get_vaccinated_persons_num(country c){
-    if (c->popByAge != NULL)
-        return c->popByAge[0];
+    if (c->popQuery != NULL)
+        return c->popQuery[0];
     else return 0;
 }
 
-int *get_popByAge(country c){
-    return c->popByAge;
+int *get_popQueries(country c){
+    return c->popQuery;
 }
 
-void increase_population(country c){
-    (c->population)++;
-}
-
-/* If query is /populationStatus, then count the total of vaccinated persons */
+/*  If query is /populationStatus, 
+    then popQuery[0] keeps the number of vaccinated persons for certain virus
+    and popQuery[1] keeps the number of not vaccinated persons for the same virus */
 void increase_vaccinated_persons(country c){
 
-    if (c->popByAge == NULL){
-        c->popByAge = (int *)malloc(sizeof(int)*1);
-        c->popByAge[0] = 0;
+    if (c->popQuery == NULL){
+        c->popQuery = (int *)malloc(sizeof(int)*2);
+        c->popQuery[0] = 0;
+        c->popQuery[1] = 0;
     }      
-    (c->popByAge[0])++;
+    (c->popQuery[0])++;
 }
 
-/* If query is /popStatusByAge, then count vaccinated persons by age */
-void increase_popByAge(country c, int age){
+void increase_not_vaccinated_persons(country c){
 
-    if (c->popByAge == NULL){
-        c->popByAge = (int *)malloc(sizeof(int)*4);
+    if (c->popQuery == NULL){
+        c->popQuery = (int *)malloc(sizeof(int)*2);
+        c->popQuery[0] = 0;
+        c->popQuery[1] = 0;
+    }      
+    (c->popQuery[1])++;
+}
 
-        for (int i = 0; i < 4; i++)
-            c->popByAge[i] = 0;
+/*  If query is /popStatusByAge, 
+    then popQuery[0-4] keeps the number of vaccinated persons by age for certain virus
+    and popQuery[4-7] keeps the number of not vaccinated persons by age for the same virus */
+void increase_popByAge_vaccinated(country c, int age){
+
+    if (c->popQuery == NULL){
+        c->popQuery = (int *)malloc(sizeof(int)*8);
+
+        for (int i = 0; i < 8; i++)
+            c->popQuery[i] = 0;
     }
 
     if (age < 20)
-        (c->popByAge[0])++;
+        (c->popQuery[0])++;
     else if (age >= 20 && age < 40)
-        (c->popByAge[1])++;
+        (c->popQuery[1])++;
     else if (age >= 40 && age < 60)
-        (c->popByAge[2])++;
+        (c->popQuery[2])++;
     else
-        (c->popByAge[3])++;
+        (c->popQuery[3])++;
 }
 
-void reset_vaccinated_persons(country c){
-    free(c->popByAge);
-    c->popByAge = NULL;
+void increase_popByAge_not_vaccinated(country c, int age){
+
+    if (c->popQuery == NULL){
+        c->popQuery = (int *)malloc(sizeof(int)*8);
+
+        for (int i = 0; i < 8; i++)
+            c->popQuery[i] = 0;
+    }
+
+    if (age < 20)
+        (c->popQuery[4])++;
+    else if (age >= 20 && age < 40)
+        (c->popQuery[5])++;
+    else if (age >= 40 && age < 60)
+        (c->popQuery[6])++;
+    else
+        (c->popQuery[7])++;
+}
+
+void reset_popQueries(country c){
+    free(c->popQuery);
+    c->popQuery = NULL;
 }
 
 void print_country(void *c){

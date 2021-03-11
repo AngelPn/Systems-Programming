@@ -139,12 +139,12 @@ void popStatusByAge(void *item, int key){
 
 void population_queries(char *args[5], dataStore *ds){
 
-	date begin_date = NULL, end_date = NULL;
+	date start_date = NULL, end_date = NULL;
 
 	/* Country is not given */
 	if (args[3] == NULL){
 		char *virusName = args[0];
-		begin_date = create_date(args[1]);
+		start_date = create_date(args[1]);
 		end_date = create_date(args[2]);
 
 		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
@@ -158,7 +158,7 @@ void population_queries(char *args[5], dataStore *ds){
 
 			vaccinated vaccinated_person = list_node_item(head, node);
 			
-			if (date_between(get_vaccinated_date(vaccinated_person), begin_date, end_date)){
+			if (date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
 				if (strcmp(args[4], "/popStatusByAge") == 0)
 					increase_popByAge(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
 				else
@@ -173,7 +173,7 @@ void population_queries(char *args[5], dataStore *ds){
 	else{
 		char *country_name = args[0];
 		char *virusName = args[1];
-		begin_date = create_date(args[2]);
+		start_date = create_date(args[2]);
 		end_date = create_date(args[3]);
 
 		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
@@ -194,7 +194,7 @@ void population_queries(char *args[5], dataStore *ds){
 			vaccinated vaccinated_person = list_node_item(head, node);
 			curr_c = get_country(get_citizen(vaccinated_person));
 
-			if (!compare_countries(country_name, curr_c) && date_between(get_vaccinated_date(vaccinated_person), begin_date, end_date)){
+			if (!compare_countries(country_name, curr_c) && date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
 				c = curr_c;
 				if (strcmp(args[4], "/popStatusByAge") == 0)
 					increase_popByAge(c, get_vaccinated_citizen_age(vaccinated_person));
@@ -211,7 +211,7 @@ void population_queries(char *args[5], dataStore *ds){
 		else populationStatus(c, 0);
 	}
 
-	free(begin_date); free(end_date);
+	free(start_date); free(end_date);
 }
 
 void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
@@ -231,19 +231,18 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 		return;
 	}
 	else{
-
 		country c = NULL;
 		citizenRecord citizen = NULL;
 		virus v = NULL;
 		
 		/* Check if country is already in hash table of countries */
-		/* If not, insert country in hash table of countries */
+		/* If not, insert country (c) in hash table of countries */
 		if ((c = HTSearch(ds->countries, country_name, compare_countries)) == NULL ){
 			c = create_country(country_name);
 			HTInsert(&(ds->countries), c, get_country_name);
 		}
 
-		/* Check if citizen is already in hash table of citizens (HashTable citizens) */
+		/* Check if citizen is already in hash table of citizens */
 		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
 		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
@@ -261,7 +260,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 			HTInsert(&(ds->viruses), v, get_virusName);
 		}
 
-		/* If citizen is vaccinated, insert citizen to vaccinated_persons skip list*/
+		/* If citizen is vaccinated, insert citizen to vaccinated_persons skip list and bloom filter */
 		if (strcmp(check_vaccinated, "YES") == 0 || strcmp(check_vaccinated, "/vaccinateNow") == 0){
 
 			vaccinated vaccinated_citizen = NULL;
@@ -279,13 +278,12 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
 					/* If process is file parsing, then this record is considered inconsistent */
 					if (fileparse){
-						printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+						printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, check_vaccinated, str_date);
 						return;
 					}
 					/* If process is queries, then remove citizen from not_vaccinated persons skip list */
-					else{
+					else
 						SLRemove(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
-					}
 				}
 				date dateVaccinated = NULL;
 
@@ -296,15 +294,19 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 				else
 					dateVaccinated = current_date();
 
+				if (dateVaccinated == NULL){
+					printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT" RESET);
+					return;
+				}
+
 				vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
-				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
+				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated);
 				BloomInsert(get_filter(v), id);
 			}
 		}
 		/* If citizen is not vaccinated, insert citizen to not_vaccinated_persons skip list*/
-		else{
-			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);
-		}
+		else
+			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen);
 	}
 }
 
@@ -366,26 +368,23 @@ void queries(int kilobytes, dataStore *ds){
 		else if (strcmp(query, "/populationStatus") == 0 || strcmp(query, "/popStatusByAge") == 0){
 
 			char *args[5];
-			args[4] = query;
-			for (int i = 0; i < 4; i++){
+			
+			if ((args[0] = strtok(NULL, " \n")) == NULL){
+				printf( RED "\nERROR: No valid input\n" RESET
+						YEL "Input format for this command: " RESET);
+				if (strcmp(query, "/populationStatus") == 0)
+					printf("/populationStatus");
+				else
+					printf("/popStatusByAge");
+				printf(" [country] virusName [date1 date2]\n");
+				return;		
+			}
+			
+			for (int i = 1; i < 4; i++){
 				args[i] = strtok(NULL, " \n");
-
-				if (args[i] == NULL && i < 3){
-					printf( RED "\nERROR: No valid input\n" RESET
-							YEL "Input format for this command: " RESET);
-					if (strcmp(query, "/populationStatus") == 0)
-						printf("/populationStatus");
-					else
-						printf("/popStatusByAge");
-					printf(" [country] virusName date1 date2\n");
-					printf(GRN "\nEnter command:\n" RESET);
-					broke = true;
-				}
 			}
-			if (broke){
-				broke = false;
-				continue;
-			}
+			args[4] = query;
+			
 			printf("args: %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4]);
 			population_queries(args, ds);
 		}
@@ -457,8 +456,8 @@ void queries(int kilobytes, dataStore *ds){
 				YEL "Input format for every command:\n" RESET
 				"/vaccineStatusBloom citizenID virusName\n"
 				"/vaccineStatus citizenID [virusName]\n"
-				"/populationStatus [country] virusName date1 date2\n"
-				"/popStatusByAge [country] virusName date1 date2\n"
+				"/populationStatus [country] virusName [date1 date2]\n"
+				"/popStatusByAge [country] virusName [date1 date2]\n"
 				"/insertCitizenRecord citizenID firstName lastName country age virusName YES/NO date\n"
 				"/vaccinateNow citizenID firstName lastName country age virusName\n"
 				"/list-nonVaccinated-Persons virusName\n"

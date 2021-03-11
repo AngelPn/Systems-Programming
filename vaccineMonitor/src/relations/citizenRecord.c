@@ -50,9 +50,7 @@ void print_citizen(void *rec){
 
 int compare_citizen(void *key, void *rec){
     int k = *(int *)key;
-    //printf("key: %d\n", k);
     citizenRecord crec = rec;
-    //printf("citizenID: %d\n", crec->citizenID);
 
     if (crec->citizenID == k) return 0;
     else if (crec->citizenID > k) return -1;

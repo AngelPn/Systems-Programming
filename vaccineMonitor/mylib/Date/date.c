@@ -18,11 +18,20 @@ date create_date(char *str){
   date d = (date)malloc(sizeof(struct date_struct));
 
   char *buf = strdup(str);
-  char *token = strtok(buf, "-");
 
+  /* Make sure given str is in right format */
+  char *token = strtok(buf, "-");
+  if (token == NULL) return NULL;
   d->day = atoi(token);
-  d->month = atoi(strtok(NULL, "-"));
-  d->year  = atoi(strtok(NULL, "-"));
+  if (d->day <= 0 || d->day >= 32 ) return NULL;
+  
+  if ((token = strtok(NULL, "-")) == NULL) return NULL;
+  d->month = atoi(token);
+  if (d->month <= 0 || d->month >= 13 ) return NULL;
+
+  if ((token = strtok(NULL, "-")) == NULL) return NULL;
+  d->year  = atoi(token);
+  if (d->year <= 1900) return NULL;
 
   free(buf);
 

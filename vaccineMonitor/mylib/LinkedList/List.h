@@ -34,7 +34,7 @@ void *list_find(List list, void *item, CompareFunc compare);
 void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, bool *found);
 
 /* Sets or changes the destroy item */
-void list_set_destroy_item(List list, DestroyFunc destroy_item)
+void list_set_destroy_item(List list, DestroyFunc destroy_item);
 
 /* Destroys list */
 void list_destroy(List list);
