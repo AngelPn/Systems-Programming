@@ -20,8 +20,9 @@ void increase_not_vaccinated_persons(country c);
 void increase_popByAge_vaccinated(country c, int age);
 void increase_popByAge_not_vaccinated(country c, int age);
 
-/* Reset popQueries to use for another virus */
-void reset_popQueries(country c);
+/* Prints data for population queries */
+void populationStatus(void *item, int key);
+void popStatusByAge(void *item, int key);
 
 /* Print the name of the country */
 void print_country(void *c);

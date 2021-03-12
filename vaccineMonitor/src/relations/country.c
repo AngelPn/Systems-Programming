@@ -101,9 +101,37 @@ void increase_popByAge_not_vaccinated(country c, int age){
         (c->popQuery[7])++;
 }
 
+/* Reset popQueries to use for another virus */
 void reset_popQueries(country c){
     free(c->popQuery);
     c->popQuery = NULL;
+}
+
+void populationStatus(void *item, int key){
+
+	country c = item;
+
+	if (c->popQuery != NULL){
+		printf("%s %d %.2f%%\n", c->country_name, c->popQuery[0], (double)c->popQuery[0]/(double)(c->popQuery[0]+c->popQuery[1])*100);
+		reset_popQueries(c);
+	}
+}
+
+void popStatusByAge(void *item, int key){
+
+	country c = item;
+
+	if (c->popQuery != NULL){
+		printf("\n%s\n", c->country_name);
+		printf("0-20 %d %.2f%%\n", c->popQuery[0], (double)c->popQuery[0]/(double)(c->popQuery[0]+c->popQuery[4])*100);
+		printf("20-40 %d %.2f%%\n", c->popQuery[1], (double)c->popQuery[1]/(double)(c->popQuery[1]+c->popQuery[5])*100);
+		printf("40-60 %d %.2f%%\n", c->popQuery[2], (double)c->popQuery[2]/(double)(c->popQuery[2]+c->popQuery[6])*100);
+		printf("60+ %d %.2f%%\n", c->popQuery[3], (double)c->popQuery[3]/(double)(c->popQuery[3]+c->popQuery[7])*100);
+		reset_popQueries(c);
+	}
+	else{
+		printf("\nNobody in country %s is vaccinated for this virus\n", (char *)get_country_name(c));
+	}
 }
 
 void print_country(void *c){
