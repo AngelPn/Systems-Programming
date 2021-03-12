@@ -141,89 +141,68 @@ void population_queries(char *args[5], dataStore *ds){
 
 	virus v = NULL;
 	country c = NULL;
-	date start_date = NULL, end_date = NULL;
+	date date1 = NULL, date2 = NULL;
 	char *virusName = NULL, *country_name = NULL;
 
+	/* If argument 0 is virusName */
 	if ((v = HTSearch(ds->viruses, args[0], compare_virusName)) != NULL){
 
-		virusName = args[0];
-
-		if ((start_date = create_date(args[1])) != NULL){
-			if((end_date = create_date(args[2])) == NULL){
+		/* If date1 exists, make sure date2 exists too */
+		if ((date1 = create_date(args[1])) != NULL){
+			if((date2 = create_date(args[2])) == NULL){
 				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
 				return;
 			}
 		}
+		/* Take data from vaccinated_persons skip list */
 		List head = get_bottom_level(get_vaccinated_persons(v));
 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
 			vaccinated vaccinated_person = list_node_item(head, node);
 			
-			if (date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
+			if (date_between(get_vaccinated_date(vaccinated_person), date1, date2)){
 				if (strcmp(args[4], "/popStatusByAge") == 0)
-					increase_popByAge(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
+					increase_popByAge_vaccinated(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
 				else
 					increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
 			}
 		}
+		/* Take data from not_vaccinated_persons skip list */
+		head = get_bottom_level(get_not_vaccinated_persons(v));
+		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+			citizenRecord person = list_node_item(head, node);
+			
+			if (date_between(get_vaccinated_date(vaccinated_person), date1, date2)){
+				if (strcmp(args[4], "/popStatusByAge") == 0)
+					increase_popByAge_vaccinated(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
+				else
+					increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
+			}
+		}
+
 		if (strcmp(args[4], "/popStatusByAge") == 0)
 			HTVisit(ds->countries, popStatusByAge, 0);
 		else
 			HTVisit(ds->countries, populationStatus, 0);		
 	}
-		
-	if ((c = HTSearch(ds->countries, args[0], compare_countries)) != NULL){
+	/* If argument 0 is country */	
+	else if ((c = HTSearch(ds->countries, args[0], compare_countries)) != NULL){
 		country_name = args[0];
-	}
 
-	
-
-	/* Country is not given */
-	if (args[3] == NULL){
-		char *virusName = args[0];
-		start_date = create_date(args[1]);
-		end_date = create_date(args[2]);
-
-		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
-		if (v == NULL){
+		if ((v = HTSearch(ds->viruses, args[1], compare_virusName)) == NULL){
 			printf(RED "\nERROR: virusName not in database\n" RESET);
 			return;
 		}
-
-		List head = get_bottom_level(get_vaccinated_persons(v));
-		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-
-			vaccinated vaccinated_person = list_node_item(head, node);
-			
-			if (date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
-				if (strcmp(args[4], "/popStatusByAge") == 0)
-					increase_popByAge(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
-				else
-					increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
+		/* If date1 exists, make sure date2 exists too */
+		if ((date1 = create_date(args[1])) != NULL){
+			if((date2 = create_date(args[2])) == NULL){
+				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
+				return;
 			}
 		}
-		if (strcmp(args[4], "/popStatusByAge") == 0)
-			HTVisit(ds->countries, popStatusByAge, 0);
-		else
-			HTVisit(ds->countries, populationStatus, 0);
-	}
-	else{
-		char *country_name = args[0];
-		char *virusName = args[1];
-		start_date = create_date(args[2]);
-		end_date = create_date(args[3]);
 
-		virus v = HTSearch(ds->viruses, virusName, compare_virusName);
-		if (v == NULL){
-			printf(RED "\nERROR: virusName not in database\n" RESET);
-			return;
-		}
-		if (HTSearch(ds->countries, country_name, compare_countries) == NULL){
-			printf(RED "\nERROR: country not in database\n" RESET);
-			return;
-		}
-		
-		country c = NULL; country curr_c = NULL;
+		country curr_c = NULL;
 
 		List head = get_bottom_level(get_vaccinated_persons(v));
 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
@@ -231,24 +210,28 @@ void population_queries(char *args[5], dataStore *ds){
 			vaccinated vaccinated_person = list_node_item(head, node);
 			curr_c = get_country(get_citizen(vaccinated_person));
 
-			if (!compare_countries(country_name, curr_c) && date_between(get_vaccinated_date(vaccinated_person), start_date, end_date)){
-				c = curr_c;
+			if (!compare_countries(country_name, curr_c) && date_between(get_vaccinated_date(vaccinated_person), date1, date2)){
 				if (strcmp(args[4], "/popStatusByAge") == 0)
 					increase_popByAge(c, get_vaccinated_citizen_age(vaccinated_person));
 				else
 					increase_vaccinated_persons(c);
 			}
 		}
-		if (c == NULL){
+		if (curr_c == NULL){
 			printf("Nobody in country %s is vaccinated for virus %s\n", country_name, virusName);
 			return;
 		}
 		if (strcmp(args[4], "/popStatusByAge") == 0)
 			popStatusByAge(c, 0);
 		else populationStatus(c, 0);
+
+	}
+	else{
+		printf(RED "\nERROR: country not in database\n" RESET);
+		return;
 	}
 
-	free(start_date); free(end_date);
+	free(date1); free(date2);
 }
 
 void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
