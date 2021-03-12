@@ -107,35 +107,6 @@ void vaccineStatus(void *item, int citizenID){
 
 }
 
-void populationStatus(void *item, int key){
-
-	country c = item;
-
-	int vaccinated_persons = get_vaccinated_persons_num(c);
-	if (vaccinated_persons){
-		printf("population %d\n", get_population(c));
-		printf("%s %d %.2f%%\n", (char *)get_country_name(c), vaccinated_persons, (double)vaccinated_persons/(double)get_population(c)*100);
-		reset_vaccinated_persons(c);
-	}
-}
-
-void popStatusByAge(void *item, int key){
-
-	country c = item;
-
-	int *vaccinated_persons = get_popByAge(c);
-	if (vaccinated_persons != NULL){
-		printf("\n%s\n", (char *)get_country_name(c));
-		printf("0-20 %d %.2f%%\n", vaccinated_persons[0], (double)vaccinated_persons[0]/(double)get_population(c)*100);
-		printf("20-40 %d %.2f%%\n", vaccinated_persons[1], (double)vaccinated_persons[1]/(double)get_population(c)*100);
-		printf("40-60 %d %.2f%%\n", vaccinated_persons[2], (double)vaccinated_persons[2]/(double)get_population(c)*100);
-		printf("60+ %d %.2f%%\n", vaccinated_persons[3], (double)vaccinated_persons[3]/(double)get_population(c)*100);
-		reset_vaccinated_persons(c);
-	}
-	else{
-		printf("\nNobody in country %s is vaccinated for this virus\n", (char *)get_country_name(c));
-	}
-}
 
 void population_queries(char *args[5], dataStore *ds){
 
@@ -173,12 +144,11 @@ void population_queries(char *args[5], dataStore *ds){
 
 			citizenRecord person = list_node_item(head, node);
 			
-			if (date_between(get_vaccinated_date(vaccinated_person), date1, date2)){
-				if (strcmp(args[4], "/popStatusByAge") == 0)
-					increase_popByAge_vaccinated(get_country(get_citizen(vaccinated_person)), get_vaccinated_citizen_age(vaccinated_person));
-				else
-					increase_vaccinated_persons(get_country(get_citizen(vaccinated_person)));
-			}
+			if (strcmp(args[4], "/popStatusByAge") == 0)
+				increase_popByAge_not_vaccinated(get_country(person), get_age(person));
+			else
+				increase_not_vaccinated_persons(get_country(person));
+			
 		}
 
 		if (strcmp(args[4], "/popStatusByAge") == 0)
