@@ -22,39 +22,33 @@
 /* Does proper argument handling and stores variables from command prompt to vars bloomsize, filepath */
 int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 
-	for(int i = 1; i < argc; i = i + 2){
-		
-		if(strcmp(argv[i],"-c") == 0){
-			if(i+1 < argc){
-                char filecat[50] = "tests/";
-                strcat(filecat, argv[i+1]);
-                strcat(filecat, ".txt");
-                *filepath = (char *)malloc(sizeof(char)*(strlen(filecat)+1));
-				strcpy(*filepath, filecat);		
-			}
-			else{
-				printf("ERROR: Invalid use of argument\n");				
-				return 0;				
-			}		
-		}
-		else if(strcmp(argv[i], "-b") == 0){
-			if(i+1 < argc){
-			*bloomsize = atoi(argv[i+1]);
-				if(*bloomsize <= 0 ){
-					printf("ERROR: Invalid argument after -b flag. Number must be positive integer.\n");
-					return 0;
-				}			
-			}
-			else{
-				printf("ERROR: Invalid use of argument\n");				
-				return 0;				
-			}						
-		} 			
-		else{
-			printf("ERROR: Invalid use of flags, the process will terminate\n");
-			return 0;			
-		}
-		
+	if (argc != 5){
+		printf(RED "ERROR: Invalid use of arguments, the process will terminate\n" RESET);
+		return 0;			
+	}
+	
+	if (strcmp(argv[1], "-c") == 0){
+		char filecat[50] = "tests/";
+		strcat(filecat, argv[2]);
+		strcat(filecat, ".txt");
+		*filepath = (char *)malloc(sizeof(char)*(strlen(filecat)+1));
+		strcpy(*filepath, filecat);
+	}
+	else{
+		printf(RED "ERROR: Invalid use of -c flag, the process will terminate\n" RESET);				
+		return 0;				
+	}
+
+	if(strcmp(argv[3], "-b") == 0){
+		*bloomsize = atoi(argv[4]);
+		if(*bloomsize <= 0 ){
+			printf(RED "ERROR: Invalid argument after -b flag. Number must be positive integer.\n" RESET);
+			return 0;
+		}		
+	} 			
+	else{
+		printf(RED "ERROR: Invalid use of -b flag, the process will terminate\n" RESET);
+		return 0;			
 	}
     return 1;
 }
@@ -70,7 +64,7 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, dataStore *ds){
     frecords = fopen(filepath, "r");
 
     if (frecords == NULL){
-        printf("Error: fopen() failed\n");
+        printf(RED "Error: The file does not exist in tests directory\n" RESET);
         exit(EXIT_FAILURE);
     }
 
@@ -93,6 +87,7 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, dataStore *ds){
     fclose(frecords);
 }
 
+
 void vaccineStatus(void *item, int citizenID){
 
 	virus v = item;
@@ -113,7 +108,6 @@ void population_queries(char *args[5], dataStore *ds){
 	virus v = NULL;
 	country c = NULL;
 	date date1 = NULL, date2 = NULL;
-	char *virusName = NULL, *country_name = NULL;
 
 	/* If argument 0 is virusName */
 	if ((v = HTSearch(ds->viruses, args[0], compare_virusName)) != NULL){
@@ -158,7 +152,7 @@ void population_queries(char *args[5], dataStore *ds){
 	}
 	/* If argument 0 is country */	
 	else if ((c = HTSearch(ds->countries, args[0], compare_countries)) != NULL){
-		country_name = args[0];
+		char *country_name = args[0];
 
 		if ((v = HTSearch(ds->viruses, args[1], compare_virusName)) == NULL){
 			printf(RED "\nERROR: virusName not in database\n" RESET);
@@ -173,7 +167,7 @@ void population_queries(char *args[5], dataStore *ds){
 		}
 
 		country curr_c = NULL;
-
+		/* Take data from vaccinated_persons skip list */
 		List head = get_bottom_level(get_vaccinated_persons(v));
 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
@@ -182,15 +176,24 @@ void population_queries(char *args[5], dataStore *ds){
 
 			if (!compare_countries(country_name, curr_c) && date_between(get_vaccinated_date(vaccinated_person), date1, date2)){
 				if (strcmp(args[4], "/popStatusByAge") == 0)
-					increase_popByAge(c, get_vaccinated_citizen_age(vaccinated_person));
+					increase_popByAge_vaccinated(c, get_vaccinated_citizen_age(vaccinated_person));
 				else
 					increase_vaccinated_persons(c);
 			}
 		}
-		if (curr_c == NULL){
-			printf("Nobody in country %s is vaccinated for virus %s\n", country_name, virusName);
-			return;
+		/* Take data from not_vaccinated_persons skip list */
+		head = get_bottom_level(get_not_vaccinated_persons(v));
+		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+			citizenRecord person = list_node_item(head, node);
+			
+			if (strcmp(args[4], "/popStatusByAge") == 0)
+				increase_popByAge_not_vaccinated(get_country(person), get_age(person));
+			else
+				increase_not_vaccinated_persons(get_country(person));
+			
 		}
+
 		if (strcmp(args[4], "/popStatusByAge") == 0)
 			popStatusByAge(c, 0);
 		else populationStatus(c, 0);
@@ -203,6 +206,7 @@ void population_queries(char *args[5], dataStore *ds){
 
 	free(date1); free(date2);
 }
+
 
 void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
@@ -238,9 +242,6 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
 			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
 			HTInsert(&(ds->citizens), citizen, get_citizenID);
-
-			/* New citizen's record: increase the population of country */
-			increase_population(c);
 		}
 
 		/* Check if virus is already in hash table of viruses */
@@ -299,6 +300,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen);
 	}
 }
+
 
 void queries(int kilobytes, dataStore *ds){
 

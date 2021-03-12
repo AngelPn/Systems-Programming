@@ -15,8 +15,6 @@ EXEC = vaccineMonitor
 CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable 
 CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(RDIR) -I$(TDIR)
 
-VALFLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
-
 OBJS =  $(SRC)/main.o
 OBJS += $(RDIR)/citizenRecord.o $(RDIR)/virus.o $(RDIR)/country.o
 OBJS += $(TDIR)/dataStore.o $(TDIR)/utils.o
@@ -30,9 +28,6 @@ $(EXEC): clean $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC) -lm
 	mkdir -p $(ODIR)
 	mv $(OBJS) $(ODIR)
-
-valgrind:
-	valgrind $(VALFLAGS) ./$(EXEC)
 
 # delete executable & object files
 clean:

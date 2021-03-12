@@ -30,20 +30,40 @@ fi
 viruses+=($(cat ${virusesFile}))
 countries+=($(cat ${countriesFile}))
 
-# Create array of IDs
-# If duplicates are not allowed, generate unique IDs
-if [ ${duplicatesAllowed} -eq "0" ]; then
+# Create array of IDs: ID is a number from 1 to 9999
+# If duplicates are not allowed or numLines < 10000, generate unique IDs
+if [ ${duplicatesAllowed} -eq "0" -a ${numLines} -lt "10000" ]; then
     ids=($(shuf -i 1-9999 -n $numLines))
+# Else generate IDs randomly with duplicates
 else
-    duplicateID=$((RANDOM % 9999 + 1))
+    # Get shuffled IDs
+    shuf_ids=($(shuf -i 1-9999 -n 10000))
+
     for ((i = 0; i < numLines; i++)); do
-        if [ $((RANDOM % 2)) -eq "0" ]; then
-            ids[i]=$((RANDOM % 9999 + 1))
-            duplicateID=${ids[i]}
+        # x represents how many times the ID will be duplicated
+        if [ ${numLines} -gt "10000" -a ${#shuf_ids[@]} -eq "1" ]; then
+            x=$((numLines-i))
         else
-            ids[i]=$duplicateID
+            x=$((RANDOM % 10 + 1))
         fi
-    done
+        
+        for ((j = 0; j < x; j++)); do
+            ids[i]=${shuf_ids[0]}
+            i=$(( $i + 1 ))
+        done
+        # Remove first element in shuf_ids
+        shuf_ids=("${shuf_ids[@]:1}")
+    done    
+
+    # duplicateID=$((RANDOM % 9999 + 1))
+    # for ((i = 0; i < numLines; i++)); do
+    #     if [ $((RANDOM % 2)) -eq "0" ]; then
+    #         ids[i]=$((RANDOM % 9999 + 1))
+    #         duplicateID=${ids[i]}
+    #     else
+    #         ids[i]=$duplicateID
+    #     fi
+    # done
 fi
 
 # Return random string of letters of length given in argument
