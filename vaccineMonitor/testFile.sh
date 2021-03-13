@@ -37,12 +37,12 @@ if [ ${duplicatesAllowed} -eq "0" -a ${numLines} -le "10000" ]; then
 # Else generate IDs randomly with duplicates
 else
     if [ ${duplicatesAllowed} -eq "0" ]; then
-        echo "Given numLines > 10000, so duplicates will be allowed..."
+        echo "Given numLines > 10K, so duplicates will be allowed..."
     fi
     # Get shuffled IDs
-    shuf_ids=($(shuf -i 1-9999 -n 10000))
+    shuf_ids=($(shuf -i 1-9999))
 
-    for ((i = 0; i < numLines-1; )); do
+    for ((i = 0; i < numLines; )); do
         # x represents how many times the ID will be duplicated
         if [ ${numLines} -gt "10000" -a ${#shuf_ids[@]} -eq "1" ]; then
             x=$((numLines-i))
@@ -103,7 +103,7 @@ function write-in-File(){
 }
 
 # For the number of lines
-for ((i = 0; i < numLines-1; i++)); do
+for ((i = 0; i < numLines; i++)); do
     # Create citizen's record
     id=${ids[i]}
     firstname=$(rand-str $((RANDOM % 12 + 3)))

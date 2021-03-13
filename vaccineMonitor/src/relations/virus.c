@@ -41,6 +41,8 @@ void print_vaccinated_date(vaccinated v){
 
 int compare_vaccinated(void *key, void *v){
     vaccinated nv = v;
+    // printf("\n~compare_vaccinated: key = %d with\n", *(int *)key);
+    // print_citizen(nv->item);
     return compare_citizen(key, nv->item);
 }
 

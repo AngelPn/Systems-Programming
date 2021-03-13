@@ -94,7 +94,7 @@ void vaccineStatus(void *item, int citizenID){
 	printf("%s ", (char *)get_virusName(v));
 
 	vaccinated vaccinated_citizen = NULL;
-	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated)) != NULL){
 		printf("YES ");
 		print_vaccinated_date(vaccinated_citizen);
 	}
@@ -219,12 +219,13 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 	char *virusName = args[5];
 	char *check_vaccinated = args[6];
 	char *str_date = args[7];
-	printf("RECORD %s %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
+	
 	if (strcmp(check_vaccinated, "NO") == 0 && str_date != NULL){
 		printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 		return;
 	}
 	else{
+		printf("INSERT %s %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 		country c = NULL;
 		citizenRecord citizen = NULL;
 		virus v = NULL;
@@ -257,14 +258,14 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 			vaccinated vaccinated_citizen = NULL;
 
 			/* Make sure vaccinated citizen is not already in skip list */
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated)) != NULL){
 				printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
 				print_vaccinated_date(vaccinated_citizen);
 				return;
 			}
 			else{
 				/* Search first if citizen is in not_vaccinated_persons to remove it or dismiss insertion */
-				citizenRecord search_citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
+				citizenRecord search_citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen, print_citizen);
 				if (search_citizen != NULL){
 
 					/* If process is file parsing, then this record is considered inconsistent */
@@ -291,13 +292,14 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 				}
 
 				vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
-				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated);
+
+				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
 				BloomInsert(get_filter(v), id);
 			}
 		}
 		/* If citizen is not vaccinated, insert citizen to not_vaccinated_persons skip list*/
 		else
-			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen);
+			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);
 	}
 }
 
