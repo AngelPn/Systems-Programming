@@ -43,9 +43,15 @@ int get_age(citizenRecord rec){
     return rec->age;
 }
 
+bool cross_check(citizenRecord rec, char *firstname, char *lastname, country cntry, int age){
+    if (!strcmp(rec->firstname, firstname) && !strcmp(rec->lastname, lastname) && !strcmp(get_country_name(rec->cntry), get_country_name(cntry)) && rec->age == age)
+        return true;
+    else return false;
+}
+
 void print_citizen(void *rec){
     citizenRecord crec = rec;
-    printf("%d %s %s %d %s\n", crec->citizenID, crec->firstname, crec->lastname, crec->age, (char *)get_country_name(crec->cntry));
+    printf("%d %s %s %s %d\n", crec->citizenID, crec->firstname, crec->lastname, (char *)get_country_name(crec->cntry), crec->age);
 }
 
 int compare_citizen(void *key, void *rec){

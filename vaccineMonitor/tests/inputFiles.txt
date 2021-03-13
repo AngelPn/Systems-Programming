@@ -1,400 +1,1001 @@
-2960 akc bppxwepiaaud China 117 COVID-19 YES 20-06-2021
-4036 yqsddy wwy Romania 114 COVID-19 NO
-3359 eiztzkd psexicgli Greece 43 COVID-19 NO
-4995 eqbywvrzeaaidl wjmbvigiwxw Greece 119 COVID-19 NO 04-10-2019
-2886 fmfwwdeom lmjliroprd Greece 101 COVID-19 YES 01-11-2018
-8547 nddi ikn Austria 5 COVID-19 NO 06-01-2021
-6024 dvrvqncsu blrrkld Slovakia 89 COVID-19 YES 23-05-2019
-6568 pkzvceza bzeyjkl ElSalvador 109 COVID-19 YES 23-12-2018
-8776 clledwulry wycjia Argentina 10 COVID-19 YES 14-10-2018
-9818 rpve uvrapeokff Lithuania 44 COVID-19 NO 09-06-2021
-7659 hntffwo mwevnkac Germany 5 COVID-19 NO
-8971 vucueya leokyqrebdaupl Dominica 43 COVID-19 YES 06-04-2021
-1046 seovsoxwnfv geahszqwcyi Haiti 23 COVID-19 NO 04-05-2020
-9532 tfzzzj meywxuwq DominicanRepublic 87 COVID-19 NO 26-05-2018
-4189 flevjqyznlwdn qyjnjgdyul China 100 COVID-19 NO
-437 zbcqoso vqma Austria 115 COVID-19 YES 17-03-2020
-9860 bvkbeguyypmph evayqj DominicanRepublic 44 COVID-19 YES 05-04-2019
-6830 lsexoojhmk mgebracquo Romania 9 COVID-19 YES 07-07-2020
-3561 xykqp jxkowx Netherlands 24 COVID-19 YES 23-03-2019
-9877 irjd wwnyrcjqgqkpw Honduras 97 COVID-19 NO 02-03-2019
-7368 eoruwokqzhk xewmg Bolivia 81 COVID-19 NO
-5090 hmypnkvgukz odroaxmtk Portugal 2 COVID-19 YES 24-04-2020
-6638 wxrhfttsnglt avcim Canada 37 COVID-19 NO 26-07-2020
-1380 cwrqhg xyrzi Guatemala 6 COVID-19 YES 02-07-2020
-1763 jpqvxfbgchyvtg xqcttal Hungary 45 COVID-19 YES 14-07-2020
-4975 spm lfuhf China 108 COVID-19 NO 17-07-2019
-9627 xkfvxdc nmvbf ElSalvador 7 COVID-19 NO
-7608 mhdcdpv ovxfypedxdvvwk Peru 103 COVID-19 YES 14-07-2020
-1374 yscatontc rxqc Barbados 12 COVID-19 YES 10-10-2018
-5169 vfzw jevpke Jamaica 86 COVID-19 NO
-8227 rxoaxs fmfnxhkhkow Peru 31 COVID-19 NO
-1006 yrvnsdt xnawapdwffjat Cyprus 21 COVID-19 YES 17-07-2019
-7361 owfwulub lcdagjlp Peru 48 COVID-19 YES 18-07-2021
-4104 bntvxhoa jekepqlvkyoxdx Luxembourg 101 COVID-19 YES 10-05-2019
-5753 ljfcucrsknomme bzfgfusoesdzlh Hungary 3 COVID-19 YES 16-03-2019
-8621 fbyuzdarpvq skjamkwu Bulgaria 38 COVID-19 NO
-68 icsbffwvhrwtk owwx Venezuela 99 COVID-19 NO 04-07-2019
-5536 kooxechrwfho ntdxhikmkk Haiti 94 COVID-19 NO 17-04-2018
-4321 wugz wyndxqxunhz Netherlands 112 COVID-19 NO
-7647 jaxj jupvcmyv Barbados 24 COVID-19 NO 03-04-2020
-4951 epyhsasgduyfev slpfiivzclmoga Estonia 58 COVID-19 NO
-428 vmsmeti xdkffmln Portugal 109 COVID-19 YES 29-06-2021
-7597 warzzwprgecsxx rtlx Bulgaria 55 COVID-19 NO 20-10-2021
-9480 dwvsqrtrq ndptlanj China 99 COVID-19 NO
-5022 imkjlig qfvzscpzxhgju Haiti 29 COVID-19 NO
-4335 joxfqiynxqx yyekbjmcdcxntn Barbados 7 COVID-19 NO
-6943 qvnwmvoyfidzk ucr Germany 40 COVID-19 YES 21-12-2019
-5521 gmqyvtvtvhivk smpredi Brazil 30 COVID-19 NO
-7354 njilrgwbbrb bfwrlanyhev Hungary 68 COVID-19 NO 07-05-2021
-4055 zftijjgychp mzycjrbkjatsy Romania 76 COVID-19 YES 03-01-2019
-4095 oobls hfrdbzpyojjtlo Guatemala 11 COVID-19 YES 01-06-2021
-8386 nehsacwut unbpl Austria 31 COVID-19 NO 25-01-2019
-330 ltebzclyzuju lmyvdpwhncrlr Argentina 23 COVID-19 YES 14-04-2021
-945 amtxpflymg dbj Luxembourg 104 COVID-19 NO
-3043 pga hrvitbnnuud Lithuania 19 COVID-19 NO 18-09-2021
-9626 oawdchtfwsukcr nrdcecnyhf Bolivia 17 COVID-19 YES 07-07-2018
-3738 uojabutnmq iqwcsxfjrhwmk DominicanRepublic 45 COVID-19 YES 31-11-2019
-8812 zvajwepa mblumfkjaj Finland 10 COVID-19 YES 15-02-2018
-7883 emezywad uhwmx Estonia 60 COVID-19 YES 29-02-2018
-3059 wtuo kevepotmbaz Spain 47 COVID-19 NO
-9338 ldmozn jnqqshe Ireland 60 COVID-19 YES 07-11-2021
-4290 erlatjckpg evtgudxslua Belgium 9 COVID-19 YES 15-02-2021
-7833 rjejrheiw kfaprg Panama 111 COVID-19 YES 10-08-2018
-7525 szgsrbd xodjewrnlqlc Haiti 99 COVID-19 YES 04-09-2019
-698 vioilp tsqctmaqfcb USA 62 COVID-19 YES 05-09-2019
-2777 hdkteuckhdqi hevtdrkwispi Slovenia 98 COVID-19 YES 03-04-2019
-3308 mcqsfwopeol hkj Honduras 23 COVID-19 NO
-7830 hetnjtl tvtvkrroou France 98 COVID-19 YES 22-09-2021
-9286 xlecpnqrbfhsat ffuamyvm Bahamas 85 COVID-19 YES 09-05-2021
-6340 jcx fgzor Hungary 103 COVID-19 NO
-9592 bdqdbwgmqwkgi pvmwpllo Germany 46 COVID-19 NO 31-09-2018
-5981 vdldrltat vjxbbgczsgm Guatemala 4 COVID-19 YES 15-10-2019
-9152 aujzjohv dlmaydlyaiw Cyprus 27 COVID-19 YES 05-01-2018
-4640 hubfhlzi mzyzewwe Brazil 52 COVID-19 YES 10-03-2021
-2271 pzmdhweiwjjwzj wtrag Greenland 41 COVID-19 NO
-72 vchufoikv mjlykthxec Slovenia 27 COVID-19 NO 24-07-2020
-8623 vfjdyb tzhfkdk PuertoRico 34 COVID-19 YES 05-09-2019
-8029 ftozwk rbdi UK 24 COVID-19 YES 09-10-2020
-7450 usdhx kywdlecq CostaRica 15 COVID-19 NO
-8265 uuvpyschisq jvwsqqukajfcn Sweden 32 COVID-19 YES 10-06-2020
-4715 rqukck gaskb Panama 37 COVID-19 NO
-9285 zhirioxrcfwel ukexslzknxdt Italy 79 COVID-19 YES 30-08-2021
-4760 rhtwxtkvm xsahnpzzxvq China 51 COVID-19 NO 11-03-2019
-5109 qkc qdqlbdjpp Haiti 92 COVID-19 YES 01-02-2018
-7288 aotuz snq Greenland 68 COVID-19 NO 12-07-2021
-1383 lsuxhaeqikzoa rlhqjtxa Canada 83 COVID-19 YES 22-05-2021
-9440 ahyepqzvrza gdveencvypgo Belgium 7 COVID-19 NO
-5186 uvscljtcnviib blxx Dominica 73 COVID-19 YES 08-06-2019
-7804 irjjlupafenyzs hjyauditvls Greece 9 COVID-19 NO
-4517 lpandabcmnwmcl gcvhbqbfytid France 58 COVID-19 NO 15-09-2019
-8525 dbbw ciihkentgosqz Estonia 32 COVID-19 NO 08-04-2020
-4285 cdmrv uch Bulgaria 102 COVID-19 NO
-2672 iugj pmb Venezuela 85 COVID-19 YES 30-08-2021
-5012 awvs fwuvmwvxkg China 106 COVID-19 NO
-4744 kaktquwq hotihjeh Italy 95 COVID-19 NO 27-05-2021
-9914 lofv mlmbdho Grenada 53 COVID-19 YES 20-12-2021
-2312 whqnerzcsy crjz Finland 27 COVID-19 NO 07-06-2020
-7938 xevqqeotvy wcnurzer Estonia 94 COVID-19 NO
-7253 pmvmodsahd bvvbnnjqsnbnb Jamaica 40 COVID-19 NO
-2575 dotqeqwqtvd mkbvwrnyt Lithuania 32 COVID-19 NO
-915 gayxgsdyfkhcp ejeermelq Canada 42 COVID-19 NO 31-04-2020
-6970 nikrgriwxf kjeparssz Luxembourg 111 COVID-19 NO
-359 webzcov ojtowminsxwhz Colombia 27 COVID-19 YES 02-10-2020
-6641 meismnodoc rrzcjpvx Lithuania 109 COVID-19 YES 02-12-2021
-6778 bymygeojvkkjbq dcsembvwwdvuu Ireland 17 COVID-19 NO
-9364 qilcmjd wlpldaairxyp Bolivia 117 COVID-19 NO 11-09-2019
-4067 rgkbrguw khmkgpftuqw Bulgaria 47 COVID-19 YES 19-07-2019
-4902 zquyexhc yrywkvgtkuihz Ireland 47 COVID-19 YES 31-08-2018
-9487 kvl vootklsjim Barbados 68 COVID-19 YES 22-01-2018
-3268 cgevipbuxut nqemdld Jamaica 104 COVID-19 NO
-535 gftzpryd bfmvsmaqynwkc Romania 74 COVID-19 NO
-4453 cxmssedwynvq ecbayfmke CostaRica 84 COVID-19 NO 24-10-2018
-7869 fmawet iupy DominicanRepublic 13 COVID-19 NO
-9023 aiyhd fnsbrocnduoki Sweden 87 COVID-19 NO 21-12-2021
-9853 aqmcjrbcashbiq xpskhxquywpbpa Italy 25 COVID-19 NO 26-08-2018
-1902 ioafbxefddt hwrjmpysn Romania 109 COVID-19 YES 13-02-2020
-2151 iiguzavar jplneltm Poland 17 COVID-19 NO
-1779 qtrhfwudem ktgbgq Jamaica 99 COVID-19 NO
-3531 jrzoxc gmanjqximf Peru 13 COVID-19 NO 31-11-2021
-9414 iyqbpxwcqahlza tziqg USA 26 COVID-19 YES 21-10-2021
-9701 whcbwigijdtov arervwqpfh Canada 101 COVID-19 YES 13-07-2021
-1608 wsmmzuumxhtkqn edysg Barbados 13 COVID-19 YES 14-05-2018
-1010 segvleqz wanicpyeq Bulgaria 96 COVID-19 YES 13-09-2019
-1999 piw ifefhaujgacq Venezuela 75 COVID-19 YES 03-12-2019
-8041 zxatqfepy dafmtufww Argentina 41 COVID-19 YES 19-11-2018
-3791 oihholoxxzy tvvysj PuertoRico 92 COVID-19 YES 09-02-2021
-6670 xgzfzxbqkly uxlzhwkjn China 67 COVID-19 YES 31-12-2020
-5895 nobgdupsosaanj nar Portugal 67 COVID-19 NO 29-07-2020
-6737 bsbwijgbp pkp Canada 35 COVID-19 NO
-1806 gjmkdkynalc ibtufqhv Barbados 8 COVID-19 YES 21-09-2021
-496 mfoimml sggz Honduras 107 COVID-19 NO 08-04-2021
-1710 vipuoogqhlgbrk kbwfonmnsip Bahamas 111 COVID-19 YES 07-05-2018
-647 dwhotsbogqn wpty Grenada 17 COVID-19 NO
-6179 jqstbsrwpbccyl bilguqxfmim Barbados 38 COVID-19 YES 26-01-2020
-8900 xqkksndfbvaa gqotvfckcekk Austria 51 COVID-19 NO 26-12-2018
-3609 zwvvcef gamxpofclis Malta 30 COVID-19 NO 21-05-2020
-4362 qhvg xxqecqdgpfhnv Greenland 38 COVID-19 YES 08-12-2019
-8705 pgreoaq gnhubviwhlcqz USA 100 COVID-19 YES 29-06-2018
-8927 tlst qqxjbkta Cyprus 52 COVID-19 NO 05-12-2020
-9189 eqxxdporawjq bvbmyu Bulgaria 20 COVID-19 YES 28-12-2020
-2993 snqgztvdu vohgpltzzbxcq Dominica 64 COVID-19 YES 12-01-2020
-9953 zbjgyazlk xckbf Canada 59 COVID-19 NO 26-09-2020
-2504 nxfrcoywcpl txcopklg Estonia 105 COVID-19 YES 14-08-2021
-5329 kniqkihpb eeipbruunq Cyprus 34 COVID-19 NO
-4980 cxtmop hfwsvhp Peru 45 COVID-19 NO
-3672 mgjxozot kdg Bulgaria 21 COVID-19 YES 15-07-2019
-1645 nupwneqn fqinymw Estonia 104 COVID-19 NO 23-05-2020
-766 mjbbvfcav cvpdp Sweden 7 COVID-19 NO
-7143 oqvrwzuidqc gdzlvw Finland 40 COVID-19 YES 09-09-2019
-5445 xalhr dxpilraxlrnluf Spain 83 COVID-19 YES 09-03-2019
-9315 bleofqbqgdhwlf fjxjfmdeyyran USA 8 COVID-19 NO 14-08-2020
-4458 rmdtee mgwwmpqowmx Jamaica 63 COVID-19 YES 06-07-2019
-6325 hnj udamsujg Bulgaria 40 COVID-19 NO 13-09-2020
-942 hyvxu kwohifzyjk Lithuania 21 COVID-19 NO
-1892 dqseyioqnyvj vkmplzkjpojj Dominica 59 COVID-19 YES 10-09-2018
-534 hcxxnb udoecwnl China 39 COVID-19 NO 22-01-2021
-8222 tpiuh eujwedxzb Finland 102 COVID-19 YES 25-04-2021
-7941 qhawync lfulswhuslcyzt Belgium 20 COVID-19 YES 11-06-2019
-2346 dsmrjzgcuj psps Finland 60 COVID-19 YES 02-11-2019
-974 nqlsv znec Finland 38 COVID-19 YES 18-12-2020
-7215 xpzmrje ghpstxlc Luxembourg 24 COVID-19 NO
-8037 cbp ibeuynhrmfes Italy 57 COVID-19 NO 25-08-2021
-3934 btzffjcfjhhgl ffec UK 50 COVID-19 NO
-9091 xdlbudb ffzadopornhgxb SaintLucia 12 COVID-19 YES 01-04-2021
-5788 rubztke ktfyfrexigprz Venezuela 118 COVID-19 YES 16-08-2018
-1582 dejev ywujfg Guatemala 118 COVID-19 NO
-4552 qyqdmxa kayetntzzzptr Honduras 45 COVID-19 YES 06-06-2018
-4461 qanvo wgjmbaspm Bahamas 23 COVID-19 NO
-7283 jdrkh gmudevav PuertoRico 92 COVID-19 YES 30-12-2019
-7309 hffy vglvu Lithuania 41 COVID-19 YES 10-12-2020
-5402 eokijxa ldgirwpfyih PuertoRico 17 COVID-19 NO
-5798 kvtbewnmfknivv idvpaquir Netherlands 80 COVID-19 NO 04-08-2018
-8569 owfphhxrpul qgo SaintLucia 36 COVID-19 NO
-2731 xlegbadmvd xfbunnhag Hungary 81 COVID-19 YES 17-12-2019
-2042 etigpv uawdwfhssurj Grenada 119 COVID-19 YES 27-06-2018
-3925 gyaghjnewse hdrffnm Guatemala 75 COVID-19 YES 08-08-2019
-9671 kckinocvugql ariudcnz Honduras 37 COVID-19 NO 29-06-2021
-986 ucthm fwrbvnve Cyprus 102 COVID-19 NO
-768 nulfktwjuln cxbcmmjnvcd Panama 116 COVID-19 NO
-7142 jpsi mzt ElSalvador 57 COVID-19 YES 14-02-2021
-6331 fyeoqawt hpfapdljdfbgr Brazil 79 COVID-19 NO
-9579 qiorzbbhuupwa qjtkgofazxp Estonia 63 COVID-19 NO 19-11-2021
-2530 rizwoszfi rirkco Cyprus 116 COVID-19 YES 10-09-2018
-4942 npj xkt Netherlands 21 COVID-19 NO
-5491 ctcuksu ndtt CostaRica 29 COVID-19 NO 30-06-2018
-3542 ktbbhiyxfi fjoeho ElSalvador 111 COVID-19 NO 30-04-2019
-3897 xodfqlcwje hdizt Austria 119 COVID-19 YES 15-09-2020
-4236 wrrssy enpovcx Mexico 40 COVID-19 YES 14-10-2021
-6161 qvjcxpvlvfcpt fokdulvqo UK 85 COVID-19 YES 09-03-2019
-7120 pdudvxwpsbhimw byx Brazil 20 COVID-19 NO
-391 ajeuwlp rjnni Slovenia 15 COVID-19 YES 08-01-2018
-6617 xcwybapygytva nuqmfyrzstbon Jamaica 41 COVID-19 NO 22-11-2019
-3991 mpcagolwwxthsz ndrfuwdsr Haiti 74 COVID-19 YES 23-08-2021
-5306 vvsd jpzmc Jamaica 34 COVID-19 NO
-3381 nphqoks zjvhzqflxkqe China 67 COVID-19 NO 08-03-2019
-6183 szengnig xhsrmtjfl Portugal 4 COVID-19 NO
-3214 qeimobgjlt xjjqg Venezuela 12 COVID-19 NO
-4656 wngcsfxzup xokqswcfhafy China 93 COVID-19 YES 27-07-2019
-9154 vqhf zdcyxqdw China 1 COVID-19 YES 29-01-2018
-4068 lkkhveaa qaagh CostaRica 59 COVID-19 NO 07-04-2020
-9303 athu xxqbpizloje Argentina 82 COVID-19 NO 20-07-2021
-364 wowduigwuz fnmsp UK 63 COVID-19 YES 21-01-2018
-6918 lbwlk pywuwzcmrqi Austria 85 COVID-19 NO 03-03-2018
-2448 cjoxpyo xstdtd Jamaica 76 COVID-19 NO
-7331 ypk calaynwg Romania 75 COVID-19 YES 26-02-2020
-1605 jkqqzeww nguzrtqxhuklz Malta 43 COVID-19 YES 28-07-2021
-5740 wjenwtswamqi lsicwigs Netherlands 111 COVID-19 NO 15-07-2021
-5422 uafxaw zwnmpcs Belgium 44 COVID-19 YES 25-01-2020
-5266 pmlynxsuzb xipgavgehmaud Greenland 33 COVID-19 YES 06-04-2020
-3884 ningon ckz Italy 89 COVID-19 NO 25-06-2021
-7751 mdokgzabomou ltlyoxgyrjla Austria 82 COVID-19 YES 02-05-2021
-7302 zkojga nhfonvwrqrrae CostaRica 113 COVID-19 YES 21-12-2021
-6796 qxujnrleosm qwnllv SaintLucia 111 COVID-19 NO 27-11-2018
-6956 vwk iczmbdyp Estonia 13 COVID-19 YES 12-09-2019
-4749 anfqbzgsmf nnctqtuxq Bolivia 29 COVID-19 YES 04-09-2021
-5232 mfamb eyr Slovakia 17 COVID-19 NO
-3522 ropqggtcgp xymwkwsucba Luxembourg 95 COVID-19 NO 24-03-2020
-7079 vwarprmxap zdvefa Poland 87 COVID-19 NO 03-04-2018
-4059 octvzpshmb hzuuwvdbxf DominicanRepublic 77 COVID-19 NO 29-03-2018
-846 cerl joublvnj Austria 18 COVID-19 YES 14-07-2019
-7696 vlodvom uyz Germany 11 COVID-19 YES 17-03-2021
-2104 kbstubm jyvfmzya Canada 3 COVID-19 YES 25-07-2018
-8483 uskaezqhipltq rqtpmumal Bahamas 84 COVID-19 NO 13-11-2021
-38 vhsyiwvjrmtawo iznda Bulgaria 19 COVID-19 YES 25-02-2021
-1800 caqrfkedcaq pux ElSalvador 28 COVID-19 YES 17-01-2018
-8314 lkas tqlscnqrltefnf Argentina 25 COVID-19 YES 31-06-2019
-4433 zanpuufomotp aecqceuzewkmkp Lithuania 95 COVID-19 NO
-3952 yglodhqvxjnj wklewh Italy 12 COVID-19 NO 09-07-2020
-5040 lzdtlyjjnb vgkyzteqiuebc Ireland 105 COVID-19 NO 12-07-2020
-9831 fhzzrstaapack myjrxzzgsxov Poland 24 COVID-19 NO
-3155 neask csaznuu Canada 7 COVID-19 YES 06-02-2021
-8954 bhngto jxgcdwqseugp Colombia 42 COVID-19 NO 17-06-2019
-9575 zzjzgfcjn hbaergqvioxmag Honduras 63 COVID-19 NO 14-05-2020
-9149 dzlfnkvhtt mjbmjyxzoed Haiti 13 COVID-19 YES 16-10-2019
-92 lde ygcwkfomqyeqk Luxembourg 52 COVID-19 YES 07-02-2018
-1354 kwg qkbhty Austria 83 COVID-19 NO
-1167 kdqqil plzwzdkszmdxum Netherlands 55 COVID-19 YES 17-01-2021
-3809 wqzyjyo ogsinxyx Sweden 103 COVID-19 YES 01-09-2021
-9620 ngukp jlzbjsht Argentina 74 COVID-19 YES 05-06-2021
-9800 slasmgrohs mcvqxruwcy Netherlands 47 COVID-19 YES 24-08-2020
-3865 rtr eyh France 16 COVID-19 YES 06-07-2021
-2650 aqiva vwedwrkm Guatemala 93 COVID-19 YES 22-11-2020
-432 formkihciv absrjp ElSalvador 73 COVID-19 NO
-5938 gahh fxpamcmrmgb Brazil 46 COVID-19 NO
-9458 cpa jydadk DominicanRepublic 116 COVID-19 NO 20-07-2020
-9105 tqqgzqgwwpcbu wrtdcb Bahamas 9 COVID-19 NO
-8101 lqbplgg ruxkqs Malta 61 COVID-19 YES 27-08-2018
-1595 ywkxivgrdpie ugucppx France 93 COVID-19 YES 11-12-2018
-9690 xvhamo rqf Malta 112 COVID-19 NO 23-07-2018
-5135 qnfqbatbtzhit pksjgfe Barbados 73 COVID-19 YES 12-06-2021
-1553 uwraqhmwt smletxujoy Slovakia 79 COVID-19 YES 22-12-2021
-2622 cupxzmjy dvibkqzjmhffoz Finland 63 COVID-19 YES 07-12-2020
-7662 nnh jdymmlmhmtzd Panama 19 COVID-19 YES 29-04-2019
-8402 evkydtkz nvu Greenland 83 COVID-19 YES 01-04-2019
-4256 kzjqzdgwqk dyhslwupo Sweden 81 COVID-19 YES 20-09-2018
-4349 erflcg tvj Slovenia 53 COVID-19 NO 31-01-2021
-7133 rojtrjnyil lhhzncafy Spain 10 COVID-19 NO
-7799 xuemjbwq ptbdczoozjgdgf Peru 21 COVID-19 YES 18-01-2019
-8973 fbut tbratwnjn Grenada 18 COVID-19 NO
-3385 zzwapsuvqyj mkttzmnfolkcf ElSalvador 84 COVID-19 NO 13-10-2019
-7561 biooykbjpzl waolcpj Sweden 112 COVID-19 NO
-9599 kjbkrdvqibvsz qermwm CostaRica 70 COVID-19 YES 07-07-2018
-3683 ktml eusmhuwvk Malta 78 COVID-19 NO 28-04-2021
-2122 uxkkwbtsmru kicj SaintLucia 40 COVID-19 YES 06-10-2019
-3294 llkbckrb nfgthm Greenland 18 COVID-19 NO 04-07-2019
-841 zdnypnwkpham vpkthg Grenada 58 COVID-19 YES 11-08-2018
-9389 mecobyfsj lhtpiejo China 47 COVID-19 YES 08-11-2020
-8863 hylnfplapgogfk kemodkeje Ireland 15 COVID-19 YES 25-11-2018
-3606 cpg uosxiqpoapuzq Austria 69 COVID-19 YES 24-09-2019
-1974 kdo mnguycpe Barbados 119 COVID-19 NO 01-11-2019
-8707 hhknvwdj rzzmgasdnc USA 28 COVID-19 NO 05-10-2020
-6028 togwtzxyxhkyn hlmsdykblkgzd Slovakia 76 COVID-19 NO
-2155 slwzxobhbwrq snwfw Finland 53 COVID-19 YES 13-04-2021
-6389 qcjoyjimg jjtmetkcskdyy Germany 94 COVID-19 NO 15-05-2020
-7840 norcsgzouu cwxq Ireland 14 COVID-19 YES 27-10-2019
-3776 xtncqtfbxvvdl egwubwa UK 85 COVID-19 YES 15-10-2021
-7160 brpe tqjdjn Sweden 20 COVID-19 YES 20-08-2018
-8207 cuc txtbrzsb Peru 25 COVID-19 NO
-9246 qgacbwjdad eigbidlbcpeqic ElSalvador 99 COVID-19 NO
-9806 dnymicx edrorhk Argentina 51 COVID-19 YES 18-12-2018
-3021 vwwnftd vvqnccsgyaqneo Sweden 90 COVID-19 YES 03-03-2021
-3424 hpvznt gxhepjxxoymk Spain 101 COVID-19 YES 13-09-2021
-2285 cxv udimfgxxt Guatemala 25 COVID-19 YES 22-01-2018
-430 ysdujusi abufblcvdrdt Austria 109 COVID-19 NO 30-02-2019
-2557 carelzpp uchinfrsoovu UK 9 COVID-19 NO
-5457 vxgqoodatkq bfiqerzintms Greece 98 COVID-19 NO 01-04-2021
-9515 zokta dvypwpi Venezuela 105 COVID-19 NO
-4878 hvgjwrbtchoyt keg Estonia 32 COVID-19 NO
-9412 blgggggijiamc azfqvtz Portugal 114 COVID-19 YES 01-12-2020
-3678 bsbffgye igddejsoenzoaz UK 22 COVID-19 NO
-8846 npt ezrntqwnnm Sweden 83 COVID-19 NO
-8164 xyzpsyffm tylcd Guatemala 62 COVID-19 YES 11-10-2021
-8741 zfgu ajdbovtfwghn Sweden 99 COVID-19 NO 31-04-2019
-8169 ktbyfk ghfljmtzvz Slovenia 25 COVID-19 NO 28-05-2019
-893 cqo zliu UK 47 COVID-19 YES 18-06-2020
-7259 nqwm jlslshrafzww DominicanRepublic 16 COVID-19 YES 02-04-2020
-1592 tlrqs vguqfznvtwkzag Cyprus 111 COVID-19 YES 04-08-2019
-3045 zuupyktbot lixtdjsei Grenada 58 COVID-19 NO 27-02-2018
-8047 ctvhdelylr vpnwkno Dominica 81 COVID-19 YES 06-06-2019
-1771 nsrndskijx unjvbuwzbp Hungary 62 COVID-19 YES 02-01-2021
-7841 megzqihmaeejm bjcpdcobl Romania 103 COVID-19 YES 24-12-2018
-7829 gtpzukrscttsi cbhl Malta 115 COVID-19 YES 15-01-2020
-8008 gscqxwgfv lykaoythqtf Mexico 4 COVID-19 YES 25-12-2019
-5056 bnxthterk hnmlwbevoa UK 45 COVID-19 YES 20-06-2020
-3799 saiahoj zjwjeaqs Grenada 67 COVID-19 YES 30-07-2018
-3193 xhwyaru fpthxtachv Dominica 17 COVID-19 YES 02-08-2021
-6467 moncirkdgtts aotncfavdangz France 86 COVID-19 YES 07-10-2018
-2924 ywh urvnmuagyg Cyprus 98 COVID-19 NO
-4842 gge cxejixg Colombia 33 COVID-19 NO
-7544 bxx uxlz CostaRica 8 COVID-19 YES 09-09-2018
-580 pxqyqekmmi qsralnfbkww Italy 53 COVID-19 YES 25-08-2021
-8985 uywkui mqqyonegpnohn Guatemala 72 COVID-19 NO 15-12-2019
-3734 artpoktxiye udoztgzyxpur Portugal 36 COVID-19 YES 18-06-2019
-2077 nhoberlfaghhn ybe Poland 11 COVID-19 NO 27-12-2019
-1054 fotogoshkuocp losf Panama 71 COVID-19 YES 30-02-2019
-7838 gurnoklivypunx wvkphuzltdwl Greenland 35 COVID-19 NO
-5744 yvhjwuvuqj vrfg Slovenia 68 COVID-19 YES 28-05-2019
-5709 fefhuwydgr rdhaqctaxfsr Italy 66 COVID-19 YES 04-10-2020
-5005 ejljnjvfohnow qeh Germany 1 COVID-19 YES 02-06-2021
-2139 xjfnuow awltjoa Venezuela 98 COVID-19 NO 03-06-2020
-7685 yiws hefsznpkus Finland 83 COVID-19 YES 03-08-2020
-1424 wsrjgwimmhufs kco Mexico 119 COVID-19 NO 05-02-2018
-2723 pzcsghpuqyty znmiumobr China 88 COVID-19 NO
-2693 utdpwc ckeiax Croatia 109 COVID-19 NO 30-07-2018
-909 lxiszw roqwurethu Germany 92 COVID-19 NO
-105 mjyavwtyul iypi SaintLucia 67 COVID-19 YES 15-08-2019
-254 dcal dnpfiirfgg Honduras 15 COVID-19 NO 23-06-2018
-9196 tmlgqae hqlddmfvl SaintLucia 105 COVID-19 YES 11-04-2021
-3254 ouzcynnt ohryta Mexico 2 COVID-19 NO 22-10-2019
-8251 nmgxhu mlpcows Spain 88 COVID-19 NO
-3538 lyqvtid udntuqb CostaRica 11 COVID-19 NO
-3285 emfjmbbajdlqz ggfqsvsupjb DominicanRepublic 98 COVID-19 YES 09-08-2018
-4543 ivfmtyxotn ekixx Ireland 114 COVID-19 YES 02-02-2018
-198 awwtszdcjxdk hqb Venezuela 61 COVID-19 NO
-2383 vhle dntaxzh Argentina 113 COVID-19 YES 19-11-2020
-7538 klisqanyeti ngfqkbhjldob Colombia 106 COVID-19 NO 05-07-2021
-8505 jzwcjjszg bubgnjqykdmws Argentina 97 COVID-19 NO 21-01-2019
-6094 tokq xumqsg Netherlands 86 COVID-19 NO
-377 ntrtfrrvxwbe yojigjlpfbxx Guatemala 33 COVID-19 NO
-4350 tdaqafqnq fdc Spain 36 COVID-19 NO
-8360 iedzzzufq vevvkscndo Bulgaria 33 COVID-19 NO
-8310 syaxg ncoqqrpjtcbz Lithuania 41 COVID-19 YES 04-04-2019
-3675 trgdreuuunekta yhqr Croatia 45 COVID-19 NO
-5326 xidcrggxmhhagg rshzytb Hungary 40 COVID-19 NO 10-07-2019
-3338 xbzohdf zghxldjkywlqy Bahamas 104 COVID-19 YES 28-04-2021
-7301 qlddd belp Argentina 47 COVID-19 NO
-5423 ffovgoaa nxjobxxhztni ElSalvador 69 COVID-19 NO 01-07-2019
-4703 dcuycoxfbzops yujol Italy 94 COVID-19 YES 23-06-2018
-3012 hpdytgbnaprf xcare Bolivia 34 COVID-19 YES 01-04-2020
-803 guuxbogxifpaqt jrfnvlf Barbados 6 COVID-19 YES 28-12-2021
-9177 zmgddwaquoqk afnamxdchnjlmw Ireland 13 COVID-19 NO 23-07-2019
-9197 tdewxihn jtefemuwcqsrhw Canada 103 COVID-19 NO
-4555 nvqkfaveplkcxf ldtbq Guatemala 63 COVID-19 NO 03-11-2018
-9059 raqduhplzy oxjpddsc Honduras 60 COVID-19 YES 13-05-2018
-550 wyrprwcb rgcophlwgcihn Luxembourg 40 COVID-19 YES 20-11-2020
-5869 cbwgsavuwy gvchhlt Ireland 40 COVID-19 YES 03-09-2021
-2171 bxfy tdmnez Austria 17 COVID-19 NO
-8958 nmypjlairzblwz siwfidkfnj Germany 44 COVID-19 YES 31-09-2020
-2123 qiiskq sndiukhfluof Bahamas 113 COVID-19 NO
-899 mplc ebvynbtkjk ElSalvador 53 COVID-19 YES 10-05-2018
-200 brrzfjxuu ldwoghi Hungary 67 COVID-19 YES 24-05-2021
-7763 dznun yknlpeovm Honduras 93 COVID-19 YES 21-01-2020
-5626 arhaceatirnmk sjfwo France 49 COVID-19 YES 22-11-2021
-6172 pqgomwdnif cihpxd Grenada 81 COVID-19 NO
-302 cfnwrqxlxfkxlw bdtkjasgb Finland 83 COVID-19 NO
-7661 htjjzbzgzelb lpwyr Poland 88 COVID-19 YES 27-07-2018
-9270 fqbl ocfoddrpfvzff Cyprus 80 COVID-19 NO 27-08-2020
-80 sftqfjaxlnau moya Germany 105 COVID-19 YES 24-01-2018
-4237 ukfyio rzhsaes USA 45 COVID-19 YES 03-10-2018
-4547 mibzjjwftroxf hszlef Jamaica 92 COVID-19 NO
-2208 hzhomgwnln seernb Cyprus 38 COVID-19 NO 07-01-2021
-6059 csujnczl ahjxekipmyegl Honduras 53 COVID-19 YES 10-03-2021
-596 hxv hxmfak Bulgaria 39 COVID-19 YES 07-06-2019
-335 edtmd vhkh Bolivia 38 COVID-19 YES 06-11-2018
-3209 xyiecllmb atuxvqaphhz Canada 40 COVID-19 YES 01-09-2019
-9772 ctbpbqjgqonz ajctkihpwzodvf Argentina 66 COVID-19 NO
-8217 peutpjzsw tzdazkkelnzf Honduras 68 COVID-19 NO 11-12-2019
-8044 yofzgesqo mbbzcsadgcxs Belgium 92 COVID-19 NO
-8444 vrmtcrqhm ybdztfnj Hungary 64 COVID-19 YES 22-06-2018
-7596 jsgxujvlwc evhhqajitawyqv Luxembourg 35 COVID-19 NO 20-11-2020
-3756 vyhr ecuguiiqnaqomi Bahamas 60 COVID-19 NO 21-04-2018
-5375 fvwdcv ctuiyvvyvv Portugal 1 COVID-19 YES 13-02-2021
-8057 jelwfrzt dwdsziovtt Malta 74 COVID-19 NO
-1855 fxmfdb ngzobruzjjid China 108 COVID-19 YES 27-10-2021
-9823 znkmyagb gse Cyprus 51 COVID-19 YES 24-05-2019
-3003 swqgwnglacjh mms Ireland 110 COVID-19 YES 24-09-2018
-6361 flj leldtl Slovakia 109 COVID-19 NO
-2306 zvgaypwcymelu ffuwba SaintLucia 51 COVID-19 NO 16-08-2019
-5926 imshjhwfrqdptk xlfd Luxembourg 113 COVID-19 NO
-9263 tzqrazxbica bvzfwssa Panama 69 COVID-19 YES 18-06-2021
-153 jyadpintohp hqtigvou SaintLucia 72 COVID-19 YES 16-11-2021
-6997 ibhx whnwhollivm Peru 113 COVID-19 NO
-7640 jnsltzb bkh UK 32 COVID-19 NO 26-10-2019
-7823 ztwiq sprfnoaxuvea Spain 42 COVID-19 YES 24-12-2019
-3627 ytwbuscfjrp zvk France 111 COVID-19 NO 19-10-2021
-6449 zqnjg fxqdmsy Italy 73 COVID-19 NO
-4655 tbibqriszkgvwh fjuvob Sweden 72 COVID-19 NO 10-10-2020
-4691 fuuqfgjo dfuuiwoabae Ireland 116 COVID-19 YES 06-05-2018
-9247 ffwzlaesrla cakqbsjenw Canada 75 COVID-19 NO 15-11-2018
-6502 cdzq qlploajwhtw Peru 45 COVID-19 YES 01-04-2020
+6839 wrlxzdihmnovzq sukzqngptq USA 72 HENDRA NO 20-08-2019
+6839 wrlxzdihmnovzq sukzqngptq USA 72 HEPATITIS NO
+7223 gwrjtoyyb skhdhyxodzuqh Croatia 14 YELLOWFEVER NO 22-01-2018
+7223 gwrjtoyyb skhdhyxodzuqh Croatia 14 MEASLES YES 16-09-2020
+7223 gwrjtoyyb skhdhyxodzuqh Croatia 14 MEASLES NO
+7223 gwrjtoyyb skhdhyxodzuqh Croatia 14 H3N2 YES 30-09-2019
+594 wyf jlnifxbs Romania 71 H1N1 YES 18-03-2020
+594 wyf jlnifxbs Romania 71 MERS-COV NO
+594 wyf jlnifxbs Romania 71 MENIGITIS NO 20-06-2019
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 H1N1 NO 05-07-2021
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 VISNA NO 16-09-2021
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 JC NO 30-06-2018
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 DENGUE YES 01-12-2019
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 DENGUE NO
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 H3N2 NO 21-12-2021
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 LASSAFEVER YES 01-07-2018
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 COXSACKIE YES 04-04-2019
+5530 fggjsjceelavlq tkohehptuhaa Portugal 7 BK NO
+7116 offwgab wgtmvlvxvtl Austria 89 ESCHERICHIA NO
+7116 offwgab wgtmvlvxvtl Austria 89 RUBELLA NO
+7116 offwgab wgtmvlvxvtl Austria 89 HKU1 NO 01-10-2018
+7116 offwgab wgtmvlvxvtl Austria 89 H5N8 NO
+7116 offwgab wgtmvlvxvtl Austria 89 RABIES NO
+7116 offwgab wgtmvlvxvtl Austria 89 MERS-COV YES 31-10-2019
+222 nwjwgskh twagmeelj ElSalvador 24 SMALLPOX YES 13-04-2019
+222 nwjwgskh twagmeelj ElSalvador 24 SMALLPOX YES 20-08-2021
+222 nwjwgskh twagmeelj ElSalvador 24 VACCINIA NO 18-09-2018
+9292 tnrkrew ntsknpvzxibst Spain 45 LASSAFEVER YES 09-06-2019
+9292 tnrkrew ntsknpvzxibst Spain 45 AIDS NO 08-04-2020
+9292 tnrkrew ntsknpvzxibst Spain 45 MENIGITIS YES 17-09-2021
+9292 tnrkrew ntsknpvzxibst Spain 45 VISNA NO
+9292 tnrkrew ntsknpvzxibst Spain 45 MERS-COV NO 27-09-2020
+9292 tnrkrew ntsknpvzxibst Spain 45 VACCINIA YES 25-10-2020
+6791 cssud bty Luxembourg 71 YELLOWFEVER YES 25-03-2020
+6791 cssud bty Luxembourg 71 JC NO 22-06-2018
+6791 cssud bty Luxembourg 71 VISNA YES 28-05-2018
+6791 cssud bty Luxembourg 71 HEPATITIS NO 16-09-2020
+6791 cssud bty Luxembourg 71 COXSACKIE YES 27-11-2018
+6791 cssud bty Luxembourg 71 ESCHERICHIA YES 11-12-2019
+6791 cssud bty Luxembourg 71 COXSACKIE NO 06-05-2021
+6791 cssud bty Luxembourg 71 VISNA YES 29-12-2019
+6791 cssud bty Luxembourg 71 POLIO YES 08-08-2019
+6551 agi ymvkdv Peru 98 COVID-19 NO 16-12-2019
+6551 agi ymvkdv Peru 98 SENDAI NO
+6551 agi ymvkdv Peru 98 ROTAVIRUS NO
+6551 agi ymvkdv Peru 98 SMALLPOX YES 22-07-2020
+9342 qjhstpmbbqhtc pjmw CostaRica 67 AIDS NO
+9342 qjhstpmbbqhtc pjmw CostaRica 67 H1N1 YES 23-01-2018
+9342 qjhstpmbbqhtc pjmw CostaRica 67 HANTAVIRUS NO 13-10-2021
+9342 qjhstpmbbqhtc pjmw CostaRica 67 EBOLA NO 02-09-2019
+185 izchtulqwrl nwfrurgkpfaj Luxembourg 17 H1N1 NO 15-04-2021
+185 izchtulqwrl nwfrurgkpfaj Luxembourg 17 H3N2 NO 10-03-2018
+185 izchtulqwrl nwfrurgkpfaj Luxembourg 17 JC NO 07-01-2020
+185 izchtulqwrl nwfrurgkpfaj Luxembourg 17 NIPAH YES 04-07-2021
+185 izchtulqwrl nwfrurgkpfaj Luxembourg 17 JC YES 09-09-2021
+8709 nfhnditwjt vtyfjqfhkung Malta 51 EBOLA NO
+8709 nfhnditwjt vtyfjqfhkung Malta 51 ESCHERICHIA NO 08-01-2018
+8709 nfhnditwjt vtyfjqfhkung Malta 51 H5N1 YES 16-06-2021
+8709 nfhnditwjt vtyfjqfhkung Malta 51 ROTAVIRUS YES 03-11-2019
+8709 nfhnditwjt vtyfjqfhkung Malta 51 HENDRA NO
+8709 nfhnditwjt vtyfjqfhkung Malta 51 VACCINIA YES 23-11-2021
+8709 nfhnditwjt vtyfjqfhkung Malta 51 COVID-19 NO
+8709 nfhnditwjt vtyfjqfhkung Malta 51 POLIO NO 06-06-2018
+8709 nfhnditwjt vtyfjqfhkung Malta 51 NIPAH NO 04-03-2018
+8709 nfhnditwjt vtyfjqfhkung Malta 51 HENDRA YES 06-09-2020
+998 kzcxcmltes mbtkf Croatia 77 EBOLA NO
+998 kzcxcmltes mbtkf Croatia 77 VACCINIA YES 10-07-2020
+998 kzcxcmltes mbtkf Croatia 77 SMALLPOX NO
+998 kzcxcmltes mbtkf Croatia 77 HENDRA YES 24-10-2021
+998 kzcxcmltes mbtkf Croatia 77 VISNA NO
+9635 lcw omxoojrf Jamaica 48 COVID-19 NO
+9635 lcw omxoojrf Jamaica 48 POLIO YES 24-08-2021
+9635 lcw omxoojrf Jamaica 48 NIPAH YES 21-08-2019
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 YELLOWFEVER NO
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 NIPAH YES 07-01-2018
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 YELLOWFEVER YES 31-05-2018
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 ROTAVIRUS NO
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 HIV NO
+5594 hiqeffqvglwvo lmbgiochyrszk France 18 DENGUE NO 06-05-2021
+6031 nakkmfabfhemc hvu Peru 89 HEPATITIS NO
+6031 nakkmfabfhemc hvu Peru 89 HKU1 YES 22-02-2020
+6031 nakkmfabfhemc hvu Peru 89 H5N1 NO 08-07-2018
+6031 nakkmfabfhemc hvu Peru 89 H5N1 NO 17-03-2020
+589 wgrcoiiyek sgnoueninmnv Finland 59 SENDAI YES 08-04-2020
+589 wgrcoiiyek sgnoueninmnv Finland 59 POLIO YES 30-05-2019
+589 wgrcoiiyek sgnoueninmnv Finland 59 DENGUE YES 12-08-2021
+589 wgrcoiiyek sgnoueninmnv Finland 59 H5N8 YES 05-04-2021
+589 wgrcoiiyek sgnoueninmnv Finland 59 JC YES 01-02-2021
+589 wgrcoiiyek sgnoueninmnv Finland 59 MERS-COV YES 31-12-2018
+589 wgrcoiiyek sgnoueninmnv Finland 59 HEPATITIS NO
+589 wgrcoiiyek sgnoueninmnv Finland 59 JC NO
+589 wgrcoiiyek sgnoueninmnv Finland 59 SMALLPOX YES 30-12-2021
+589 wgrcoiiyek sgnoueninmnv Finland 59 MARBURG NO
+691 rpemhmn yivbktrkeualx Cyprus 112 MERS-COV NO
+691 rpemhmn yivbktrkeualx Cyprus 112 SARS-1 NO 16-07-2019
+691 rpemhmn yivbktrkeualx Cyprus 112 ENCEPHALITIS YES 13-01-2020
+7257 qhqnxikcztr hdrwklwnwc Poland 13 HENDRA NO
+7257 qhqnxikcztr hdrwklwnwc Poland 13 SENDAI NO 12-02-2021
+7257 qhqnxikcztr hdrwklwnwc Poland 13 H1N1 NO 16-03-2019
+7257 qhqnxikcztr hdrwklwnwc Poland 13 NIPAH YES 01-10-2018
+7257 qhqnxikcztr hdrwklwnwc Poland 13 HEPATITIS YES 06-04-2020
+7257 qhqnxikcztr hdrwklwnwc Poland 13 HKU1 YES 07-01-2021
+9051 rrosems xiywfzmhkxczr Bulgaria 104 RUBELLA NO
+9051 rrosems xiywfzmhkxczr Bulgaria 104 SMALLPOX YES 10-05-2020
+9051 rrosems xiywfzmhkxczr Bulgaria 104 SMALLPOX NO 07-09-2019
+9051 rrosems xiywfzmhkxczr Bulgaria 104 SENDAI NO
+9051 rrosems xiywfzmhkxczr Bulgaria 104 MERS-COV NO 07-03-2018
+9051 rrosems xiywfzmhkxczr Bulgaria 104 LASSAFEVER NO 27-11-2021
+9051 rrosems xiywfzmhkxczr Bulgaria 104 HENDRA NO 07-03-2021
+9051 rrosems xiywfzmhkxczr Bulgaria 104 RABIES NO 09-11-2019
+9051 rrosems xiywfzmhkxczr Bulgaria 104 ROTAVIRUS NO
+9051 rrosems xiywfzmhkxczr Bulgaria 104 SENDAI YES 03-09-2018
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 NIPAH YES 28-05-2018
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 RABIES NO
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 HKU1 YES 06-03-2018
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 ROTAVIRUS NO 27-11-2018
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 HIV YES 21-08-2019
+4975 homqfotsekx dzvkvwatlcjqgf CostaRica 94 MARBURG YES 25-02-2018
+574 noswvjjkdjgyif vmwuitleu Greenland 66 ESCHERICHIA NO 08-04-2019
+5183 afgyrr aiynccxgjpceck Mexico 39 AIDS YES 02-02-2019
+5183 afgyrr aiynccxgjpceck Mexico 39 POLIO YES 31-10-2021
+5183 afgyrr aiynccxgjpceck Mexico 39 VACCINIA NO 11-05-2018
+5183 afgyrr aiynccxgjpceck Mexico 39 H1N1 YES 09-10-2021
+5183 afgyrr aiynccxgjpceck Mexico 39 VACCINIA NO 08-10-2021
+5183 afgyrr aiynccxgjpceck Mexico 39 NIPAH YES 09-01-2021
+5183 afgyrr aiynccxgjpceck Mexico 39 EBOLA NO
+481 yuzodwtwecjib wpffctpvk Slovakia 51 AIDS NO 08-10-2018
+481 yuzodwtwecjib wpffctpvk Slovakia 51 SENDAI YES 30-12-2020
+481 yuzodwtwecjib wpffctpvk Slovakia 51 MENIGITIS YES 06-02-2019
+855 ganah csvnicwatfb Honduras 87 LASSAFEVER NO 16-12-2020
+855 ganah csvnicwatfb Honduras 87 YELLOWFEVER YES 31-08-2019
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 HKU1 YES 23-03-2021
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 HIV YES 07-08-2018
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 RUBELLA NO
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 SMALLPOX NO 11-05-2018
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 VISNA YES 30-08-2020
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 EBOLA YES 05-02-2019
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 SMALLPOX YES 25-06-2021
+2872 mtkheamhfg ukkepjzhreqjyp Brazil 99 HENDRA NO 08-12-2021
+565 rrrawpoaagak abdpr Greenland 88 SMALLPOX NO
+565 rrrawpoaagak abdpr Greenland 88 MERS-COV NO
+565 rrrawpoaagak abdpr Greenland 88 CIRCOVIRUS NO 04-02-2021
+565 rrrawpoaagak abdpr Greenland 88 DENGUE NO
+565 rrrawpoaagak abdpr Greenland 88 RABIES NO 05-09-2019
+565 rrrawpoaagak abdpr Greenland 88 COVID-19 NO 12-06-2019
+565 rrrawpoaagak abdpr Greenland 88 JC NO
+4889 fbcartmot glbf SaintLucia 44 VACCINIA NO
+4889 fbcartmot glbf SaintLucia 44 VISNA NO 13-02-2020
+4889 fbcartmot glbf SaintLucia 44 BK NO 20-08-2020
+4889 fbcartmot glbf SaintLucia 44 SMALLPOX YES 01-01-2020
+4889 fbcartmot glbf SaintLucia 44 MERS-COV NO
+4889 fbcartmot glbf SaintLucia 44 SENDAI YES 18-08-2020
+1451 wzncutw bisujvtrfvxe CostaRica 100 ROTAVIRUS YES 13-10-2021
+1451 wzncutw bisujvtrfvxe CostaRica 100 POLIO NO
+1451 wzncutw bisujvtrfvxe CostaRica 100 JC NO
+1451 wzncutw bisujvtrfvxe CostaRica 100 H5N1 YES 23-01-2019
+1451 wzncutw bisujvtrfvxe CostaRica 100 COVID-19 YES 30-02-2021
+1451 wzncutw bisujvtrfvxe CostaRica 100 ENCEPHALITIS NO 16-09-2019
+1451 wzncutw bisujvtrfvxe CostaRica 100 MARBURG NO
+6981 mcsoy ndxe Slovenia 93 ESCHERICHIA NO
+3041 zotkryqthge zymorrfyzzj China 34 ENCEPHALITIS YES 31-05-2020
+3041 zotkryqthge zymorrfyzzj China 34 H1N1 NO
+3041 zotkryqthge zymorrfyzzj China 34 VACCINIA NO
+9222 doke stxinoc Colombia 43 VACCINIA YES 14-11-2021
+9222 doke stxinoc Colombia 43 YELLOWFEVER YES 01-10-2018
+9222 doke stxinoc Colombia 43 MENIGITIS NO 17-04-2021
+9222 doke stxinoc Colombia 43 AIDS YES 15-09-2020
+9222 doke stxinoc Colombia 43 HANTAVIRUS YES 12-01-2018
+9222 doke stxinoc Colombia 43 NIPAH YES 04-12-2019
+9222 doke stxinoc Colombia 43 JC YES 19-04-2019
+9222 doke stxinoc Colombia 43 HIV YES 26-06-2018
+8027 lxsalzrjcb avfyrqmvtvl Panama 27 YELLOWFEVER NO 22-04-2019
+8027 lxsalzrjcb avfyrqmvtvl Panama 27 HEPATITIS NO 27-12-2021
+8027 lxsalzrjcb avfyrqmvtvl Panama 27 HENDRA YES 26-10-2020
+8027 lxsalzrjcb avfyrqmvtvl Panama 27 AIDS NO
+8027 lxsalzrjcb avfyrqmvtvl Panama 27 MEASLES YES 06-08-2020
+7971 nbi zowahgqkvdamm Mexico 40 MARBURG NO
+7971 nbi zowahgqkvdamm Mexico 40 HKU1 YES 24-09-2020
+7971 nbi zowahgqkvdamm Mexico 40 LASSAFEVER NO
+7971 nbi zowahgqkvdamm Mexico 40 VACCINIA NO 19-03-2019
+7971 nbi zowahgqkvdamm Mexico 40 H3N2 YES 31-07-2020
+7971 nbi zowahgqkvdamm Mexico 40 MERS-COV NO
+7971 nbi zowahgqkvdamm Mexico 40 NIPAH YES 06-03-2021
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 HEPATITIS NO 13-05-2019
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 POLIO NO 17-02-2019
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 ROTAVIRUS YES 26-07-2021
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 H5N1 NO
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 BK YES 18-09-2018
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 JC YES 08-06-2020
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 POLIO YES 31-07-2019
+2890 fmhiyibytsnev wgdgwaaun Croatia 62 MERS-COV YES 26-04-2019
+3653 oijkb vuwaqpflj DominicanRepublic 75 SMALLPOX NO
+3653 oijkb vuwaqpflj DominicanRepublic 75 EBOLA YES 02-01-2021
+3653 oijkb vuwaqpflj DominicanRepublic 75 MEASLES NO
+3653 oijkb vuwaqpflj DominicanRepublic 75 H1N1 YES 18-11-2018
+3653 oijkb vuwaqpflj DominicanRepublic 75 MERS-COV NO 26-02-2018
+5446 vyzxu ncyrhwmaabqjbx Bahamas 55 HENDRA YES 29-08-2019
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 COXSACKIE NO 20-04-2018
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 BK YES 25-02-2020
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 NIPAH YES 20-01-2018
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 MERS-COV NO
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 ENCEPHALITIS NO
+1097 psrskoavx blvlwjrkeqgwfc Spain 68 EBOLA NO
+182 hjfhhxztzqd bsktvgufezg Slovakia 4 H1N1 NO
+182 hjfhhxztzqd bsktvgufezg Slovakia 4 VACCINIA NO
+182 hjfhhxztzqd bsktvgufezg Slovakia 4 HEPATITIS YES 30-02-2019
+182 hjfhhxztzqd bsktvgufezg Slovakia 4 MARBURG NO 09-08-2019
+3631 jmvgvzc apgxjvqz Argentina 117 EBOLA YES 02-08-2019
+3631 jmvgvzc apgxjvqz Argentina 117 HANTAVIRUS NO 01-10-2020
+3631 jmvgvzc apgxjvqz Argentina 117 COVID-19 NO
+3631 jmvgvzc apgxjvqz Argentina 117 POLIO YES 16-02-2021
+8734 igrjobuqklo fuxugvrl USA 20 HIV YES 09-09-2021
+8734 igrjobuqklo fuxugvrl USA 20 EBOLA YES 23-11-2020
+8734 igrjobuqklo fuxugvrl USA 20 H5N8 NO
+8734 igrjobuqklo fuxugvrl USA 20 VISNA YES 12-02-2020
+8734 igrjobuqklo fuxugvrl USA 20 RABIES YES 29-03-2020
+8734 igrjobuqklo fuxugvrl USA 20 BK NO
+8734 igrjobuqklo fuxugvrl USA 20 HANTAVIRUS YES 30-10-2020
+8734 igrjobuqklo fuxugvrl USA 20 CIRCOVIRUS NO
+8734 igrjobuqklo fuxugvrl USA 20 LASSAFEVER NO 04-12-2020
+9569 zjvgvnxcwywj txjprvxz Austria 80 BK YES 08-06-2019
+9569 zjvgvnxcwywj txjprvxz Austria 80 H5N8 YES 08-11-2020
+9569 zjvgvnxcwywj txjprvxz Austria 80 RABIES YES 01-11-2021
+9569 zjvgvnxcwywj txjprvxz Austria 80 H5N1 NO
+9569 zjvgvnxcwywj txjprvxz Austria 80 H1N1 NO 29-07-2020
+2857 xmtajjyxdqdka aaejvuhyvyfv Grenada 18 RUBELLA NO 02-06-2018
+2857 xmtajjyxdqdka aaejvuhyvyfv Grenada 18 COXSACKIE NO
+2857 xmtajjyxdqdka aaejvuhyvyfv Grenada 18 ENCEPHALITIS NO 29-06-2019
+1561 akwl dbtmkhiolaxrwy Italy 13 DENGUE YES 02-07-2021
+1561 akwl dbtmkhiolaxrwy Italy 13 CIRCOVIRUS YES 11-04-2021
+1561 akwl dbtmkhiolaxrwy Italy 13 DENGUE NO
+5782 jesuxymqqsi zcvnefywq Cyprus 50 COVID-19 NO
+5013 uxwx bowkwrswkxucti Peru 72 SENDAI NO
+5013 uxwx bowkwrswkxucti Peru 72 POLIO NO 03-06-2021
+5013 uxwx bowkwrswkxucti Peru 72 HANTAVIRUS YES 14-12-2019
+5013 uxwx bowkwrswkxucti Peru 72 H5N8 NO
+5013 uxwx bowkwrswkxucti Peru 72 RUBELLA NO
+5013 uxwx bowkwrswkxucti Peru 72 HKU1 YES 26-12-2018
+5013 uxwx bowkwrswkxucti Peru 72 RUBELLA YES 20-04-2020
+6147 uoimpmurqd cydithikczwz Netherlands 6 DENGUE NO
+6147 uoimpmurqd cydithikczwz Netherlands 6 ESCHERICHIA YES 23-09-2018
+6147 uoimpmurqd cydithikczwz Netherlands 6 H3N2 YES 12-10-2018
+6147 uoimpmurqd cydithikczwz Netherlands 6 H5N8 NO
+8516 lpffivvwic dflheyreq Slovenia 92 MENIGITIS YES 08-07-2018
+8516 lpffivvwic dflheyreq Slovenia 92 HKU1 NO
+8516 lpffivvwic dflheyreq Slovenia 92 MENIGITIS NO
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 HKU1 NO 05-06-2020
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 COXSACKIE YES 16-01-2019
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 COXSACKIE NO 03-06-2019
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 H3N2 NO 02-11-2021
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 CIRCOVIRUS YES 27-04-2019
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 NIPAH NO 21-10-2019
+5981 dktbbqnyogey cvcfabqphmuib Brazil 81 HENDRA YES 20-06-2018
+6650 qyrbqopc kexz SaintLucia 87 ESCHERICHIA YES 30-01-2020
+6650 qyrbqopc kexz SaintLucia 87 RABIES YES 13-06-2021
+6650 qyrbqopc kexz SaintLucia 87 H5N1 NO
+6650 qyrbqopc kexz SaintLucia 87 VISNA YES 29-05-2020
+6650 qyrbqopc kexz SaintLucia 87 MERS-COV YES 09-01-2020
+6650 qyrbqopc kexz SaintLucia 87 HEPATITIS NO 12-05-2018
+7734 ebhucnzpkwq cdhz Finland 50 SARS-1 NO
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 DENGUE NO
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 COXSACKIE NO
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 H5N8 NO
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 MERS-COV YES 30-10-2021
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 COVID-19 YES 12-08-2021
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 HEPATITIS YES 27-07-2018
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 HEPATITIS NO
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 RUBELLA YES 10-07-2018
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 SMALLPOX NO 26-11-2021
+1222 exevulqfb dymijnebpdpscg DominicanRepublic 4 MENIGITIS YES 29-08-2020
+3961 tecmhsdfv hqzfodewysm Colombia 22 HEPATITIS NO
+3961 tecmhsdfv hqzfodewysm Colombia 22 HENDRA NO 21-01-2020
+3313 pzwdk qtmgjvyxeqgz Colombia 95 MARBURG NO 09-07-2019
+3313 pzwdk qtmgjvyxeqgz Colombia 95 H5N8 YES 02-09-2021
+3313 pzwdk qtmgjvyxeqgz Colombia 95 COXSACKIE NO
+3313 pzwdk qtmgjvyxeqgz Colombia 95 SENDAI YES 07-01-2021
+3313 pzwdk qtmgjvyxeqgz Colombia 95 RUBELLA NO
+3313 pzwdk qtmgjvyxeqgz Colombia 95 HENDRA NO 02-11-2018
+3313 pzwdk qtmgjvyxeqgz Colombia 95 BK YES 17-12-2019
+3313 pzwdk qtmgjvyxeqgz Colombia 95 SARS-1 YES 12-09-2019
+6811 xxfmn xypexj Honduras 63 MERS-COV NO
+6811 xxfmn xypexj Honduras 63 POLIO YES 22-03-2018
+6811 xxfmn xypexj Honduras 63 BK YES 06-11-2021
+6811 xxfmn xypexj Honduras 63 H5N8 YES 16-06-2021
+6811 xxfmn xypexj Honduras 63 JC NO
+8000 wbegerdwupesv mmn Venezuela 64 MENIGITIS NO 02-02-2020
+8000 wbegerdwupesv mmn Venezuela 64 VACCINIA YES 23-04-2020
+8000 wbegerdwupesv mmn Venezuela 64 BK YES 04-03-2021
+8000 wbegerdwupesv mmn Venezuela 64 NIPAH YES 28-03-2020
+8000 wbegerdwupesv mmn Venezuela 64 DENGUE NO 11-10-2018
+8000 wbegerdwupesv mmn Venezuela 64 NIPAH YES 12-10-2020
+8000 wbegerdwupesv mmn Venezuela 64 VACCINIA NO 04-02-2020
+963 ujpoofyumhvx mtyk Greenland 11 YELLOWFEVER NO
+963 ujpoofyumhvx mtyk Greenland 11 SMALLPOX NO
+963 ujpoofyumhvx mtyk Greenland 11 COXSACKIE NO
+963 ujpoofyumhvx mtyk Greenland 11 H5N1 YES 15-11-2018
+963 ujpoofyumhvx mtyk Greenland 11 RUBELLA NO
+7562 ynqrfzpf lerk Finland 120 SARS-1 YES 25-08-2019
+7562 ynqrfzpf lerk Finland 120 COXSACKIE NO
+7562 ynqrfzpf lerk Finland 120 ROTAVIRUS NO 01-09-2021
+7562 ynqrfzpf lerk Finland 120 HKU1 YES 05-05-2018
+7562 ynqrfzpf lerk Finland 120 H5N8 NO 19-05-2020
+7562 ynqrfzpf lerk Finland 120 HEPATITIS YES 01-11-2021
+7562 ynqrfzpf lerk Finland 120 HEPATITIS YES 26-10-2019
+7562 ynqrfzpf lerk Finland 120 H5N8 NO
+7542 ggecgoe gqpwiknhspssy PuertoRico 76 MERS-COV YES 02-05-2019
+781 ifujvcokxq xywmf Italy 116 MERS-COV YES 07-03-2019
+781 ifujvcokxq xywmf Italy 116 BK YES 14-01-2021
+781 ifujvcokxq xywmf Italy 116 HEPATITIS NO 25-09-2021
+781 ifujvcokxq xywmf Italy 116 AIDS YES 02-01-2018
+781 ifujvcokxq xywmf Italy 116 MERS-COV NO 30-01-2021
+781 ifujvcokxq xywmf Italy 116 MARBURG NO
+781 ifujvcokxq xywmf Italy 116 H3N2 NO 03-03-2020
+781 ifujvcokxq xywmf Italy 116 COXSACKIE NO 15-03-2021
+781 ifujvcokxq xywmf Italy 116 NIPAH YES 11-06-2018
+781 ifujvcokxq xywmf Italy 116 DENGUE YES 15-08-2021
+8252 fiiz jlwvvnevdbql ElSalvador 108 HANTAVIRUS YES 13-01-2019
+8252 fiiz jlwvvnevdbql ElSalvador 108 MERS-COV NO
+4984 npsflhrk dtq China 38 BK YES 27-10-2020
+4984 npsflhrk dtq China 38 DENGUE NO
+4984 npsflhrk dtq China 38 RABIES YES 29-07-2021
+4984 npsflhrk dtq China 38 MARBURG YES 18-09-2018
+4984 npsflhrk dtq China 38 ROTAVIRUS NO
+4984 npsflhrk dtq China 38 MARBURG NO
+4285 voquqxtl nlokm Bulgaria 10 LASSAFEVER YES 23-10-2019
+4285 voquqxtl nlokm Bulgaria 10 RABIES YES 31-11-2018
+4285 voquqxtl nlokm Bulgaria 10 HKU1 YES 22-03-2020
+4285 voquqxtl nlokm Bulgaria 10 COXSACKIE NO
+4285 voquqxtl nlokm Bulgaria 10 POLIO NO 07-01-2020
+4285 voquqxtl nlokm Bulgaria 10 RABIES YES 22-10-2019
+4285 voquqxtl nlokm Bulgaria 10 H5N1 YES 30-11-2019
+4285 voquqxtl nlokm Bulgaria 10 COVID-19 YES 29-03-2021
+4285 voquqxtl nlokm Bulgaria 10 H5N8 YES 20-05-2021
+5815 ubexxdzjo sufwsbjzsilc France 30 COXSACKIE YES 29-05-2019
+5815 ubexxdzjo sufwsbjzsilc France 30 NIPAH YES 13-07-2020
+5815 ubexxdzjo sufwsbjzsilc France 30 MENIGITIS YES 25-02-2018
+5815 ubexxdzjo sufwsbjzsilc France 30 LASSAFEVER NO 20-05-2021
+1453 jmkqfn gqkoji Estonia 46 COVID-19 YES 31-12-2021
+1453 jmkqfn gqkoji Estonia 46 H5N8 NO
+1453 jmkqfn gqkoji Estonia 46 ROTAVIRUS NO 31-08-2021
+1453 jmkqfn gqkoji Estonia 46 HIV YES 30-11-2021
+1453 jmkqfn gqkoji Estonia 46 H5N1 YES 21-11-2020
+1453 jmkqfn gqkoji Estonia 46 NIPAH YES 30-10-2018
+1453 jmkqfn gqkoji Estonia 46 MERS-COV NO 04-02-2021
+1453 jmkqfn gqkoji Estonia 46 SARS-1 YES 28-10-2020
+2849 mljbjwwtyf yvv Croatia 11 HANTAVIRUS YES 09-03-2021
+1717 drgervjytab dzhpk Belgium 114 H5N1 YES 07-04-2019
+1568 abgc uedipnlw Malta 99 HKU1 YES 19-10-2019
+9897 dpmavmhpmmrsi bwymebehqrijm Mexico 33 YELLOWFEVER NO 09-12-2019
+6965 doo occkapvtso Romania 120 MENIGITIS NO 27-07-2021
+4018 dbfmqwg uyzblsflsyxm Slovakia 51 VISNA NO
+4018 dbfmqwg uyzblsflsyxm Slovakia 51 H1N1 NO
+4018 dbfmqwg uyzblsflsyxm Slovakia 51 SARS-1 YES 24-10-2019
+5386 lsca lua Estonia 57 MERS-COV YES 04-12-2019
+5386 lsca lua Estonia 57 HKU1 NO 22-07-2020
+5386 lsca lua Estonia 57 H3N2 NO
+5386 lsca lua Estonia 57 HIV NO 18-08-2018
+8486 wpouikaewiiayl rafssyyeyj China 87 COXSACKIE YES 19-05-2018
+8486 wpouikaewiiayl rafssyyeyj China 87 COXSACKIE NO 31-02-2020
+8486 wpouikaewiiayl rafssyyeyj China 87 H5N8 NO
+8486 wpouikaewiiayl rafssyyeyj China 87 MENIGITIS YES 24-08-2018
+8486 wpouikaewiiayl rafssyyeyj China 87 ROTAVIRUS YES 11-01-2021
+8486 wpouikaewiiayl rafssyyeyj China 87 COXSACKIE NO 17-07-2021
+410 aitn rtzuiycogdyku Jamaica 87 LASSAFEVER YES 28-02-2021
+2379 gsf rrptm Estonia 92 VACCINIA YES 29-03-2020
+2379 gsf rrptm Estonia 92 HEPATITIS NO
+2379 gsf rrptm Estonia 92 LASSAFEVER YES 02-02-2018
+2379 gsf rrptm Estonia 92 ESCHERICHIA YES 21-04-2020
+2379 gsf rrptm Estonia 92 ENCEPHALITIS YES 26-06-2019
+2379 gsf rrptm Estonia 92 AIDS YES 21-11-2020
+2379 gsf rrptm Estonia 92 HKU1 NO
+2379 gsf rrptm Estonia 92 HANTAVIRUS YES 18-10-2020
+2379 gsf rrptm Estonia 92 LASSAFEVER NO
+2379 gsf rrptm Estonia 92 ROTAVIRUS YES 07-02-2021
+8274 lpce qaix Romania 43 ESCHERICHIA YES 03-08-2020
+8274 lpce qaix Romania 43 DENGUE YES 07-08-2018
+8274 lpce qaix Romania 43 ROTAVIRUS NO 13-08-2020
+8274 lpce qaix Romania 43 H1N1 NO
+8274 lpce qaix Romania 43 BK NO
+8274 lpce qaix Romania 43 COVID-19 YES 09-02-2018
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 AIDS YES 09-11-2018
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 MARBURG NO 28-07-2018
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 H5N8 YES 26-06-2020
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 VISNA YES 08-01-2018
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 DENGUE NO
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 POLIO NO
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 HANTAVIRUS NO
+8934 mxfoepnpcszr jrkpritotfi Argentina 113 VISNA YES 24-08-2020
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 H5N1 NO 17-01-2020
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 MARBURG NO 21-01-2020
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 HENDRA NO 04-07-2018
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 H5N8 YES 01-04-2021
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 MERS-COV NO
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 ENCEPHALITIS YES 03-05-2018
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 YELLOWFEVER YES 23-09-2021
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 CIRCOVIRUS NO 01-10-2021
+5948 bypdlctuuhtklw encrtaax Luxembourg 3 RABIES NO
+8222 wqyukhbujbd woq Mexico 72 SARS-1 YES 29-09-2019
+8222 wqyukhbujbd woq Mexico 72 ROTAVIRUS NO 31-10-2021
+8222 wqyukhbujbd woq Mexico 72 H1N1 YES 10-08-2020
+8222 wqyukhbujbd woq Mexico 72 RUBELLA YES 07-05-2021
+8222 wqyukhbujbd woq Mexico 72 HENDRA YES 23-07-2018
+8222 wqyukhbujbd woq Mexico 72 MERS-COV YES 11-03-2019
+8222 wqyukhbujbd woq Mexico 72 SENDAI YES 11-01-2019
+8196 gsa jwpihcjzmgkzls Italy 59 LASSAFEVER NO
+8196 gsa jwpihcjzmgkzls Italy 59 SENDAI YES 10-10-2018
+8196 gsa jwpihcjzmgkzls Italy 59 HEPATITIS NO
+8196 gsa jwpihcjzmgkzls Italy 59 HIV NO
+8196 gsa jwpihcjzmgkzls Italy 59 COVID-19 YES 12-12-2019
+8196 gsa jwpihcjzmgkzls Italy 59 HANTAVIRUS NO 06-12-2018
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 COVID-19 NO
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 VISNA YES 29-07-2020
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 NIPAH YES 25-03-2020
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 H3N2 YES 26-02-2019
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 NIPAH NO
+4927 dicqcnnmfdchnt muqcslfz Colombia 11 HANTAVIRUS NO
+6896 avoby zrzvjgqh DominicanRepublic 36 AIDS YES 02-03-2020
+6896 avoby zrzvjgqh DominicanRepublic 36 VISNA NO
+6896 avoby zrzvjgqh DominicanRepublic 36 HENDRA NO
+6896 avoby zrzvjgqh DominicanRepublic 36 DENGUE NO 21-03-2019
+8023 orbivwdzbbbf ybze Canada 109 H5N8 YES 26-11-2019
+8023 orbivwdzbbbf ybze Canada 109 MENIGITIS NO
+8023 orbivwdzbbbf ybze Canada 109 SMALLPOX YES 17-05-2018
+8023 orbivwdzbbbf ybze Canada 109 SENDAI YES 05-08-2019
+8023 orbivwdzbbbf ybze Canada 109 POLIO NO
+8023 orbivwdzbbbf ybze Canada 109 MERS-COV YES 22-07-2018
+8023 orbivwdzbbbf ybze Canada 109 HEPATITIS NO
+8023 orbivwdzbbbf ybze Canada 109 RUBELLA NO 03-06-2019
+8023 orbivwdzbbbf ybze Canada 109 YELLOWFEVER YES 16-08-2018
+8023 orbivwdzbbbf ybze Canada 109 CIRCOVIRUS YES 13-08-2019
+3190 jwyx wfai Sweden 68 ENCEPHALITIS NO
+3190 jwyx wfai Sweden 68 HENDRA NO
+3190 jwyx wfai Sweden 68 COXSACKIE YES 04-12-2018
+3190 jwyx wfai Sweden 68 AIDS YES 06-12-2018
+1661 qfbb rylbnxgrb Brazil 103 SMALLPOX YES 29-05-2020
+1661 qfbb rylbnxgrb Brazil 103 POLIO NO
+1661 qfbb rylbnxgrb Brazil 103 SMALLPOX NO
+1661 qfbb rylbnxgrb Brazil 103 NIPAH YES 06-03-2018
+1661 qfbb rylbnxgrb Brazil 103 COXSACKIE YES 24-10-2018
+1661 qfbb rylbnxgrb Brazil 103 VACCINIA YES 20-01-2019
+1661 qfbb rylbnxgrb Brazil 103 H5N8 NO
+1661 qfbb rylbnxgrb Brazil 103 DENGUE YES 11-01-2018
+1661 qfbb rylbnxgrb Brazil 103 COVID-19 YES 12-07-2020
+1661 qfbb rylbnxgrb Brazil 103 EBOLA YES 19-12-2018
+2311 rziveeqx cywydzkhdqayr Portugal 102 H3N2 YES 14-02-2018
+2311 rziveeqx cywydzkhdqayr Portugal 102 MENIGITIS YES 05-02-2019
+2311 rziveeqx cywydzkhdqayr Portugal 102 SMALLPOX YES 10-05-2021
+2311 rziveeqx cywydzkhdqayr Portugal 102 HIV NO
+2311 rziveeqx cywydzkhdqayr Portugal 102 SENDAI NO
+8498 twoykqhry jawoovptqw Portugal 96 VISNA NO 31-12-2021
+8498 twoykqhry jawoovptqw Portugal 96 HENDRA YES 31-01-2021
+8498 twoykqhry jawoovptqw Portugal 96 DENGUE NO
+8498 twoykqhry jawoovptqw Portugal 96 HEPATITIS YES 27-12-2020
+8498 twoykqhry jawoovptqw Portugal 96 ESCHERICHIA YES 15-11-2019
+8498 twoykqhry jawoovptqw Portugal 96 HEPATITIS NO
+5016 yfdtqh akjutmnzo Lithuania 16 MARBURG NO 16-10-2018
+4520 bbhoxzxts fcdqgc Luxembourg 56 DENGUE NO 26-04-2019
+3227 zaomovv smd Barbados 32 HENDRA NO 05-08-2020
+3227 zaomovv smd Barbados 32 MARBURG YES 25-03-2021
+3227 zaomovv smd Barbados 32 JC YES 26-01-2018
+3227 zaomovv smd Barbados 32 HKU1 NO
+3227 zaomovv smd Barbados 32 HEPATITIS YES 01-06-2018
+3227 zaomovv smd Barbados 32 COXSACKIE NO 07-12-2019
+3227 zaomovv smd Barbados 32 COXSACKIE YES 03-01-2020
+244 qahjfe vjiemywzvl Finland 117 BK YES 12-10-2018
+244 qahjfe vjiemywzvl Finland 117 DENGUE YES 18-08-2021
+244 qahjfe vjiemywzvl Finland 117 SMALLPOX NO 30-03-2021
+244 qahjfe vjiemywzvl Finland 117 H5N8 NO
+244 qahjfe vjiemywzvl Finland 117 AIDS NO 22-06-2019
+244 qahjfe vjiemywzvl Finland 117 JC YES 31-10-2020
+244 qahjfe vjiemywzvl Finland 117 MENIGITIS YES 21-09-2021
+244 qahjfe vjiemywzvl Finland 117 JC NO
+3412 wwovsjft xmtfnowl Argentina 75 HIV YES 08-01-2020
+3412 wwovsjft xmtfnowl Argentina 75 POLIO YES 27-05-2020
+9857 dgkvshj sakidl Cyprus 53 SENDAI YES 02-06-2018
+9857 dgkvshj sakidl Cyprus 53 MENIGITIS NO
+9857 dgkvshj sakidl Cyprus 53 AIDS NO 20-08-2020
+9857 dgkvshj sakidl Cyprus 53 SENDAI YES 11-07-2021
+9857 dgkvshj sakidl Cyprus 53 JC NO 22-11-2018
+9857 dgkvshj sakidl Cyprus 53 ROTAVIRUS YES 12-01-2021
+9857 dgkvshj sakidl Cyprus 53 COVID-19 NO 05-08-2018
+9857 dgkvshj sakidl Cyprus 53 MARBURG NO
+6852 vbnuwhmpjtf wlvjfsdwbcbsfn Canada 46 ENCEPHALITIS YES 23-09-2020
+5865 idu gyopnbvfseo SaintLucia 97 SARS-1 YES 17-09-2019
+5865 idu gyopnbvfseo SaintLucia 97 HKU1 NO 08-06-2021
+5865 idu gyopnbvfseo SaintLucia 97 YELLOWFEVER YES 20-10-2019
+5865 idu gyopnbvfseo SaintLucia 97 CIRCOVIRUS NO 26-05-2021
+5865 idu gyopnbvfseo SaintLucia 97 COVID-19 YES 05-01-2020
+4015 vch cpdnaaini Barbados 68 H1N1 YES 10-05-2021
+328 gojsiqmcj denlpqad Greenland 119 ENCEPHALITIS YES 06-09-2021
+328 gojsiqmcj denlpqad Greenland 119 CIRCOVIRUS NO 15-08-2018
+328 gojsiqmcj denlpqad Greenland 119 ESCHERICHIA YES 11-06-2018
+328 gojsiqmcj denlpqad Greenland 119 MEASLES YES 02-02-2019
+328 gojsiqmcj denlpqad Greenland 119 YELLOWFEVER YES 20-01-2018
+328 gojsiqmcj denlpqad Greenland 119 VISNA YES 24-12-2020
+328 gojsiqmcj denlpqad Greenland 119 COVID-19 NO 17-09-2018
+6510 fuvprwenswbba vqpjlzeltwp China 115 RABIES NO
+6510 fuvprwenswbba vqpjlzeltwp China 115 SENDAI YES 10-02-2018
+6510 fuvprwenswbba vqpjlzeltwp China 115 LASSAFEVER YES 09-11-2020
+6510 fuvprwenswbba vqpjlzeltwp China 115 HANTAVIRUS NO 07-06-2020
+6510 fuvprwenswbba vqpjlzeltwp China 115 RABIES NO 10-12-2020
+6510 fuvprwenswbba vqpjlzeltwp China 115 NIPAH YES 24-09-2021
+6510 fuvprwenswbba vqpjlzeltwp China 115 JC NO
+6510 fuvprwenswbba vqpjlzeltwp China 115 HIV YES 02-03-2019
+6510 fuvprwenswbba vqpjlzeltwp China 115 AIDS NO
+6510 fuvprwenswbba vqpjlzeltwp China 115 HEPATITIS YES 22-10-2019
+5614 owthisbngkeocr giugtcvkzl UK 118 EBOLA YES 12-12-2018
+5614 owthisbngkeocr giugtcvkzl UK 118 ROTAVIRUS NO 05-08-2019
+5614 owthisbngkeocr giugtcvkzl UK 118 VACCINIA NO 16-10-2019
+2574 gxathquwy ihgg Barbados 82 H5N8 NO 19-05-2019
+2574 gxathquwy ihgg Barbados 82 ROTAVIRUS NO 06-03-2018
+2574 gxathquwy ihgg Barbados 82 COXSACKIE YES 03-08-2018
+2574 gxathquwy ihgg Barbados 82 BK NO 06-06-2020
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 HIV YES 29-02-2021
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 ENCEPHALITIS YES 04-03-2020
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 EBOLA NO
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 HENDRA NO 11-09-2020
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 EBOLA YES 01-04-2018
+966 jrrvhmqk bkcsarkbdeeh Sweden 106 SENDAI YES 16-01-2020
+3600 oodnxskujfn yygs Mexico 116 SENDAI NO
+3600 oodnxskujfn yygs Mexico 116 ROTAVIRUS YES 23-12-2020
+3600 oodnxskujfn yygs Mexico 116 LASSAFEVER YES 04-04-2019
+3600 oodnxskujfn yygs Mexico 116 SMALLPOX YES 19-06-2019
+3600 oodnxskujfn yygs Mexico 116 BK NO 28-04-2021
+3600 oodnxskujfn yygs Mexico 116 HIV YES 13-10-2019
+3600 oodnxskujfn yygs Mexico 116 HANTAVIRUS NO
+3600 oodnxskujfn yygs Mexico 116 COVID-19 NO
+3600 oodnxskujfn yygs Mexico 116 RABIES NO
+424 xdfsllbe ovq Cyprus 102 ESCHERICHIA NO 16-05-2018
+424 xdfsllbe ovq Cyprus 102 CIRCOVIRUS YES 02-12-2019
+8818 xcqrojraei oze USA 88 MERS-COV NO 02-05-2018
+8818 xcqrojraei oze USA 88 HEPATITIS YES 02-11-2020
+8818 xcqrojraei oze USA 88 HKU1 YES 09-10-2019
+8818 xcqrojraei oze USA 88 POLIO NO
+8818 xcqrojraei oze USA 88 VACCINIA YES 13-07-2018
+8818 xcqrojraei oze USA 88 LASSAFEVER NO
+8818 xcqrojraei oze USA 88 H1N1 YES 07-09-2019
+8818 xcqrojraei oze USA 88 ESCHERICHIA YES 04-02-2021
+6877 ihnwhbcfbx oglznvgkd UK 49 DENGUE YES 20-03-2020
+6877 ihnwhbcfbx oglznvgkd UK 49 HEPATITIS NO
+6877 ihnwhbcfbx oglznvgkd UK 49 HANTAVIRUS YES 29-02-2021
+6877 ihnwhbcfbx oglznvgkd UK 49 COVID-19 YES 27-02-2020
+6877 ihnwhbcfbx oglznvgkd UK 49 COXSACKIE YES 28-06-2021
+6877 ihnwhbcfbx oglznvgkd UK 49 ENCEPHALITIS NO
+6877 ihnwhbcfbx oglznvgkd UK 49 MEASLES YES 18-01-2018
+6877 ihnwhbcfbx oglznvgkd UK 49 H5N1 NO
+7743 nomxzzmnld kfvlsdtkx Canada 83 POLIO NO
+4762 svculs xxkiysypxumvt PuertoRico 99 ROTAVIRUS YES 23-02-2021
+4762 svculs xxkiysypxumvt PuertoRico 99 HEPATITIS NO 12-01-2018
+4762 svculs xxkiysypxumvt PuertoRico 99 YELLOWFEVER NO
+4762 svculs xxkiysypxumvt PuertoRico 99 CIRCOVIRUS YES 28-08-2019
+4762 svculs xxkiysypxumvt PuertoRico 99 HIV NO
+4762 svculs xxkiysypxumvt PuertoRico 99 NIPAH YES 15-12-2018
+4762 svculs xxkiysypxumvt PuertoRico 99 MENIGITIS YES 23-03-2020
+5257 svstqo vfnrstfvnm Venezuela 27 COVID-19 NO
+5257 svstqo vfnrstfvnm Venezuela 27 ENCEPHALITIS NO 06-03-2020
+5257 svstqo vfnrstfvnm Venezuela 27 MARBURG NO
+5257 svstqo vfnrstfvnm Venezuela 27 HANTAVIRUS YES 19-10-2019
+5257 svstqo vfnrstfvnm Venezuela 27 H1N1 NO
+5257 svstqo vfnrstfvnm Venezuela 27 SMALLPOX YES 06-02-2018
+5257 svstqo vfnrstfvnm Venezuela 27 H5N8 YES 31-08-2018
+5257 svstqo vfnrstfvnm Venezuela 27 YELLOWFEVER NO 20-12-2021
+5257 svstqo vfnrstfvnm Venezuela 27 HEPATITIS YES 30-03-2021
+3798 kdbynt cseizrbvppyccb Germany 51 H3N2 YES 29-09-2021
+3798 kdbynt cseizrbvppyccb Germany 51 MEASLES NO 10-12-2020
+3798 kdbynt cseizrbvppyccb Germany 51 ESCHERICHIA YES 15-01-2018
+3798 kdbynt cseizrbvppyccb Germany 51 MERS-COV YES 23-02-2019
+3798 kdbynt cseizrbvppyccb Germany 51 CIRCOVIRUS YES 18-05-2018
+3798 kdbynt cseizrbvppyccb Germany 51 HENDRA NO
+3798 kdbynt cseizrbvppyccb Germany 51 MERS-COV YES 20-04-2019
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 H1N1 YES 13-06-2020
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 COXSACKIE YES 16-12-2018
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 EBOLA NO
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 H1N1 YES 16-11-2021
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 ROTAVIRUS NO
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 NIPAH NO
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 H5N8 NO 23-11-2018
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 POLIO YES 24-05-2018
+6207 uaccvjlwxo sfpuvvmeypxuj Panama 88 HEPATITIS YES 12-08-2020
+4729 jjbc msi Malta 56 MEASLES YES 12-06-2019
+4729 jjbc msi Malta 56 H3N2 YES 24-01-2019
+4729 jjbc msi Malta 56 ENCEPHALITIS YES 18-11-2018
+4729 jjbc msi Malta 56 SENDAI YES 05-11-2018
+4729 jjbc msi Malta 56 VACCINIA YES 13-09-2018
+4729 jjbc msi Malta 56 COVID-19 YES 23-09-2018
+4729 jjbc msi Malta 56 RABIES NO 23-05-2021
+4729 jjbc msi Malta 56 HENDRA NO
+4729 jjbc msi Malta 56 HKU1 NO 16-09-2019
+3290 myfy esz Greece 95 COXSACKIE YES 11-03-2019
+3290 myfy esz Greece 95 CIRCOVIRUS YES 31-04-2019
+3290 myfy esz Greece 95 H5N1 YES 30-06-2021
+3290 myfy esz Greece 95 HIV NO
+3290 myfy esz Greece 95 SMALLPOX YES 31-01-2018
+3290 myfy esz Greece 95 ENCEPHALITIS NO
+3290 myfy esz Greece 95 JC YES 09-12-2019
+3290 myfy esz Greece 95 MEASLES YES 27-12-2021
+3290 myfy esz Greece 95 JC YES 03-06-2019
+9314 rqcsbnpevd rvchccub Argentina 117 AIDS NO 07-06-2018
+9314 rqcsbnpevd rvchccub Argentina 117 ROTAVIRUS NO
+9314 rqcsbnpevd rvchccub Argentina 117 DENGUE YES 21-08-2018
+7920 pnuqtyfbwk rcuf Mexico 98 HEPATITIS YES 25-04-2019
+7920 pnuqtyfbwk rcuf Mexico 98 HEPATITIS NO
+7920 pnuqtyfbwk rcuf Mexico 98 JC YES 12-06-2018
+6139 guildhe lbmsjv Argentina 78 ESCHERICHIA YES 20-10-2018
+6139 guildhe lbmsjv Argentina 78 HIV NO 02-01-2019
+6139 guildhe lbmsjv Argentina 78 H5N8 YES 26-06-2019
+6139 guildhe lbmsjv Argentina 78 ESCHERICHIA YES 30-08-2020
+7180 vxbswjelbbww mzfhdrklrq Slovenia 75 BK YES 21-04-2020
+7180 vxbswjelbbww mzfhdrklrq Slovenia 75 LASSAFEVER YES 14-06-2018
+7180 vxbswjelbbww mzfhdrklrq Slovenia 75 NIPAH NO 08-12-2020
+7180 vxbswjelbbww mzfhdrklrq Slovenia 75 MERS-COV YES 21-08-2018
+7180 vxbswjelbbww mzfhdrklrq Slovenia 75 SARS-1 NO
+8694 opead rxzeqa UK 73 ROTAVIRUS NO
+8694 opead rxzeqa UK 73 YELLOWFEVER YES 13-09-2020
+8694 opead rxzeqa UK 73 VISNA YES 16-02-2018
+8694 opead rxzeqa UK 73 HIV YES 10-11-2018
+8694 opead rxzeqa UK 73 CIRCOVIRUS YES 10-01-2020
+8694 opead rxzeqa UK 73 BK YES 01-10-2021
+8694 opead rxzeqa UK 73 VACCINIA YES 27-12-2021
+8694 opead rxzeqa UK 73 DENGUE NO 01-03-2021
+1262 mzmwmgpnury dxziesxieeab Italy 76 ROTAVIRUS YES 19-05-2019
+1262 mzmwmgpnury dxziesxieeab Italy 76 HKU1 NO
+1262 mzmwmgpnury dxziesxieeab Italy 76 MERS-COV YES 07-02-2021
+1262 mzmwmgpnury dxziesxieeab Italy 76 RUBELLA NO
+1262 mzmwmgpnury dxziesxieeab Italy 76 COXSACKIE YES 04-07-2020
+1434 isqdc lfqrco Grenada 81 SENDAI YES 18-11-2018
+1434 isqdc lfqrco Grenada 81 NIPAH NO
+1434 isqdc lfqrco Grenada 81 HANTAVIRUS YES 12-12-2021
+1434 isqdc lfqrco Grenada 81 SARS-1 NO 21-01-2018
+1434 isqdc lfqrco Grenada 81 RABIES YES 22-05-2021
+6290 gcbekxuvsh yyaxsxiipnavo Netherlands 84 AIDS YES 07-07-2018
+6290 gcbekxuvsh yyaxsxiipnavo Netherlands 84 LASSAFEVER NO 10-05-2020
+6290 gcbekxuvsh yyaxsxiipnavo Netherlands 84 JC YES 04-03-2021
+6290 gcbekxuvsh yyaxsxiipnavo Netherlands 84 H1N1 NO 25-04-2021
+84 exlzl tldpwvxvfvlm Barbados 38 RABIES NO
+84 exlzl tldpwvxvfvlm Barbados 38 POLIO YES 16-01-2020
+84 exlzl tldpwvxvfvlm Barbados 38 SARS-1 YES 03-08-2021
+84 exlzl tldpwvxvfvlm Barbados 38 MEASLES YES 10-08-2019
+84 exlzl tldpwvxvfvlm Barbados 38 SARS-1 YES 04-02-2018
+84 exlzl tldpwvxvfvlm Barbados 38 VACCINIA YES 31-12-2021
+84 exlzl tldpwvxvfvlm Barbados 38 SARS-1 NO
+84 exlzl tldpwvxvfvlm Barbados 38 COXSACKIE YES 09-04-2019
+5074 fgjrijrrg hbjah Cyprus 65 YELLOWFEVER YES 11-03-2021
+5074 fgjrijrrg hbjah Cyprus 65 HIV YES 13-12-2019
+5074 fgjrijrrg hbjah Cyprus 65 CIRCOVIRUS NO
+5074 fgjrijrrg hbjah Cyprus 65 VISNA NO 10-07-2020
+5074 fgjrijrrg hbjah Cyprus 65 RABIES NO 14-08-2021
+5074 fgjrijrrg hbjah Cyprus 65 H5N8 NO 23-04-2021
+5074 fgjrijrrg hbjah Cyprus 65 H5N1 YES 07-02-2019
+5074 fgjrijrrg hbjah Cyprus 65 LASSAFEVER NO 10-02-2018
+5391 mtmpdhzpuj okedvmacdwu Belgium 115 HEPATITIS NO 18-12-2021
+5391 mtmpdhzpuj okedvmacdwu Belgium 115 DENGUE YES 02-12-2018
+5391 mtmpdhzpuj okedvmacdwu Belgium 115 MENIGITIS NO
+5391 mtmpdhzpuj okedvmacdwu Belgium 115 YELLOWFEVER YES 23-03-2020
+5391 mtmpdhzpuj okedvmacdwu Belgium 115 SARS-1 YES 23-06-2018
+155 pmx qplpvzrxcdv Hungary 32 SARS-1 YES 02-03-2018
+155 pmx qplpvzrxcdv Hungary 32 AIDS NO
+155 pmx qplpvzrxcdv Hungary 32 RUBELLA NO
+155 pmx qplpvzrxcdv Hungary 32 HANTAVIRUS YES 03-11-2021
+155 pmx qplpvzrxcdv Hungary 32 MERS-COV NO 30-11-2018
+155 pmx qplpvzrxcdv Hungary 32 SENDAI NO
+155 pmx qplpvzrxcdv Hungary 32 POLIO NO
+8402 ltjdchiumzwyli rmyba Netherlands 68 HIV NO 24-06-2021
+8402 ltjdchiumzwyli rmyba Netherlands 68 MARBURG NO 10-05-2021
+8402 ltjdchiumzwyli rmyba Netherlands 68 H1N1 YES 08-11-2018
+8402 ltjdchiumzwyli rmyba Netherlands 68 ESCHERICHIA NO
+8402 ltjdchiumzwyli rmyba Netherlands 68 NIPAH NO
+635 jgxg bejtx Venezuela 78 CIRCOVIRUS NO 28-04-2020
+635 jgxg bejtx Venezuela 78 ROTAVIRUS YES 30-10-2021
+635 jgxg bejtx Venezuela 78 MENIGITIS YES 19-07-2018
+635 jgxg bejtx Venezuela 78 HANTAVIRUS NO
+635 jgxg bejtx Venezuela 78 YELLOWFEVER NO 03-09-2020
+635 jgxg bejtx Venezuela 78 H1N1 NO
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 RUBELLA YES 08-10-2020
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 COVID-19 NO
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 COXSACKIE YES 30-09-2019
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 H5N1 NO 29-03-2021
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 NIPAH YES 16-01-2019
+7160 igdxtqdlhbb aqpnnotjvavcc Finland 18 H5N1 YES 25-02-2019
+9970 kgmtoxbck byt Greece 31 AIDS NO 01-02-2020
+9970 kgmtoxbck byt Greece 31 NIPAH NO
+9970 kgmtoxbck byt Greece 31 HIV NO
+9970 kgmtoxbck byt Greece 31 RUBELLA NO
+9970 kgmtoxbck byt Greece 31 ROTAVIRUS NO 19-03-2019
+9970 kgmtoxbck byt Greece 31 SENDAI NO 03-10-2021
+9970 kgmtoxbck byt Greece 31 RABIES YES 09-09-2021
+9970 kgmtoxbck byt Greece 31 LASSAFEVER YES 01-03-2021
+9970 kgmtoxbck byt Greece 31 RUBELLA YES 15-09-2021
+7152 yiobql xhihtjpfysl Greenland 106 H5N8 YES 26-02-2021
+7152 yiobql xhihtjpfysl Greenland 106 RUBELLA NO
+7152 yiobql xhihtjpfysl Greenland 106 JC YES 20-07-2018
+7152 yiobql xhihtjpfysl Greenland 106 BK NO
+8847 cpsw ubowkypzlnpxm Haiti 30 LASSAFEVER YES 06-10-2019
+8847 cpsw ubowkypzlnpxm Haiti 30 SENDAI NO
+8847 cpsw ubowkypzlnpxm Haiti 30 VISNA NO 30-10-2020
+258 sedxpoeyvc hwjduouzno ElSalvador 79 HENDRA YES 04-09-2020
+258 sedxpoeyvc hwjduouzno ElSalvador 79 ROTAVIRUS NO 25-12-2019
+1148 qra hkjhnawnhdoos Spain 105 H5N8 YES 27-12-2018
+1148 qra hkjhnawnhdoos Spain 105 COXSACKIE NO 04-10-2019
+1148 qra hkjhnawnhdoos Spain 105 COVID-19 NO 19-09-2019
+1148 qra hkjhnawnhdoos Spain 105 MARBURG YES 31-01-2020
+1148 qra hkjhnawnhdoos Spain 105 SMALLPOX NO
+1148 qra hkjhnawnhdoos Spain 105 AIDS NO 28-09-2019
+1148 qra hkjhnawnhdoos Spain 105 CIRCOVIRUS NO
+1148 qra hkjhnawnhdoos Spain 105 AIDS YES 21-09-2021
+1148 qra hkjhnawnhdoos Spain 105 MARBURG YES 25-06-2019
+1148 qra hkjhnawnhdoos Spain 105 H5N1 YES 28-04-2018
+9006 qrelojiwzadv opehzciljjzk Grenada 104 H1N1 YES 01-12-2018
+9006 qrelojiwzadv opehzciljjzk Grenada 104 DENGUE NO 28-03-2020
+9006 qrelojiwzadv opehzciljjzk Grenada 104 HENDRA YES 23-04-2020
+9006 qrelojiwzadv opehzciljjzk Grenada 104 SARS-1 NO
+9006 qrelojiwzadv opehzciljjzk Grenada 104 POLIO YES 05-11-2018
+9006 qrelojiwzadv opehzciljjzk Grenada 104 COXSACKIE NO 21-04-2020
+9006 qrelojiwzadv opehzciljjzk Grenada 104 AIDS NO 09-12-2021
+9006 qrelojiwzadv opehzciljjzk Grenada 104 COVID-19 YES 23-08-2019
+513 kllvqssuge uvsdqztcnl Italy 54 H5N8 YES 05-03-2020
+513 kllvqssuge uvsdqztcnl Italy 54 COVID-19 YES 15-06-2020
+513 kllvqssuge uvsdqztcnl Italy 54 HANTAVIRUS YES 14-01-2020
+513 kllvqssuge uvsdqztcnl Italy 54 YELLOWFEVER YES 22-10-2021
+513 kllvqssuge uvsdqztcnl Italy 54 ENCEPHALITIS NO
+3108 fcrvcrndazx vffxc Honduras 79 HANTAVIRUS NO
+3108 fcrvcrndazx vffxc Honduras 79 AIDS NO
+3108 fcrvcrndazx vffxc Honduras 79 LASSAFEVER YES 01-07-2019
+3108 fcrvcrndazx vffxc Honduras 79 ESCHERICHIA NO
+3108 fcrvcrndazx vffxc Honduras 79 VISNA YES 19-01-2019
+3108 fcrvcrndazx vffxc Honduras 79 HENDRA YES 22-10-2021
+3108 fcrvcrndazx vffxc Honduras 79 H5N8 NO
+5211 gnykgoaesth aqrvbxvbrxwk Brazil 98 BK NO
+409 ewpbnxehypzquw fjuumrumbvs Panama 23 YELLOWFEVER NO
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 SARS-1 NO 16-05-2018
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 COVID-19 YES 17-05-2019
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 VISNA YES 15-11-2018
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 CIRCOVIRUS YES 16-02-2020
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 HANTAVIRUS NO 12-04-2018
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 MEASLES NO
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 H1N1 NO
+8320 aoagseqvwppwiy jagzpllkh Haiti 41 LASSAFEVER YES 02-02-2018
+3421 dptnbainzwdrq qkxqyh Poland 100 HENDRA YES 06-02-2020
+3421 dptnbainzwdrq qkxqyh Poland 100 H1N1 YES 31-05-2018
+3421 dptnbainzwdrq qkxqyh Poland 100 BK NO 12-06-2021
+1804 jdkmdeqgt calp Lithuania 87 H1N1 YES 16-05-2018
+1804 jdkmdeqgt calp Lithuania 87 H5N1 NO 13-01-2019
+1804 jdkmdeqgt calp Lithuania 87 LASSAFEVER NO
+1804 jdkmdeqgt calp Lithuania 87 H3N2 NO
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 LASSAFEVER NO
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 ESCHERICHIA YES 06-12-2019
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 COVID-19 NO 01-05-2020
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 SENDAI NO 29-10-2021
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 SMALLPOX NO
+6180 rwzfnhgcoaiqcd mtlqqgcovczdpx Guatemala 37 LASSAFEVER NO
+7950 lqattzcgzrbaid fbf Slovenia 11 SARS-1 NO 30-01-2019
+7950 lqattzcgzrbaid fbf Slovenia 11 MENIGITIS NO 25-01-2018
+7950 lqattzcgzrbaid fbf Slovenia 11 POLIO YES 25-05-2018
+7950 lqattzcgzrbaid fbf Slovenia 11 HIV YES 12-11-2021
+230 lci xxpqumukw Ireland 112 SMALLPOX NO 28-12-2019
+230 lci xxpqumukw Ireland 112 ROTAVIRUS NO
+230 lci xxpqumukw Ireland 112 NIPAH NO 27-04-2020
+230 lci xxpqumukw Ireland 112 H5N8 YES 22-03-2019
+230 lci xxpqumukw Ireland 112 H5N8 NO 07-11-2019
+230 lci xxpqumukw Ireland 112 RABIES NO 13-04-2020
+230 lci xxpqumukw Ireland 112 HANTAVIRUS YES 01-02-2020
+230 lci xxpqumukw Ireland 112 ENCEPHALITIS NO 27-06-2021
+8919 yuzspvqprq kqazvhacut Slovenia 31 HIV YES 03-02-2019
+8919 yuzspvqprq kqazvhacut Slovenia 31 MEASLES NO 29-07-2021
+8919 yuzspvqprq kqazvhacut Slovenia 31 COVID-19 NO 24-12-2018
+8919 yuzspvqprq kqazvhacut Slovenia 31 HEPATITIS YES 23-09-2021
+6904 xpsrhznnkjstn ipno Portugal 57 MARBURG YES 26-07-2019
+6904 xpsrhznnkjstn ipno Portugal 57 H5N8 NO
+6904 xpsrhznnkjstn ipno Portugal 57 HENDRA YES 23-10-2019
+6904 xpsrhznnkjstn ipno Portugal 57 RUBELLA NO
+6904 xpsrhznnkjstn ipno Portugal 57 YELLOWFEVER NO
+6904 xpsrhznnkjstn ipno Portugal 57 ROTAVIRUS NO
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 CIRCOVIRUS YES 09-10-2020
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 MEASLES YES 22-10-2020
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 AIDS YES 02-04-2021
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 POLIO YES 21-06-2018
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 HIV YES 26-11-2021
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 VACCINIA YES 19-10-2018
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 NIPAH NO
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 H5N8 NO 05-03-2020
+2246 ouhwrjuaddoi toycboffagiqgc Netherlands 98 MARBURG NO 03-09-2020
+8562 oifsjotefqo mqeywns Bahamas 70 HEPATITIS YES 09-10-2019
+8562 oifsjotefqo mqeywns Bahamas 70 SARS-1 YES 03-08-2020
+8562 oifsjotefqo mqeywns Bahamas 70 POLIO NO
+8562 oifsjotefqo mqeywns Bahamas 70 VACCINIA YES 18-07-2021
+8562 oifsjotefqo mqeywns Bahamas 70 SMALLPOX NO
+8562 oifsjotefqo mqeywns Bahamas 70 HIV YES 02-06-2021
+8562 oifsjotefqo mqeywns Bahamas 70 VISNA NO
+8562 oifsjotefqo mqeywns Bahamas 70 H1N1 NO 31-08-2020
+8562 oifsjotefqo mqeywns Bahamas 70 SENDAI NO 10-06-2021
+286 mtlzt eeeovxsrfl Netherlands 84 CIRCOVIRUS YES 14-12-2021
+286 mtlzt eeeovxsrfl Netherlands 84 COVID-19 NO 03-02-2020
+286 mtlzt eeeovxsrfl Netherlands 84 DENGUE YES 10-08-2020
+2201 stk cqeywqhv SaintLucia 101 LASSAFEVER YES 16-04-2019
+2201 stk cqeywqhv SaintLucia 101 HANTAVIRUS NO 03-11-2021
+2201 stk cqeywqhv SaintLucia 101 HENDRA YES 20-06-2019
+2201 stk cqeywqhv SaintLucia 101 EBOLA YES 25-09-2021
+2201 stk cqeywqhv SaintLucia 101 HENDRA YES 13-03-2020
+2201 stk cqeywqhv SaintLucia 101 H1N1 NO
+2201 stk cqeywqhv SaintLucia 101 RUBELLA NO 01-10-2019
+2201 stk cqeywqhv SaintLucia 101 H3N2 NO 24-01-2018
+2201 stk cqeywqhv SaintLucia 101 VACCINIA YES 11-03-2020
+2201 stk cqeywqhv SaintLucia 101 ESCHERICHIA NO 18-10-2020
+9554 ygfhzkqozlzvfk wcqfbmj Greenland 70 COXSACKIE YES 15-05-2020
+9554 ygfhzkqozlzvfk wcqfbmj Greenland 70 ESCHERICHIA YES 25-09-2019
+9554 ygfhzkqozlzvfk wcqfbmj Greenland 70 VACCINIA NO 23-08-2020
+9554 ygfhzkqozlzvfk wcqfbmj Greenland 70 RABIES YES 11-08-2020
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 MENIGITIS YES 03-06-2019
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 DENGUE NO
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 SENDAI YES 22-02-2019
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 VISNA YES 28-03-2018
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 POLIO YES 26-05-2018
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 SARS-1 NO
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 H1N1 YES 25-04-2019
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 EBOLA YES 27-04-2021
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 VISNA NO 04-06-2021
+2955 vixmcqpgxe abdbhbnmtvldzf Lithuania 61 MENIGITIS NO
+233 plhcllwawh vtrdeqrwujl Greece 16 H5N1 NO 30-01-2020
+233 plhcllwawh vtrdeqrwujl Greece 16 H5N8 YES 03-02-2019
+5832 xzguzfizknsqo eeht Cyprus 74 DENGUE YES 29-08-2018
+5832 xzguzfizknsqo eeht Cyprus 74 SENDAI YES 30-11-2020
+8089 ofgkm yhpirjquruanmz Belgium 43 H3N2 YES 16-08-2021
+8089 ofgkm yhpirjquruanmz Belgium 43 MARBURG YES 06-12-2019
+8089 ofgkm yhpirjquruanmz Belgium 43 HEPATITIS YES 01-01-2018
+8089 ofgkm yhpirjquruanmz Belgium 43 NIPAH NO
+8089 ofgkm yhpirjquruanmz Belgium 43 MERS-COV YES 01-10-2019
+8089 ofgkm yhpirjquruanmz Belgium 43 H3N2 YES 10-10-2021
+265 yurjba aejhmqog CostaRica 4 AIDS NO 27-01-2019
+265 yurjba aejhmqog CostaRica 4 ESCHERICHIA NO 30-05-2019
+265 yurjba aejhmqog CostaRica 4 EBOLA NO
+265 yurjba aejhmqog CostaRica 4 ESCHERICHIA NO 28-03-2019
+265 yurjba aejhmqog CostaRica 4 MEASLES YES 08-10-2019
+265 yurjba aejhmqog CostaRica 4 RUBELLA NO
+265 yurjba aejhmqog CostaRica 4 LASSAFEVER YES 27-09-2021
+9774 gjocevu nevnbnsjwmqod SaintLucia 64 ESCHERICHIA NO 25-02-2019
+7982 ytdleykmbk zirmq Greenland 57 MENIGITIS NO
+7982 ytdleykmbk zirmq Greenland 57 ROTAVIRUS YES 21-03-2021
+7982 ytdleykmbk zirmq Greenland 57 POLIO YES 25-10-2021
+7982 ytdleykmbk zirmq Greenland 57 HIV YES 05-01-2018
+7982 ytdleykmbk zirmq Greenland 57 COVID-19 NO 28-05-2018
+7982 ytdleykmbk zirmq Greenland 57 ENCEPHALITIS NO 05-07-2021
+7982 ytdleykmbk zirmq Greenland 57 DENGUE NO 10-02-2020
+7982 ytdleykmbk zirmq Greenland 57 MENIGITIS NO
+3505 zmqysxfotidk yxlq USA 36 VISNA NO
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 H1N1 YES 13-07-2018
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 HANTAVIRUS NO
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 H3N2 YES 09-05-2021
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 VACCINIA YES 25-06-2019
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 EBOLA NO 29-07-2018
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 HENDRA YES 06-11-2021
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 RABIES YES 02-01-2020
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 MENIGITIS NO 12-05-2021
+2118 xhrhhhekrbxim vcwkanqflmy Austria 108 BK NO
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 SENDAI YES 30-08-2018
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 HKU1 YES 20-03-2020
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 RUBELLA YES 14-04-2018
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 HENDRA NO
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 HANTAVIRUS NO
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 ESCHERICHIA NO 03-09-2021
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 VACCINIA NO 14-07-2018
+4000 nwqxajxaxp yfgcccjpomqki SaintLucia 69 ROTAVIRUS NO 22-01-2021
+7506 cbabliwtcaltf puotcyhyxei Honduras 24 H5N1 YES 20-04-2021
+678 vxhgxexh wrgou Spain 103 SMALLPOX YES 11-09-2020
+678 vxhgxexh wrgou Spain 103 HKU1 YES 03-03-2019
+678 vxhgxexh wrgou Spain 103 ESCHERICHIA YES 30-09-2019
+678 vxhgxexh wrgou Spain 103 COVID-19 NO
+678 vxhgxexh wrgou Spain 103 SARS-1 YES 25-03-2021
+5525 pgqweaews jpfz Greece 20 ESCHERICHIA YES 21-06-2018
+5525 pgqweaews jpfz Greece 20 H5N1 YES 06-01-2020
+5525 pgqweaews jpfz Greece 20 NIPAH YES 04-02-2019
+5525 pgqweaews jpfz Greece 20 POLIO NO
+5525 pgqweaews jpfz Greece 20 AIDS NO 05-01-2021
+5525 pgqweaews jpfz Greece 20 JC YES 21-12-2019
+5525 pgqweaews jpfz Greece 20 MERS-COV YES 21-07-2018
+5525 pgqweaews jpfz Greece 20 RABIES YES 21-03-2018
+3898 afzubuzdbagpop vfil France 37 HEPATITIS NO
+3898 afzubuzdbagpop vfil France 37 ROTAVIRUS YES 26-12-2021
+3898 afzubuzdbagpop vfil France 37 SENDAI NO 06-03-2020
+3898 afzubuzdbagpop vfil France 37 AIDS YES 26-04-2018
+3898 afzubuzdbagpop vfil France 37 RABIES YES 03-01-2019
+3898 afzubuzdbagpop vfil France 37 HKU1 NO 08-08-2018
+3898 afzubuzdbagpop vfil France 37 HENDRA NO
+3898 afzubuzdbagpop vfil France 37 HANTAVIRUS YES 28-05-2018
+3898 afzubuzdbagpop vfil France 37 BK YES 28-03-2019
+3898 afzubuzdbagpop vfil France 37 COVID-19 NO 19-07-2019
+5488 cmpqyryit rwszthdo Ireland 19 EBOLA NO 26-08-2019
+7694 bbhx xudzodz Poland 64 H1N1 NO
+7694 bbhx xudzodz Poland 64 H5N8 YES 28-09-2019
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 HIV YES 11-04-2019
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 SENDAI NO 07-06-2018
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 HKU1 YES 17-02-2021
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 LASSAFEVER NO 12-11-2020
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 ESCHERICHIA NO 19-05-2020
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 CIRCOVIRUS YES 16-07-2020
+1048 ntjxfbbjgjkb nvzovrbdnw Panama 43 POLIO YES 21-08-2019
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 HIV YES 21-05-2020
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 BK NO 27-04-2021
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 LASSAFEVER NO
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 COXSACKIE NO 06-03-2021
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 JC NO
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 HANTAVIRUS YES 03-09-2021
+3428 bmxyrnnik xtccywcyvxau Slovakia 2 BK YES 05-06-2019
+6391 byhpz gtggnqmwq Finland 85 COVID-19 NO 25-09-2019
+6391 byhpz gtggnqmwq Finland 85 H5N1 NO 28-02-2018
+6391 byhpz gtggnqmwq Finland 85 SENDAI YES 14-07-2019
+6391 byhpz gtggnqmwq Finland 85 H1N1 NO
+6391 byhpz gtggnqmwq Finland 85 MERS-COV YES 19-06-2019
+2774 gsur vflmxnvkxrmaw Germany 61 ENCEPHALITIS NO 05-11-2021
+2774 gsur vflmxnvkxrmaw Germany 61 ROTAVIRUS YES 22-12-2020
+2774 gsur vflmxnvkxrmaw Germany 61 BK NO
+2774 gsur vflmxnvkxrmaw Germany 61 BK NO 11-01-2018
+2774 gsur vflmxnvkxrmaw Germany 61 NIPAH YES 14-06-2018
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 POLIO YES 18-11-2018
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 H5N8 NO
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 LASSAFEVER YES 18-03-2021
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 POLIO YES 04-03-2021
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 EBOLA YES 15-09-2019
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 BK NO 31-08-2020
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 MARBURG YES 01-11-2018
+708 mjdiuwxvdvy tfhwxtfkzk Bolivia 23 COXSACKIE YES 03-12-2019
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 MEASLES YES 12-11-2020
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 RABIES YES 03-08-2018
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 YELLOWFEVER NO 01-09-2018
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 ROTAVIRUS NO 31-07-2018
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 H5N8 NO
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 MENIGITIS NO
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 AIDS YES 06-08-2020
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 ROTAVIRUS NO
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 EBOLA NO 10-10-2019
+7404 rrqknvdczqlj fdrpsgwjvjltf Luxembourg 30 RABIES YES 05-10-2018
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 EBOLA NO
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 VISNA YES 29-04-2019
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 SMALLPOX NO
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 SMALLPOX NO
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 EBOLA YES 08-08-2019
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 COVID-19 YES 17-02-2018
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 DENGUE NO 17-07-2021
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 HIV YES 14-10-2021
+6526 dgwbfkefqfjq hmpnoxcxdoycn Bulgaria 70 HANTAVIRUS YES 30-11-2019
+3922 eyobqeyni cxafvjewlgkb PuertoRico 95 MARBURG NO 09-05-2019
+3922 eyobqeyni cxafvjewlgkb PuertoRico 95 H5N8 YES 25-10-2018
+3922 eyobqeyni cxafvjewlgkb PuertoRico 95 COVID-19 NO
+3922 eyobqeyni cxafvjewlgkb PuertoRico 95 CIRCOVIRUS YES 22-02-2021
+3922 eyobqeyni cxafvjewlgkb PuertoRico 95 SENDAI YES 01-09-2018
+5097 xti ztgaiqxqet Sweden 34 H3N2 NO
+5097 xti ztgaiqxqet Sweden 34 SENDAI YES 13-05-2020
+5097 xti ztgaiqxqet Sweden 34 POLIO YES 20-05-2018
+6952 krsguvrvprb vzypd DominicanRepublic 48 MARBURG NO 16-01-2020
+2915 nhnlkjvkflzmrj pamo Cyprus 30 ENCEPHALITIS YES 29-12-2020
+2915 nhnlkjvkflzmrj pamo Cyprus 30 VACCINIA YES 13-09-2018
+4239 kemidsebp mpnomtktonwptn Slovakia 117 POLIO YES 16-11-2021
+4239 kemidsebp mpnomtktonwptn Slovakia 117 HEPATITIS NO 06-02-2020
+4239 kemidsebp mpnomtktonwptn Slovakia 117 H5N1 YES 21-07-2019
+4239 kemidsebp mpnomtktonwptn Slovakia 117 HIV NO 02-07-2019
+4239 kemidsebp mpnomtktonwptn Slovakia 117 BK NO
+4239 kemidsebp mpnomtktonwptn Slovakia 117 MARBURG YES 06-10-2021
+4239 kemidsebp mpnomtktonwptn Slovakia 117 MENIGITIS NO 24-09-2021
+4239 kemidsebp mpnomtktonwptn Slovakia 117 NIPAH NO
+9761 wcqtoikchwxu qgmepn Slovenia 93 YELLOWFEVER NO 27-12-2019
+9761 wcqtoikchwxu qgmepn Slovenia 93 POLIO YES 03-01-2019
+9761 wcqtoikchwxu qgmepn Slovenia 93 MEASLES YES 10-11-2021
+9761 wcqtoikchwxu qgmepn Slovenia 93 AIDS YES 03-03-2018
+9761 wcqtoikchwxu qgmepn Slovenia 93 SENDAI YES 15-10-2018
+3216 tiovmsqitrgwjw yszm Luxembourg 37 AIDS YES 08-01-2020
+3216 tiovmsqitrgwjw yszm Luxembourg 37 JC NO
+3216 tiovmsqitrgwjw yszm Luxembourg 37 MENIGITIS NO
+3216 tiovmsqitrgwjw yszm Luxembourg 37 COVID-19 NO 12-09-2019
+3216 tiovmsqitrgwjw yszm Luxembourg 37 LASSAFEVER YES 30-01-2020
+3216 tiovmsqitrgwjw yszm Luxembourg 37 YELLOWFEVER YES 27-10-2021
+3216 tiovmsqitrgwjw yszm Luxembourg 37 NIPAH YES 21-02-2019
+3216 tiovmsqitrgwjw yszm Luxembourg 37 AIDS NO 14-01-2018
+9714 haomdh vwxbarfw France 52 JC YES 31-07-2019
+9714 haomdh vwxbarfw France 52 LASSAFEVER YES 22-05-2021
+9714 haomdh vwxbarfw France 52 BK NO
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 DENGUE YES 20-02-2019
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 VACCINIA YES 31-10-2019
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 BK NO
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 MEASLES NO 15-08-2018
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 SMALLPOX YES 02-08-2020
+1153 kdxlapyfpbhtfm ormzspgf ElSalvador 117 CIRCOVIRUS NO 01-10-2021
+1345 mqd dghjivyhpo SaintLucia 60 POLIO NO 28-12-2018
+1345 mqd dghjivyhpo SaintLucia 60 JC NO
+1345 mqd dghjivyhpo SaintLucia 60 VISNA YES 27-08-2021
+1345 mqd dghjivyhpo SaintLucia 60 RUBELLA NO 17-05-2020
+1345 mqd dghjivyhpo SaintLucia 60 CIRCOVIRUS YES 30-10-2018
+577 cgnxbd wuvsqwotgrvklv Malta 18 HIV YES 07-04-2018
+577 cgnxbd wuvsqwotgrvklv Malta 18 H5N8 YES 13-09-2020
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 MARBURG YES 07-01-2020
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 RABIES NO
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 CIRCOVIRUS YES 09-08-2020
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 VISNA YES 27-08-2019
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 SENDAI YES 29-08-2021
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 SMALLPOX YES 09-01-2020
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 H5N1 NO
+3787 cfepxyhhthokn xrramytaaeav Brazil 86 POLIO YES 27-05-2021
+9174 klclvfpeii aiabwpihoutfv China 2 NIPAH YES 03-10-2018
+9174 klclvfpeii aiabwpihoutfv China 2 BK NO
+9174 klclvfpeii aiabwpihoutfv China 2 RUBELLA NO 08-12-2019
+9174 klclvfpeii aiabwpihoutfv China 2 CIRCOVIRUS NO
+9174 klclvfpeii aiabwpihoutfv China 2 HENDRA NO 20-01-2019
+9174 klclvfpeii aiabwpihoutfv China 2 POLIO NO 18-06-2018

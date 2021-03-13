@@ -32,6 +32,9 @@ BloomFilter BloomCreate(size_t kilobytes){
     bloom->size = 1000*kilobytes;
     bloom->array = (uint8_t *)malloc(sizeof(uint8_t)*(bloom->size));
 
+    for (int i = 0; i < bloom->size; i++)
+        bloom->array[i] = (uint8_t)0;
+
     return bloom;
 }
 

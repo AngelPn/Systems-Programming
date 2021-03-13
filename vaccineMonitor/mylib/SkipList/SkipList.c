@@ -92,9 +92,9 @@ List get_bottom_level(SkipList sl){
 
 void *SLSearch(SkipList sl, void *key, CompareFunc compare, PrintItem print){
 
-    printf("\n\n----------SEARCH-------------\n\n");
-    SLPrint(sl, print);
-    printf("\n\n-----------------------------\n\n");
+    // printf("\n\n----------SEARCH-------------\n\n");
+    // SLPrint(sl, print);
+    // printf("\n\n-----------------------------\n\n");
 
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
@@ -123,7 +123,6 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare, PrintItem print){
             the previous node of given key in ascending order */       
         else{
             sl_node = list_node_item(sl->layers[i+1], node);
-            if (sl_node->lower_level == NULL) printf("lower level NULL\n");
             node = list_find_order(head, sl_node->lower_level, key, compare_function, &found);            
         }              
 
@@ -145,9 +144,9 @@ double my_log(double x, int base) {
 
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print){
 
-    printf("\n\n----------BEFORE-------------\n\n");
-    SLPrint(sl, print);
-    printf("\n\n-----------------------------\n\n");
+    // printf("\n\n----------BEFORE-------------\n\n");
+    // SLPrint(sl, print);
+    // printf("\n\n-----------------------------\n\n");
 
     /* Find the path */
     ListNode *path = (ListNode *)malloc(sizeof(ListNode)*(sl->level + 2));
@@ -170,7 +169,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         }
 
         head = sl->layers[i];
-        //printf("level i = %d\n", i);
         
         /* Same process with SLSearch but saves path in path array */
         if (path[i+1] != NULL){
@@ -179,7 +177,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         }
         else{
             path[i] = list_find_order(head, NULL, key(item), compare_function, &found); 
-            if (path[i] == NULL) printf("returned NULL");
         }
 
         if (found == true){
@@ -198,7 +195,8 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
             SLNode new_node = create_sl_node(key(item), lower_level);
             lower_level = list_insert_next(sl->layers[i], path[i], new_node);
         }
-
+        else
+            break;
     }
     free(path); 
     
@@ -209,13 +207,11 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         (sl->level)++;
 
         /* Change GetKey func depending level */
-        if ( sl->level > 1){
-            key = get_sl_node_key;
-        }
-            
+        if ( sl->level > 1)
+            key = get_sl_node_key;      
 
         sl->layers[sl->level] = list_create(destroy_sl_node);
-        printf("level: %d\n", sl->level);
+
         /* Flip a coin to every node of previous Layer to 
         decide whether or not to add the item in the new Layer*/
         head = sl->layers[sl->level - 1];
@@ -228,9 +224,9 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
         }
     }
 
-    printf("\n\n-----------AFTER-------------\n\n");
-    SLPrint(sl, print);
-    printf("\n\n-----------------------------\n\n");
+    // printf("\n\n-----------AFTER-------------\n\n");
+    // SLPrint(sl, print);
+    // printf("\n\n-----------------------------\n\n");
 }
 
 

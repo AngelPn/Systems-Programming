@@ -1,6 +1,8 @@
 #ifndef RECORD_H
 #define RECORD_H
 
+#include <stdbool.h>
+
 #include "country.h"
 
 /* "struct record" is incomplete struct */
@@ -14,6 +16,10 @@ void *get_citizenID(void *rec);
 
 country get_country(citizenRecord rec);
 int get_age(citizenRecord rec);
+
+/* Cross-check of citizen's informations with arguments
+    If data are identical, returns true. Else, returns false */
+bool cross_check(citizenRecord rec, char *firstname, char *lastname, country cntry, int age);
 
 /* Prints the fields of record */
 void print_citizen(void *rec);
