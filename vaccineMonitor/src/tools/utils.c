@@ -219,9 +219,9 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 	char *virusName = args[5];
 	char *check_vaccinated = args[6];
 	char *str_date = args[7];
-
+	printf("RECORD %s %s %s %s %s %s %s %s\n", id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 	if (strcmp(check_vaccinated, "NO") == 0 && str_date != NULL){
-		printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+		printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 		return;
 	}
 	else{
@@ -269,7 +269,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
 					/* If process is file parsing, then this record is considered inconsistent */
 					if (fileparse){
-						printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, check_vaccinated, str_date);
+						printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 						return;
 					}
 					/* If process is queries, then remove citizen from not_vaccinated persons skip list */

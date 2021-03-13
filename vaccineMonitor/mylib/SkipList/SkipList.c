@@ -26,6 +26,7 @@ SLNode create_sl_node(void *key, ListNode lower_level){
     SLNode new = (SLNode)malloc(sizeof(struct skiplist_node));
 
     new->key = *(int *)key;
+    printf("new key: %d\n", new->key);
     new->lower_level = lower_level;
 
     return new;
@@ -41,6 +42,12 @@ void print_sl_node_key(void *node){
 void destroy_sl_node(void *node){
     SLNode sl_node = node;
     free(sl_node);
+}
+
+void *get_sl_node_key(void *node){
+    printf("HERE-----------------------------------\n");
+    SLNode n =  node;
+    return &(n->key);
 }
 
 int compare_keys(void *key, void *sl_node){
@@ -90,14 +97,18 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare){
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
 
-    /* Compare items in Layer i (i > 0) with compare_keys */
+    /* Layer i (i > 0) needs compare_keys and key_function */
     CompareFunc compare_function = compare_keys;
+    GetKey key_function = get_sl_node_key;
 
     /* For each Layer of lists starting with highest level of skip list*/
     for(int i = sl->level; i >= 0; i--){
 
-        /* Compare items in Layer 0 with compare passed by user as argument */
-        if (i == 0) compare_function = compare;
+        /* Layer 0 with compare and key functions passed by user as arguments */
+        if (i == 0){
+            compare_function = compare;
+            key_function = key;
+        }
 
         head = sl->layers[i];
 
@@ -105,14 +116,14 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare){
             Find the node with given key or
             the previous node of given key in ascending order */
         if (node == NULL)
-            node = list_find_order(head, NULL, key, compare_function, &found);
+            node = list_find_order(head, NULL, key_function, compare_function, &found);
 
         /*  If node is not NULL, search list in Layer i with start_node being the lower_level of node.
             Find the node with given key or
             the previous node of given key in ascending order */       
         else{
             sl_node = list_node_item(sl->layers[i+1], node);
-            node = list_find_order(head, sl_node->lower_level, key, compare_function, &found);            
+            node = list_find_order(head, sl_node->lower_level, key_function, compare_function, &found);            
         }              
 
         if (found == true){ /* If found, go to Layer 0 and return node's item */
@@ -142,28 +153,32 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     List head = NULL;
     bool found = false;
 
-    /* Compare items in Layer i (i > 0) with compare_keys */
+    /* Layer i (i > 0) needs compare_keys and key_function */
     CompareFunc compare_function = compare_keys;
+    GetKey key_function = get_sl_node_key;
     
     /* For each Layer of lists starting with highest level of skip list*/
     for(int i = sl->level; i >= 0; i--){
 
-        /* Compare items in Layer 0 with compare passed by user as argument */
-        if (i == 0) compare_function = compare;
+        /* Layer 0 with compare and key functions passed by user as arguments */
+        if (i == 0){
+            compare_function = compare;
+            key_function = key;
+        }
 
         head = sl->layers[i];
         
         /* Same process with SLSearch but saves path in path array */
         if (path[i+1] != NULL){
             SLNode node = list_node_item(sl->layers[i+1], path[i+1]);
-            path[i] = list_find_order(head, node->lower_level, key(item), compare_function, &found);                
+            path[i] = list_find_order(head, node->lower_level, key_function(item), compare_function, &found);                
         }
         else{
-            path[i] = list_find_order(head, NULL, key(item), compare_function, &found); 
+            path[i] = list_find_order(head, NULL, key_function(item), compare_function, &found); 
         }
 
         if (found == true){
-            printf("The item is already in Skip List\n");
+            free(path);
             return ;
         }
     }  
@@ -175,7 +190,7 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     for (int i = 1; i < sl->level + 1; i++){
         
         if (rand()%2){
-            SLNode new_node = create_sl_node(key(item), lower_level);
+            SLNode new_node = create_sl_node(key_function(item), lower_level);
             lower_level = list_insert_next(sl->layers[i], path[i], new_node);
         }
 
@@ -187,8 +202,16 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     if ((int)result > sl->level + 1 && (int)result < sl->max_level){ /* Add Layer */
 
         (sl->level)++;
-        sl->layers[sl->level] = list_create(destroy_sl_node);
 
+        /* Change GetKey func depending level */
+        if ( sl->level > 1){
+            printf("here\n");
+            key = get_sl_node_key;
+        }
+            
+
+        sl->layers[sl->level] = list_create(destroy_sl_node);
+        printf("level: %d\n", sl->level);
         /* Flip a coin to every node of previous Layer to 
         decide whether or not to add the item in the new Layer*/
         head = sl->layers[sl->level - 1];
@@ -208,23 +231,27 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
 
-    /* Compare items in Layer i (i > 0) with compare_keys */
+    /* Layer i (i > 0) needs compare_keys and key_function */
     CompareFunc compare_function = compare_keys;
+    GetKey key_function = get_sl_node_key;
 
     /* Compare items in Layer i (i > 0) with compare_keys */
     for(int i = sl->level; i >= 0; i--){
 
-        /* Compare items in Layer 0 with compare passed by user as argument */
-        if (i == 0) compare_function = compare;
+        /* Layer 0 with compare and key functions passed by user as arguments */
+        if (i == 0){
+            compare_function = compare;
+            key_function = key;
+        }
 
         head = sl->layers[i];
 
         /* Same process with SLSearch*/
         if (node == NULL)
-            node = list_find_order(head, NULL, key, compare_function, &found);   
+            node = list_find_order(head, NULL, key_function, compare_function, &found);   
         else{
             sl_node = list_node_item(sl->layers[i+1], node);
-            node = list_find_order(head, sl_node->lower_level, key, compare_function, &found);            
+            node = list_find_order(head, sl_node->lower_level, key_function, compare_function, &found);            
         }          
 
         if (found == true){ /* If found, remove node from every Layer i (i > 0) */

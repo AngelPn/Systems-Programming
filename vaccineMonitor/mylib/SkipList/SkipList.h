@@ -21,6 +21,7 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare);
 
 /* Inserts item in Skip List with key specified by GetKey */
 /* Compares item's key with compare func */
+/* If item is already in skip list, then dismiss insertion */
 void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare);
 
 /* Removes item specified by key */

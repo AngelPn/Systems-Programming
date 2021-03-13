@@ -32,14 +32,17 @@ countries+=($(cat ${countriesFile}))
 
 # Create array of IDs: ID is a number from 1 to 9999
 # If duplicates are not allowed or numLines < 10000, generate unique IDs
-if [ ${duplicatesAllowed} -eq "0" -a ${numLines} -lt "10000" ]; then
+if [ ${duplicatesAllowed} -eq "0" -a ${numLines} -le "10000" ]; then
     ids=($(shuf -i 1-9999 -n $numLines))
 # Else generate IDs randomly with duplicates
 else
+    if [ ${duplicatesAllowed} -eq "0" ]; then
+        echo "Given numLines > 10000, so duplicates will be allowed..."
+    fi
     # Get shuffled IDs
     shuf_ids=($(shuf -i 1-9999 -n 10000))
 
-    for ((i = 0; i < numLines; i++)); do
+    for ((i = 0; i < numLines-1; )); do
         # x represents how many times the ID will be duplicated
         if [ ${numLines} -gt "10000" -a ${#shuf_ids[@]} -eq "1" ]; then
             x=$((numLines-i))
@@ -53,17 +56,7 @@ else
         done
         # Remove first element in shuf_ids
         shuf_ids=("${shuf_ids[@]:1}")
-    done    
-
-    # duplicateID=$((RANDOM % 9999 + 1))
-    # for ((i = 0; i < numLines; i++)); do
-    #     if [ $((RANDOM % 2)) -eq "0" ]; then
-    #         ids[i]=$((RANDOM % 9999 + 1))
-    #         duplicateID=${ids[i]}
-    #     else
-    #         ids[i]=$duplicateID
-    #     fi
-    # done
+    done
 fi
 
 # Return random string of letters of length given in argument
@@ -95,6 +88,13 @@ function write-in-File(){
         dd=$((RANDOM % 31 + 1))
         mm=$((RANDOM % 12 + 1))
         yyyy=$((RANDOM % 4 + 2018))
+        # Make sure both day and month are 2 digits
+        if [ $dd -lt "10" ]; then
+           dd="0${dd}"
+        fi
+        if [ $mm -lt "10" ]; then
+           mm="0${mm}"
+        fi
         date=$dd-$mm-$yyyy
         echo $1 $virus $vaccinated $date >> inputFiles.txt
     else
@@ -103,7 +103,7 @@ function write-in-File(){
 }
 
 # For the number of lines
-for ((i=0; i<numLines; i++)); do
+for ((i = 0; i < numLines-1; i++)); do
     # Create citizen's record
     id=${ids[i]}
     firstname=$(rand-str $((RANDOM % 12 + 3)))
