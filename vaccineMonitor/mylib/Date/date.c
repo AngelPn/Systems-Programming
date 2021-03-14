@@ -15,28 +15,32 @@ struct date_struct
 /* Convert a string that contains a date to a struct date and return it */
 date create_date(char *str){
 
-  date d = (date)malloc(sizeof(struct date_struct));
-
   if (str == NULL) return NULL;
 
   char *buf = strdup(str);
+  int dd, mm, yy;
 
   /* Make sure given str is in right format */
   char *token = strtok(buf, "-");
   if (token == NULL) return NULL;
-  d->day = atoi(token);
-  if (d->day <= 0 || d->day >= 32 ) return NULL;
+  dd = atoi(token);
+  if (dd <= 0 || dd >= 32 ) return NULL;
   
   if ((token = strtok(NULL, "-")) == NULL) return NULL;
-  d->month = atoi(token);
-  if (d->month <= 0 || d->month >= 13 ) return NULL;
+  mm = atoi(token);
+  if (mm <= 0 || mm >= 13 ) return NULL;
 
   if ((token = strtok(NULL, "-")) == NULL) return NULL;
-  d->year  = atoi(token);
-  if (d->year <= 1900) return NULL;
+  yy  = atoi(token);
+  if (yy <= 1900) return NULL;
 
   free(buf);
 
+  date d = (date)malloc(sizeof(struct date_struct));
+  d->day = dd;
+  d->month = mm;
+  d->year = yy;
+  
   return d;
 }
 

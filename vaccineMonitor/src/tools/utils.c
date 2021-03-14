@@ -54,10 +54,10 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 }
 
 
-void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse);
+void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse);
 
 /* Does file parsing and builds structs in dataStore */
-void fileParse_and_buildStructs(char *filepath, int kilobytes, dataStore *ds){
+void fileParse_and_buildStructs(char *filepath, int bytes, dataStore *ds){
 
 	FILE *frecords;
     /* Open the file given from filepath and read it*/
@@ -80,7 +80,7 @@ void fileParse_and_buildStructs(char *filepath, int kilobytes, dataStore *ds){
 		for (int i = 1; i < 8; ++i)
 			args[i] = strtok(NULL, " \n");
 
-		insertCitizen(args, kilobytes, ds, true);   
+		insertCitizen(args, bytes, ds, true);   
     }
 
 	free(line); free(filepath);
@@ -93,12 +93,12 @@ void vaccineStatus(void *item, int citizenID){
 	virus v = item;
 
 	vaccinated vaccinated_citizen = NULL;
-	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated)) != NULL){
+	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
 		printf("%s ", (char *)get_virusName(v));
 		printf("YES ");
 		print_vaccinated_date(vaccinated_citizen);
 	}
-	else if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen, print_citizen) != NULL){
+	else if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
 		printf("%s ", (char *)get_virusName(v));
 		printf("NO\n");
 	}
@@ -110,7 +110,7 @@ void vaccineStatus_with_virusName(void *item, int citizenID){
 	virus v = item;
 
 	vaccinated vaccinated_citizen = NULL;
-	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated)) != NULL){
+	if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
 		printf("VACCINATED ON ");
 		print_vaccinated_date(vaccinated_citizen);
 	}
@@ -159,9 +159,7 @@ void population_queries(char *args[5], dataStore *ds){
 				increase_popByAge_not_vaccinated(get_country(person), get_age(person));
 			else
 				increase_not_vaccinated_persons(get_country(person));
-			
 		}
-
 		if (strcmp(args[4], "/popStatusByAge") == 0)
 			HTVisit(ds->countries, popStatusByAge, 0);
 		else
@@ -176,8 +174,8 @@ void population_queries(char *args[5], dataStore *ds){
 			return;
 		}
 		/* If date1 exists, make sure date2 exists too */
-		if ((date1 = create_date(args[1])) != NULL){
-			if((date2 = create_date(args[2])) == NULL){
+		if ((date1 = create_date(args[2])) != NULL){
+			if((date2 = create_date(args[3])) == NULL){
 				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
 				free(date1);
 				return;
@@ -204,29 +202,34 @@ void population_queries(char *args[5], dataStore *ds){
 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
 			citizenRecord person = list_node_item(head, node);
+			curr_c = get_country(person);
 			
-			if (strcmp(args[4], "/popStatusByAge") == 0)
-				increase_popByAge_not_vaccinated(get_country(person), get_age(person));
-			else
-				increase_not_vaccinated_persons(get_country(person));
-			
+			if(!compare_countries(country_name, curr_c)){
+				if (strcmp(args[4], "/popStatusByAge") == 0)
+					increase_popByAge_not_vaccinated(get_country(person), get_age(person));
+				else
+					increase_not_vaccinated_persons(get_country(person));				
+			}
 		}
-
 		if (strcmp(args[4], "/popStatusByAge") == 0)
 			popStatusByAge(c, 0);
 		else populationStatus(c, 0);
-
 	}
 	else{
-		printf(RED "\nERROR: country not in database\n" RESET);
+		printf(RED "\nERROR: Invalid input\n" RESET
+				YEL "Input format for this command: " RESET);
+
+		if (strcmp(args[4], "/popStatusByAge") == 0)
+			printf("/popStatusByAge [country] virusName [date1 date2]\n");
+		else
+			printf("/populationStatus [country] virusName [date1 date2]\n");
 		return;
 	}
-
 	free(date1); free(date2);
 }
 
 
-void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
+void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
@@ -261,6 +264,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
 			HTInsert(&(ds->citizens), citizen, get_citizenID);
 		}
+		/* If citizen is already in hash tbale of citizens, cross-check given data */
 		else{
 			if (!cross_check(citizen, firstname, lastname, c, atoi(age))){
 				printf(RED "ERROR: Given citizen's data do not match with data in database\n" RESET
@@ -273,7 +277,7 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 		/* Check if virus is already in hash table of viruses */
 		/* If not, insert virus (v) in hash table of viruses */
 		if ((v = HTSearch(ds->viruses, virusName, compare_virusName)) == NULL){
-			v = create_virus(virusName, kilobytes);
+			v = create_virus(virusName, bytes);
 			HTInsert(&(ds->viruses), v, get_virusName);
 		}
 
@@ -283,14 +287,14 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 			vaccinated vaccinated_citizen = NULL;
 
 			/* Make sure vaccinated citizen is not already in skip list */
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated)) != NULL){
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
 				printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
 				print_vaccinated_date(vaccinated_citizen);
 				return;
 			}
 			else{
 				/* Search first if citizen is in not_vaccinated_persons to remove it or dismiss insertion */
-				citizenRecord search_citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen, print_citizen);
+				citizenRecord search_citizen = SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
 				if (search_citizen != NULL){
 
 					/* If process is file parsing, then this record is considered inconsistent */
@@ -306,36 +310,35 @@ void insertCitizen(char *args[8], int kilobytes, dataStore *ds, bool fileparse){
 
 				/* If user gave date, create date from given input */
 				/* Else, vaccinated date is current date */
-				if (str_date != NULL)
-					dateVaccinated = create_date(str_date);
+				if (str_date != NULL){
+					if ( (dateVaccinated = create_date(str_date)) == NULL){
+						printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT\n" RESET);
+						return;
+					}					
+				}
 				else
 					dateVaccinated = current_date();
 
-				if (dateVaccinated == NULL){
-					printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT\n" RESET);
-					return;
-				}
-
 				vaccinated_citizen = create_vaccinated(citizen, dateVaccinated);
 
-				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated, print_vaccinated);
+				SLInsert(get_vaccinated_persons(v), vaccinated_citizen, get_vaccinated_key, compare_vaccinated);
 				BloomInsert(get_filter(v), id);
 			}
 		}
 		/* If citizen is not vaccinated, insert citizen to not_vaccinated_persons skip list*/
 		else{
 			/* Make sure citizen is not already in vaccinated_persons skip list */
-			if (SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated, print_vaccinated) != NULL){
+			if (SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated) != NULL){
 				printf(RED "ERROR: INCONSISTENT RECORD, CITIZEN IS ALREADY VACCINATED\n" RESET);
 				return;
 			}
-			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen, print_citizen);
+			SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen);
 		}	
 	}
 }
 
 
-void queries(int kilobytes, dataStore *ds){
+void queries(int bytes, dataStore *ds){
 
 	/* Read input from stdin */
 	char *line = NULL;
@@ -373,7 +376,7 @@ void queries(int kilobytes, dataStore *ds){
 				else printf("NOT VACCINATED\n");
 			}
 			else
-				printf( RED "\nERROR: No valid input\n" RESET
+				printf( RED "\nERROR: Invalid input\n" RESET
 						YEL "Input format for this command: " RESET
 						"/vaccineStatusBloom citizenID virusName\n");
 
@@ -384,7 +387,7 @@ void queries(int kilobytes, dataStore *ds){
 			char *virusName = strtok(NULL, " \n");
 
 			if (citizenID == NULL)
-				printf( RED "\nERROR: No valid input\n" RESET
+				printf( RED "\nERROR: Invalid input\n" RESET
 						YEL "Input format for this command: " RESET
 						"/vaccineStatus citizenID [virusName]\n");			
 			else{
@@ -412,23 +415,23 @@ void queries(int kilobytes, dataStore *ds){
 			char *args[5];
 			
 			if ((args[0] = strtok(NULL, " \n")) == NULL){
-				printf( RED "\nERROR: No valid input\n" RESET
+				printf( RED "\nERROR: Invalid input\n" RESET
 						YEL "Input format for this command: " RESET);
 				if (strcmp(query, "/populationStatus") == 0)
 					printf("/populationStatus");
 				else
 					printf("/popStatusByAge");
 				printf(" [country] virusName [date1 date2]\n");
-				return;		
+				printf(GRN "\nEnter command:\n" RESET);
+				continue;	
 			}
 			
 			for (int i = 1; i < 4; i++){
 				args[i] = strtok(NULL, " \n");
 			}
 			args[4] = query;
-
-			printf("args: %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4]);
 			population_queries(args, ds);
+
 		}
 		else if (strcmp(query, "/insertCitizenRecord") == 0){
 
@@ -437,7 +440,7 @@ void queries(int kilobytes, dataStore *ds){
 				args[i] = strtok(NULL, " \n");
 
 				if (args[i] == NULL && i < 7){
-					printf( RED "\nERROR: No valid input\n" RESET
+					printf( RED "\nERROR: Invalid input\n" RESET
 							YEL "Input format for this command: " RESET
 							"/insertCitizenRecord citizenID firstName lastName country age virusName YES/NO date\n"
 							GRN "\nEnter command:\n" RESET);
@@ -449,18 +452,18 @@ void queries(int kilobytes, dataStore *ds){
 				broke = false;
 				continue;
 			}
-			insertCitizen(args, kilobytes, ds, false);
+			insertCitizen(args, bytes, ds, false);
 
 		}
 		else if (strcmp(query, "/vaccinateNow") == 0){
-			//printf("1\n");
+
 			char *args[8];
 
       		for (int i = 0; i < 6; i++){
 				args[i] = strtok(NULL, " \n");
 
 				if (args[i] == NULL){
-					printf( RED "\nERROR: No valid input\n" RESET
+					printf( RED "\nERROR: Invalid input\n" RESET
 							YEL "Input format for this command: " RESET
 							"/vaccinateNow citizenID firstName lastName country age virusName\n"
 							GRN "\nEnter command:\n" RESET);
@@ -474,8 +477,7 @@ void queries(int kilobytes, dataStore *ds){
 			}
 			args[6] = query;
 			args[7] = NULL;
-			//printf("2 %s %s %s %s %s %s %s\n", args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-			insertCitizen(args, kilobytes, ds, false);
+			insertCitizen(args, bytes, ds, false);
 
 		}
 		else if (strcmp(query, "/list-nonVaccinated-Persons") == 0){
@@ -486,7 +488,7 @@ void queries(int kilobytes, dataStore *ds){
 				SLPrint_BottomLevel(get_not_vaccinated_persons(v), print_citizen);
 			}
 			else
-				printf(RED "\nERROR: No valid input\n" RESET
+				printf(RED "\nERROR: Invalid input\n" RESET
 						YEL "Input format for this command: " RESET
 						"/list-nonVaccinated-Persons virusName\n");
 
@@ -496,7 +498,7 @@ void queries(int kilobytes, dataStore *ds){
 			break;
 		}
 		else
-			printf( RED "\nERROR: No valid input\n" RESET
+			printf( RED "\nERROR: Invalid input\n" RESET
 				YEL "Input format for every command:\n" RESET
 				"/vaccineStatusBloom citizenID virusName\n"
 				"/vaccineStatus citizenID [virusName]\n"

@@ -42,7 +42,7 @@ void destroy_vaccinated(void *vaccinated);
 typedef struct virus_struct *virus;
 
 /* Creates virus_struct */
-virus create_virus(char *virusName, size_t kilobytes);
+virus create_virus(char *virusName, size_t bytes);
 
 /* Returns pointer to virusName of virus_struct */
 void *get_virusName(void *v);

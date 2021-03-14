@@ -66,13 +66,13 @@ struct virus_struct
     SkipList not_vaccinated_persons;
 };
 
-virus create_virus(char *virusName, size_t kilobytes){
+virus create_virus(char *virusName, size_t bytes){
     virus v = (virus)malloc(sizeof(struct virus_struct));
 
     v->virusName = (char *)malloc(sizeof(char)*(strlen(virusName)+1));
     strcpy(v->virusName, virusName);
 
-    v->filter = BloomCreate(kilobytes);
+    v->filter = BloomCreate(bytes);
     v->vaccinated_persons = SLCreate(0.5, destroy_vaccinated);
     v->not_vaccinated_persons = SLCreate(0.5, NULL);
 

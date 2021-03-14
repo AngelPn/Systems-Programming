@@ -113,7 +113,9 @@ void populationStatus(void *item, int key){
 
 	if (c->popQuery != NULL){
 		printf("%s %d %.2f%%\n", c->country_name, c->popQuery[0], (double)c->popQuery[0]/(double)(c->popQuery[0]+c->popQuery[1])*100);
-		reset_popQueries(c);
+		
+        /* Deallocate memory for new population query */
+        reset_popQueries(c);
 	}
 }
 
@@ -123,14 +125,27 @@ void popStatusByAge(void *item, int key){
 
 	if (c->popQuery != NULL){
 		printf("\n%s\n", c->country_name);
-		printf("0-20 %d %.2f%%\n", c->popQuery[0], (double)c->popQuery[0]/(double)(c->popQuery[0]+c->popQuery[4])*100);
-		printf("20-40 %d %.2f%%\n", c->popQuery[1], (double)c->popQuery[1]/(double)(c->popQuery[1]+c->popQuery[5])*100);
-		printf("40-60 %d %.2f%%\n", c->popQuery[2], (double)c->popQuery[2]/(double)(c->popQuery[2]+c->popQuery[6])*100);
-		printf("60+ %d %.2f%%\n", c->popQuery[3], (double)c->popQuery[3]/(double)(c->popQuery[3]+c->popQuery[7])*100);
-		reset_popQueries(c);
-	}
-	else{
-		printf("\nNobody in country %s is vaccinated for this virus\n", (char *)get_country_name(c));
+
+        /* quotient array keeps the quotient for every age group */
+        /* If denominator is 0, division is not valid, then set quotient to 0 */
+        /* This for loop is used to avoid printing NaN (Not a Number) */
+        double quotient[4], denominator;
+        for (int i = 0; i < 4; i++){
+            denominator = (double)(c->popQuery[i] + c->popQuery[i + 4]);
+
+            if (denominator)
+                quotient[i] = (double)c->popQuery[i] / denominator;
+            else
+                quotient[i] = 0;
+        }
+
+		printf("0-20 %d %.2f%%\n", c->popQuery[0], quotient[0]*100);
+		printf("20-40 %d %.2f%%\n", c->popQuery[1], quotient[1]*100);
+		printf("40-60 %d %.2f%%\n", c->popQuery[2], quotient[2]*100);
+		printf("60+ %d %.2f%%\n", c->popQuery[3], quotient[3]*100);
+		
+        /* Deallocate memory for new population query */
+        reset_popQueries(c);
 	}
 }
 

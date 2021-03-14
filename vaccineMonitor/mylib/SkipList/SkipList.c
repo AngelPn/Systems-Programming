@@ -90,11 +90,7 @@ List get_bottom_level(SkipList sl){
     return sl->layers[0];
 }
 
-void *SLSearch(SkipList sl, void *key, CompareFunc compare, PrintItem print){
-
-    // printf("\n\n----------SEARCH-------------\n\n");
-    // SLPrint(sl, print);
-    // printf("\n\n-----------------------------\n\n");
+void *SLSearch(SkipList sl, void *key, CompareFunc compare){
 
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
@@ -142,11 +138,7 @@ double my_log(double x, int base) {
 }
 
 
-void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintItem print){
-
-    // printf("\n\n----------BEFORE-------------\n\n");
-    // SLPrint(sl, print);
-    // printf("\n\n-----------------------------\n\n");
+void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
 
     /* Find the path */
     ListNode *path = (ListNode *)malloc(sizeof(ListNode)*(sl->level + 2));
@@ -223,10 +215,6 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare, PrintIte
             }
         }
     }
-
-    // printf("\n\n-----------AFTER-------------\n\n");
-    // SLPrint(sl, print);
-    // printf("\n\n-----------------------------\n\n");
 }
 
 

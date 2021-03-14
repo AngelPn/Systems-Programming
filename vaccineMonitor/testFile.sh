@@ -87,7 +87,7 @@ function write-in-File(){
         # Create random date
         dd=$((RANDOM % 31 + 1))
         mm=$((RANDOM % 12 + 1))
-        yyyy=$((RANDOM % 4 + 2018))
+        yyyy=$((RANDOM % 3 + 2018))
         # Make sure both day and month are 2 digits
         if [ $dd -lt "10" ]; then
            dd="0${dd}"
@@ -103,7 +103,7 @@ function write-in-File(){
 }
 
 # For the number of lines
-for ((i = 0; i < numLines; i++)); do
+for ((i = 0; i < numLines - 1; i++)); do
     # Create citizen's record
     id=${ids[i]}
     firstname=$(rand-str $((RANDOM % 12 + 3)))

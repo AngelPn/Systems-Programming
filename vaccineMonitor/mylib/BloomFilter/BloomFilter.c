@@ -25,11 +25,11 @@ struct bloom_filter
     size_t size;    /* the size of bloom filter in bytes */
 };
 
-BloomFilter BloomCreate(size_t kilobytes){
+BloomFilter BloomCreate(size_t bytes){
 
     BloomFilter bloom = (BloomFilter)malloc(sizeof(struct bloom_filter));
 
-    bloom->size = 1000*kilobytes;
+    bloom->size = bytes;
     bloom->array = (uint8_t *)malloc(sizeof(uint8_t)*(bloom->size));
 
     for (int i = 0; i < bloom->size; i++)
