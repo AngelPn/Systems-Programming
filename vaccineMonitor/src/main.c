@@ -17,8 +17,6 @@ int main(int argc, char **argv){
 
     queries(bloom_size, &ds);
 
-    //print_ht_viruses(&ds);
-
     /* Deallocate memory */
     destroy_structs(&ds);
 

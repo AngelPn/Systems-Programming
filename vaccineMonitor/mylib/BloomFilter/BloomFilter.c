@@ -64,7 +64,6 @@ void BloomDestroy(BloomFilter bf){
     free(bf);
 }
 
-
 /*------------------------------ hash functions ------------------------------*/
 
 /*

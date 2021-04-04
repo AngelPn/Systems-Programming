@@ -30,7 +30,9 @@ void list_remove(List list, ListNode node);
 ListNode list_find_node(List list, void * item, CompareFunc compare);
 void *list_find(List list, void *item, CompareFunc compare);
 
-/* Returns the node to insert new node after (in ascending order) */
+/* Returns the node to insert new node after that (in ascending order).
+    The key determines the order.
+    If the key is already in list, set the found argument true */
 void *list_find_order(List list, ListNode node, void *key, CompareFunc compare, bool *found);
 
 /* Sets or changes the destroy item */

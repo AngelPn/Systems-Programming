@@ -10,11 +10,7 @@ country create_country(char *country_name);
 /* Returns a pointer to country's name */
 void *get_country_name(void *c);
 
-/* Access fields in country */
-int get_vaccinated_persons_num(country c);
-int *get_popQueries(country c);
-
-/* Change the values of fields in country */
+/* Change the values of population query in country */
 void increase_vaccinated_persons(country c);
 void increase_not_vaccinated_persons(country c);
 void increase_popByAge_vaccinated(country c, int age);

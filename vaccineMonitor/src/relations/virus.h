@@ -9,7 +9,7 @@
 /* "struct vaccinated_struct" is incomplete struct */
 typedef struct vaccinated_struct *vaccinated;
 
-/* Creates vaccinated */
+/* Creates vaccinated citizen */
 vaccinated create_vaccinated(citizenRecord item, date dt);
 
 /* Finds the key of vaccinated_struct and returns a pointer to it */

@@ -27,16 +27,6 @@ void *get_country_name(void *c){
     return nc->country_name;
 }
 
-int get_vaccinated_persons_num(country c){
-    if (c->popQuery != NULL)
-        return c->popQuery[0];
-    else return 0;
-}
-
-int *get_popQueries(country c){
-    return c->popQuery;
-}
-
 /*  If query is /populationStatus, 
     then popQuery[0] keeps the number of vaccinated persons for certain virus
     and popQuery[1] keeps the number of not vaccinated persons for the same virus */
@@ -114,7 +104,7 @@ void populationStatus(void *item, int key){
 	if (c->popQuery != NULL){
 		printf("%s %d %.2f%%\n", c->country_name, c->popQuery[0], (double)c->popQuery[0]/(double)(c->popQuery[0]+c->popQuery[1])*100);
 		
-        /* Deallocate memory for new population query */
+        /* Deallocate c->popQuery in order to use it for a new population query */
         reset_popQueries(c);
 	}
 }
@@ -144,7 +134,7 @@ void popStatusByAge(void *item, int key){
 		printf("40-60 %d %.2f%%\n", c->popQuery[2], quotient[2]*100);
 		printf("60+ %d %.2f%%\n", c->popQuery[3], quotient[3]*100);
 		
-        /* Deallocate memory for new population query */
+        /* Deallocate c->popQuery in order to use it for a new population query */
         reset_popQueries(c);
 	}
 }
