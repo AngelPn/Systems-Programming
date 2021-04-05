@@ -234,7 +234,7 @@ void population_queries(char *args[5], dataStore *ds){
 		/* If date1 exists, make sure date2 exists too */
 		if ((date1 = create_date(args[1])) != NULL){
 			if((date2 = create_date(args[2])) == NULL){
-				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
+				printf(RED "\nERROR: date1 must come up with date2 in format: dd-mm-yy\n" RESET);
 				free(date1);
 				return;
 			}
@@ -279,7 +279,7 @@ void population_queries(char *args[5], dataStore *ds){
 		/* If date1 exists, make sure date2 exists too */
 		if ((date1 = create_date(args[2])) != NULL){
 			if((date2 = create_date(args[3])) == NULL){
-				printf(RED "\nERROR: date1 must come up with date2\n" RESET);
+				printf(RED "\nERROR: date1 must come up with date2 in format: dd-mm-yy\n" RESET);
 				free(date1);
 				return;
 			}

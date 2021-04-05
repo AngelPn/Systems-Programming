@@ -17,22 +17,39 @@ date create_date(char *str){
 
   if (str == NULL) return NULL;
 
-  char *buf = strdup(str);
+  char *buf = strdup(str), *token;
   int dd, mm, yy;
 
   /* Make sure given str is in right format */
-  char *token = strtok(buf, "-");
-  if (token == NULL) return NULL;
+  if ((token = strtok(buf, "-")) == NULL){
+    free(buf);
+    return NULL;
+  }
   dd = atoi(token);
-  if (dd <= 0 || dd >= 32 ) return NULL;
+  if (dd <= 0 || dd >= 32 ){
+    free(buf);
+    return NULL;    
+  }
   
-  if ((token = strtok(NULL, "-")) == NULL) return NULL;
+  if ((token = strtok(NULL, "-")) == NULL){
+    free(buf);
+    return NULL;
+  }
   mm = atoi(token);
-  if (mm <= 0 || mm >= 13 ) return NULL;
+  if (mm <= 0 || mm >= 13 ){
+    free(buf);
+    return NULL;
+  }
 
-  if ((token = strtok(NULL, "-")) == NULL) return NULL;
+  if ((token = strtok(NULL, "-")) == NULL){
+    free(buf);
+    return NULL;
+  }
   yy  = atoi(token);
-  if (yy <= 1900) return NULL;
+  if (yy <= 1900){
+    free(buf);
+    return NULL;
+  }
 
   free(buf);
 
