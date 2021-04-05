@@ -319,7 +319,7 @@ void population_queries(char *args[5], dataStore *ds){
 		else populationStatus(c, 0);
 	}
 	else{
-		printf(RED "\nERROR: Invalid input\n" RESET
+		printf(RED "\nERROR: virusName or country not in database\n" RESET
 				YEL "Input format for this command: " RESET);
 
 		if (strcmp(args[4], "/popStatusByAge") == 0)
