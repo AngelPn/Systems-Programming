@@ -13,13 +13,13 @@ countriesFile=$2
 numLines=$3
 duplicatesAllowed=$4
 
-# Go to tests directory
-cd tests
+# Go to testFiles directory
+cd testFiles
 
-# Check if virusesFile and countriesFile exists
+# Check if virusesFile and countriesFile exist
 # and if the two numbers given are greater than 0
 if [ ! -e ${virusesFile} -o ! -e ${countriesFile} ]; then
-    echo "Given files does not exist in tests directory"
+    echo "Given files do not exist in testFiles directory"
     exit 1
 elif [ ${numLines} -lt "0" -o ${duplicatesAllowed} -lt "0" ]; then
     echo "Provided numbers are not greater than 0"
@@ -75,7 +75,7 @@ function yes-no() {
 }
 
 # Create inputFiles
-touch inputFiles.txt
+touch inputFiles
 
 function write-in-File(){
     index_virus=$((RANDOM % ${#viruses[@]}))
@@ -96,9 +96,9 @@ function write-in-File(){
            mm="0${mm}"
         fi
         date=$dd-$mm-$yyyy
-        echo $1 $virus $vaccinated $date >> inputFiles.txt
+        echo $1 $virus $vaccinated $date >> inputFiles
     else
-        echo $1 $virus $vaccinated >> inputFiles.txt
+        echo $1 $virus $vaccinated >> inputFiles
     fi
 }
 

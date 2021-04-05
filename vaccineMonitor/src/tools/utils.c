@@ -21,11 +21,10 @@ int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
 	}
 	
 	if (strcmp(argv[1], "-c") == 0){
-		char filecat[50] = "tests/";
-		strcat(filecat, argv[2]);
-		strcat(filecat, ".txt");
-		*filepath = (char *)malloc(sizeof(char)*(strlen(filecat)+1));
-		strcpy(*filepath, filecat);
+		const static char dir[] = "testFiles/";
+		*filepath = (char *)malloc(sizeof(char)*(strlen(dir) + strlen(argv[2]) + 1));
+		strcpy(*filepath, dir);
+		strcat(*filepath, argv[2]);
 	}
 	else{
 		printf(RED "ERROR: Invalid use of -c flag, the process will terminate\n" RESET);				
@@ -59,7 +58,7 @@ void fileParse_and_buildStructs(char *filepath, int bytes, dataStore *ds){
     frecords = fopen(filepath, "r");
 
     if (frecords == NULL){
-        printf(RED "Error: The file does not exist in tests directory\n" RESET);
+        printf(RED "Error: Given inputFile does not exist in testFiles directory\n" RESET);
         exit(EXIT_FAILURE);
     }
 
