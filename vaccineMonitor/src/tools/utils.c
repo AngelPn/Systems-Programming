@@ -115,8 +115,12 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
 		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
-			citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age));
-			HTInsert(&(ds->citizens), citizen, get_citizenID);
+			if ((citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age))) == NULL){
+				printf(RED "ERROR: Given citizen's age is not between 0 and 120\n" RESET);
+				return;
+			}
+			else
+				HTInsert(&(ds->citizens), citizen, get_citizenID);
 		}
 		/* If citizen is already in hash tbale of citizens, cross-check given data */
 		else{

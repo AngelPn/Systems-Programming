@@ -15,6 +15,9 @@ struct record
 
 citizenRecord create_citizen(int citizenID, char *firstname, char *lastname, country cntry, int age){
 
+    if (!(age >= 0 && age <= 120))
+        return NULL;
+    
     citizenRecord rec = (citizenRecord)malloc(sizeof(struct record));
     rec->citizenID = citizenID;
     rec->age = age;

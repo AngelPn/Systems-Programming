@@ -129,9 +129,9 @@ void popStatusByAge(void *item, int key){
                 quotient[i] = 0;
         }
 
-		printf("0-20 %d %.2f%%\n", c->popQuery[0], quotient[0]*100);
-		printf("20-40 %d %.2f%%\n", c->popQuery[1], quotient[1]*100);
-		printf("40-60 %d %.2f%%\n", c->popQuery[2], quotient[2]*100);
+		printf("0-19 %d %.2f%%\n", c->popQuery[0], quotient[0]*100);
+		printf("20-39 %d %.2f%%\n", c->popQuery[1], quotient[1]*100);
+		printf("40-59 %d %.2f%%\n", c->popQuery[2], quotient[2]*100);
 		printf("60+ %d %.2f%%\n", c->popQuery[3], quotient[3]*100);
 		
         /* Deallocate c->popQuery in order to use it for a new population query */
