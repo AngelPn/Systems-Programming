@@ -83,7 +83,7 @@ SkipList SLCreate_with_maxlevel(int max_level, float p, DestroyFunc destroy_item
 }
 
 SkipList SLCreate(float p, DestroyFunc destroy_item){
-    return SLCreate_with_maxlevel(7, p, destroy_item);
+    return SLCreate_with_maxlevel(10, p, destroy_item);
 }
 
 List get_bottom_level(SkipList sl){
@@ -95,16 +95,15 @@ void *SLSearch(SkipList sl, void *key, CompareFunc compare){
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
 
-    /* Layer i (i > 0) needs compare_keys*/
+    /* Compare items in Layer i (i > 0) with compare_keys */
     CompareFunc compare_function = compare_keys;
 
     /* For each Layer of lists starting with highest level of skip list*/
     for(int i = sl->level; i >= 0; i--){
 
-        /* Layer 0 with compare function passed by user as argument */
-        if (i == 0){
+        /* Compare items in Layer 0 with compare function passed by user as argument */
+        if (i == 0)
             compare_function = compare;
-        }
 
         head = sl->layers[i];
 
@@ -149,16 +148,15 @@ void SLInsert(SkipList sl, void *item, GetKey key, CompareFunc compare){
     List head = NULL;
     bool found = false;
 
-    /* Layer i (i > 0) needs compare_keys */
+    /* Compare items in Layer i (i > 0) with compare_keys */
     CompareFunc compare_function = compare_keys;
     
     /* For each Layer of lists starting with highest level of skip list*/
     for(int i = sl->level; i >= 0; i--){
 
-        /* Layer 0 with compare function passed by user as argument */
-        if (i == 0){
+        /* Compare items in Layer 0 with compare function passed by user as argument */
+        if (i == 0)
             compare_function = compare;
-        }
 
         head = sl->layers[i];
         
@@ -223,16 +221,15 @@ void SLRemove(SkipList sl, void *key, CompareFunc compare){
     List head = NULL; ListNode node = NULL; SLNode sl_node = NULL;
     bool found = false;
 
-    /* Layer i (i > 0) needs compare_keys */
+    /* Compare items in Layer i (i > 0) with compare_keys */
     CompareFunc compare_function = compare_keys;
 
-    /* Compare items in Layer i (i > 0) with compare_keys */
+    /* For each Layer of lists starting with highest level of skip list*/
     for(int i = sl->level; i >= 0; i--){
 
-        /* Layer 0 with compare function passed by user as argument */
-        if (i == 0){
+        /* Compare items in Layer 0 with compare function passed by user as argument */
+        if (i == 0)
             compare_function = compare;
-        }
 
         head = sl->layers[i];
 
