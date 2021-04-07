@@ -15,7 +15,7 @@
     > relations
     > tools
     - main.c
-> testFiles (περιέχει virusesFile, countriesFile, inputFiles*)
+> testFiles (περιέχει virusesFile, countriesFile, inputFiles)
 - testFile.sh 
 - Makefile
 
@@ -25,6 +25,7 @@
 
 Δημιουργία αρχείου:
 ./testFile.sh virusesFile countriesFile numLines duplicatesAllowed
+Τα αρχεία virusesFile και countriesFile πρέπει να βρίσκονται στον φάκελο testFiles!
 Αν ο αριθμός numLines > 10K και το duplicatesAllowed = 0, τότε θα παραχθεί αρχείο με διπλότυπα στο citizenID
 καθώς το citizenID παίρνει τιμή στο διάστημα [1, 9999].
 
@@ -196,4 +197,4 @@ max level = log_(2)(7.5M) = 32, αλλά τα αρχεία θα είναι αρ�
   οποιοσδήποτε εμβολιασμός. Η συνάρτηση που ελέγχει τα στοιχεία είναι η cross_check του citizenRecord.
 
 - Στον φάκελο testFiles θα βρείτε ήδη αρχεία που έχουν δημιουργηθεί από το testFile.sh με το εξής format:
-  inputFiles50K_1 σημαίνει ότι έχουμε 50Κ γραμμές και το duplicatesAllowed = 1.
+  inputFile50K_1 σημαίνει ότι έχουμε 50Κ γραμμές και το duplicatesAllowed = 1.
