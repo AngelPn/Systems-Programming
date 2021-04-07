@@ -96,9 +96,9 @@ function write-in-File(){
            mm="0${mm}"
         fi
         date=$dd-$mm-$yyyy
-        echo $1 $virus $vaccinated $date >> inputFiles
+        echo $1 $virus $vaccinated $date >> inputFile
     else
-        echo $1 $virus $vaccinated >> inputFiles
+        echo $1 $virus $vaccinated >> inputFile
     fi
 }
 
