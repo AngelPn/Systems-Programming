@@ -47,7 +47,7 @@ else
         if [ ${numLines} -gt "10000" -a ${#shuf_ids[@]} -eq "1" ]; then
             x=$((numLines-i))
         else
-            x=$((RANDOM % 10 + 1))
+            x=$((RANDOM % 20 + 1))
         fi
         
         for ((j = 0; j < x; j++)); do
@@ -74,8 +74,8 @@ function yes-no() {
     fi
 }
 
-# Create inputFiles
-touch inputFiles
+# Create inputFile
+touch inputFile
 
 function write-in-File(){
     index_virus=$((RANDOM % ${#viruses[@]}))
