@@ -5,5 +5,6 @@
     numMonitors, buffersize, bloomsize, input_dir */
 int argumentHandling(int argc, char **argv, int *numMonitors, int *buffersize, int *bloomsize, char **input_dir);
 
+void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir);
 
 #endif

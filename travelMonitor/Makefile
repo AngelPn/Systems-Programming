@@ -33,3 +33,4 @@ $(EXEC): clean $(OBJS)
 clean:
 	rm -f $(EXEC)
 	rm -rf $(ODIR)
+	rm -rf temp
