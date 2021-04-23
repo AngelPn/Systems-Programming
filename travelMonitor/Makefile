@@ -2,7 +2,7 @@
 SRC = src
 MODULES = mylib
 ODIR = build
-# RDIR = $(SRC)/relations
+RDIR = $(SRC)/relations
 TDIR = $(SRC)/tools
 
 #compiler
@@ -13,10 +13,10 @@ EXEC = travelMonitor
 
 #compile options
 CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable 
-CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) #-I$(RDIR)
+CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) -I$(RDIR)
 
 OBJS =  $(SRC)/main.o
-# OBJS += $(RDIR)/citizenRecord.o $(RDIR)/virus.o $(RDIR)/country.o
+OBJS += $(RDIR)/monitor.o
 OBJS += $(TDIR)/utils.o
 OBJS += $(MODULES)/BloomFilter/BloomFilter.o
 OBJS += $(MODULES)/Date/date.o
