@@ -196,20 +196,29 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
-	monitor_idx = 0;
+	int monitor_idx = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
 		monitor m = NULL;
-		pid_t monitor_pid = monitors_pids[monitor_idx];
+		// pid_t monitor_pid = monitors_pids[monitor_idx];
+		pid_t monitor_pid = monitor_idx;
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
-		if ((m = HTSearch(monitors, monitor_pid, compare_monitor)) == NULL ){
+		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
 			m = create_monitor(monitor_pid);
 			HTInsert(&(monitors), m, get_monitor_pid);
 		}
-
-		add_country(m, countries[country_idx]);
+		/* Assign the country subdir to monitor */
+		add_country(m, countries[country_idx]); /* add country in monitor to handle */
+        write_to_pipe(writing[i], buff_size, dirs[count]); /* inform the child process through the pipe */
+		
 		if ((monitor_idx++) == numMonitors)
 			monitor_idx = 0;
 	}
+
+	HTPrint(monitors, print_monitor);
+	HTDestroy(monitors);
+	free(input_dir);
+	/* Close the input directory */
+    closedir(indir);
 }

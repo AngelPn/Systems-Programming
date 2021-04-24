@@ -42,6 +42,7 @@ void print_monitor(void *m){
     List head = nm->countries;
     for (ListNode node = list_first(head); node != NULL; node = list_next(head, node))
 		printf("%s\n", (char *)list_node_item(head, node));
+    printf("\n");
 }
 
 int compare_monitor(void *key, void *m){
