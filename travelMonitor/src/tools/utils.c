@@ -16,6 +16,7 @@
 #include "utils.h"
 #include "HashTable.h"
 #include "monitor.h"
+#include "ipc.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -178,6 +179,9 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 			i++;
 		}
 	}
+	/* Close the input directory */
+    closedir(indir); free(input_dir);
+
 	/* Sort countries array alphabetically */
 	char *temp = NULL;
 	for (int i = 0; i < numSubdirs; i++){
@@ -196,7 +200,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
-	int monitor_idx = 0;
+	int monitor_idx = 0, numActiveMonitors = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
 		monitor m = NULL;
 		// pid_t monitor_pid = monitors_pids[monitor_idx];
@@ -210,15 +214,84 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		}
 		/* Assign the country subdir to monitor */
 		add_country(m, countries[country_idx]); /* add country in monitor to handle */
-        write_to_pipe(writing[i], buff_size, dirs[count]); /* inform the child process through the pipe */
+        // send_data(writing[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
 		
-		if ((monitor_idx++) == numMonitors)
-			monitor_idx = 0;
+		if ((monitor_idx++) == numMonitors){
+			monitor_idx = 0; /* reset monitor_idx */
+			numActiveMonitors = 1; /* set numActiveMonitors to declare that all monitors are active */
+		}
+			
 	}
 
 	HTPrint(monitors, print_monitor);
+
+    /* Write 'end' into every pipe to note the end of distribution of countries per monitor */
+    // for (int i = 0; i < numMonitors; i++)
+    //     send_data(writing[i], bufferSize, "end");
+
+	/* Update numActiveMonitors to declare the number of active monitors */
+	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
+	printf("numActiveMonitors: %d\n", numActiveMonitors);
+
+    /* call the print function to prin the stats from the incoming files */
+    // print_stats(numActiveMonitors, bufferSize, reading);
+
 	HTDestroy(monitors);
-	free(input_dir);
-	/* Close the input directory */
-    closedir(indir);
+	
+
 }
+
+// void print_stats(int numActiveMonitors, int bufferSize, int *reading) {
+
+//     fd_set active, read; /* represent file descriptor sets for the select function */
+//     FD_ZERO(&active); /* initialize the file descriptor set 'active' to be the empty set */
+
+// 	/* Add file descriptors in reading array to the file descriptor set 'active' */
+//     for (int i = 0; i < numActiveMonitors; i++)
+//         FD_SET(reading[i], &active);
+	
+//     int done = 0;
+//     while (done < numActiveMonitors) {
+//         // print the incoming stats from each worker
+//         // Block until an input arrives from one of the workers
+//         read = active;
+//         // find out how many workers are ready
+//         if (select(FD_SETSIZE, &read, NULL, NULL, NULL) < 0) {
+//             perror("select");
+//             exit(EXIT_FAILURE);
+//         }
+//         // for all the workers that have already reported stats
+//         for (int i = 0; i < numActiveMonitors; i++) {
+//             if (FD_ISSET(reading[i], &read)) {
+//                 // first thing: how many files the worker reported
+//                 char* n = read_from_pipe(reading[i], bufferSize);
+//                 int n_files = atoi(n);
+//                 for (int j = 0; j < n_files; j++) {
+//                     // each file has a name, a country, and some diseases
+//                     char* name = read_from_pipe(reading[i], bufferSize);
+//                     char* country = read_from_pipe(reading[i], bufferSize);
+//                     char* n_dis = read_from_pipe(reading[i], bufferSize);
+//                     int n_diseases = atoi(n_dis);
+//                     fprintf(stdout, "%s\n%s\n", name, country);
+//                     // for each disease
+//                     for (int k = 0; k < n_diseases; k++) {
+//                         // parse the stats
+//                         char* disease = read_from_pipe(reading[i], bufferSize);
+//                         fprintf(stdout, "%s\n", disease);
+//                         free(disease);
+//                         char* info = read_from_pipe(reading[i], bufferSize);
+//                         fprintf(stdout, "%s\n", info);
+//                         free(info);
+//                     }
+//                     fprintf(stdout, "\n");
+//                     // no leaks!
+//                     free(name); 
+//                     free(country);
+//                     free(n_dis);
+//                 }
+//                 free(n);
+//                 done++;
+//             }
+//         }
+//     }
+// }

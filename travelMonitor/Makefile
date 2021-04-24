@@ -17,7 +17,7 @@ CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) -I$(RDIR)
 
 OBJS =  $(SRC)/main.o
 OBJS += $(RDIR)/monitor.o
-OBJS += $(TDIR)/utils.o
+OBJS += $(TDIR)/utils.o $(TDIR)/ipc.o
 OBJS += $(MODULES)/BloomFilter/BloomFilter.o
 OBJS += $(MODULES)/Date/date.o
 OBJS += $(MODULES)/HashTable/HashTable.o

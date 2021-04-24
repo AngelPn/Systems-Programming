@@ -1,9 +1,21 @@
-#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <dirent.h> 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <errno.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/select.h>
 
 #include "ipc.h"
 
-char *read_pipe(int fd, int bufferSize){
+char *receive_data(int fd, int bufferSize){
 
 	/* Read the dataSize */
 	int dataSize;
@@ -31,7 +43,7 @@ char *read_pipe(int fd, int bufferSize){
 	return data;
 }
 
-void write_pipe(int fd, int bufferSize, char *data){
+void send_data(int fd, int bufferSize, char *data){
 
 	/* Write the dataSize in front of the message */
     int dataSize = strlen(data);
