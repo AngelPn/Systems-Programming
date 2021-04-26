@@ -87,7 +87,7 @@ int argumentHandling(int argc, char **argv, int *numMonitors, int *buffersize, i
 char *concat_int_to_string(const char str[], int i){
 	char string_i[10];
 	snprintf(string_i, 10, "%d", i);
-	char *result = (char *)malloc(sizeof(char)*(strlen(str) + strlen(string_i)));
+	char *result = (char *)malloc(sizeof(char)*(strlen(str) + 1 + sizeof(string_i)));
 	strcpy(result, str);
 	strcat(result, string_i);
 	return result;
@@ -101,15 +101,15 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	char *names1[numMonitors], *names2[numMonitors]; /* stores the names of named pipes */
 
 	/* Create a temporary dir with read/write/search permissions for owner, group and others */
-    mkdir("./temp", S_IRWXU | S_IRWXG | S_IRWXO);
+    mkdir("./tmp", S_IRWXU | S_IRWXG | S_IRWXO);
 
 	/* Create numMonitors child processes with fork and named pipes */
     for (int i = 0; i < numMonitors; i++) {
         pid = fork();
 
         /* Store the name of the 2 named pipes */
-		names1[i] = concat_int_to_string("./temp/myfifo1_", i);
-		names2[i] = concat_int_to_string("./temp/myfifo2_", i);
+		names1[i] = concat_int_to_string("./tmp/myfifo1_", i);
+		names2[i] = concat_int_to_string("./tmp/myfifo2_", i);
 
         if (pid > 0) { /* parent process */
             monitors_pids[i] = pid; /* save child's pid */
@@ -127,7 +127,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		else{ /* child process */
 			/* 	Replace the current running process with a new process
 				representing the argument list available to the executed program */
-			char *path = "../../processMonitor";
+			char *path = "processMonitor";
             if (execl(path, path, concat_int_to_string("", bufferSize), names1[i], names2[i], input_dir, "init", NULL) == -1){
 				perror("Error in execl");
 				exit(EXIT_FAILURE);				
@@ -137,8 +137,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Οpen the named pipes and store the file descs */
     for (int i = 0; i < numMonitors; i++) {
-		char *name1 = concat_int_to_string("./temp/fifo1_", i);
-		char *name2 = concat_int_to_string("./temp/fifo2_", i);
+		char *name1 = concat_int_to_string("./tmp/myfifo1_", i);
+		char *name2 = concat_int_to_string("./tmp/myfifo2_", i);
         if ((read_fd[i] = open(name1, O_RDONLY, 0666)) == -1) {
             perror("Error storing file desc in reading array");
             exit(EXIT_FAILURE);
@@ -150,7 +150,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
         free(name1);
         free(name2);
     }
-
+	printf("Opened named pipes and stored the file descs\n");
     struct dirent *subdir; /* pointer to subdirs*/
 
     /* Open the input dir */
@@ -168,7 +168,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     }
     rewinddir(indir); /* reset the position of the directory stream */
     
-	/* Store country names in countries array, removing . and .. in dirs*/
+	/* Store country names in countries array, removing . and .. in dirs */
 	numSubdirs -= 2;
 	char *countries[numSubdirs];
 	int i = 0;
@@ -180,7 +180,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 			i++;
 		}
 	}
-	/* Close the input directory */
     closedir(indir); free(input_dir);
 
 	/* Sort countries array alphabetically */
@@ -199,13 +198,16 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	for (int i=0; i < numSubdirs; i++)
 		printf("%d. %s\n", i, countries[i]);
 
+	for (int i=0; i<numMonitors; i++)
+		printf("%d\n", monitors_pids[i]);
+
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
 	int monitor_idx = 0, numActiveMonitors = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
 		monitor m = NULL;
-		// pid_t monitor_pid = monitors_pids[monitor_idx];
-		pid_t monitor_pid = monitor_idx;
+		pid_t monitor_pid = monitors_pids[monitor_idx];
+		// pid_t monitor_pid = monitor_idx;
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
@@ -215,7 +217,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		}
 		/* Assign the country subdir to monitor */
 		add_country(m, countries[country_idx]); /* add country in monitor to handle */
-        // send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
+        send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
 		
 		if ((monitor_idx++) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
@@ -224,11 +226,10 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 			
 	}
 
-	HTPrint(monitors, print_monitor);
-
     /* Write 'end' into every pipe to note the end of distribution of countries per monitor */
-    // for (int i = 0; i < numMonitors; i++)
-    //     send_data(write_fd[i], bufferSize, "end");
+    for (int i = 0; i < numMonitors; i++){
+		send_data(write_fd[i], bufferSize, "end");
+	}
 
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
@@ -237,7 +238,26 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     /* call the print function to prin the stats from the incoming files */
     // print_stats(numActiveMonitors, bufferSize, read_fd);
 
+	printf("Print monitors hash table in parent\n");
+	HTPrint(monitors, print_monitor);
 	HTDestroy(monitors);
+
+    /* Send a SIGKILL to the monitors to end them */
+    for (int i = 0; i < numMonitors; i++) {
+        kill(monitors_pids[i], SIGKILL);
+    }
+    /* Delete named pipes */
+    for (int i = 0; i < numMonitors; i++) {
+        unlink(names1[i]);
+        unlink(names2[i]);
+     
+        free(names1[i]);
+        free(names2[i]);
+    }
+    /* Wait until all the children are dead */
+    for (int i = 0; i < numMonitors; i++) {
+        wait(&monitors_pids[i]);
+    }
 	
 
 }

@@ -6,6 +6,7 @@ RDIR = $(SRC)/relations
 TDIR = $(SRC)/tools
 MNTR = monitor
 MTDIR = $(MNTR)/tools
+MRDIR = $(MNTR)/relations
 
 #compiler
 CC = gcc
@@ -16,16 +17,17 @@ EXEC_MONITOR = processMonitor
 
 #compile options
 CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable 
-CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) -I$(RDIR) -I$(MTDIR)
+CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) -I$(RDIR) -I$(MTDIR) -I$(MRDIR)
 
 COMMON_OBJS = $(MODULES)/BloomFilter/BloomFilter.o $(MODULES)/Date/date.o $(MODULES)/LinkedList/List.o
-COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o
+COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o $(TDIR)/ipc.o
 
 #src .o
-OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(TDIR)/utils.o $(TDIR)/ipc.o
+OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(TDIR)/utils.o
 
 #monitor .o
-MNTR_OBJS = $(MNTR)/monitor_main.o $(MTDIR)/signal_functions.o
+MNTR_OBJS = $(MNTR)/monitor_main.o $(MTDIR)/signal_functions.o $(MTDIR)/dataStore.o
+MNTR_OBJS += $(MTDIR)/utils_monitor.o $(MRDIR)/country.o $(MRDIR)/virus.o $(MRDIR)/citizenRecord.o
 
 all: $(EXEC) $(EXEC_MONITOR)
 	mkdir -p $(ODIR)
@@ -44,4 +46,4 @@ clean:
 	rm -f $(EXEC)
 	rm -f $(EXEC_MONITOR)
 	rm -rf $(ODIR)
-	rm -rf temp
+	rm -rf tmp

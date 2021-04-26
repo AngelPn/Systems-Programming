@@ -2,6 +2,7 @@
 #define DATA_H
 
 #include "HashTable.h"
+#include "List.h"
 
 typedef struct  data_store
 {
