@@ -34,6 +34,7 @@ int main(int argc, char **argv){
 		perror("Error in opening read_fd in monitor"); exit(EXIT_FAILURE);
 	}
     char *input_dir = argv[4];
+    printf("(monitor_main)Opened named pipes and stored the file descs %s: %d, %s: %d\n", argv[2], write_fd,argv[3],  read_fd);
 
     /* Structures needed for queries */
     dataStore ds;
@@ -46,7 +47,7 @@ int main(int argc, char **argv){
 		country_name = receive_data(read_fd, bufferSize);
 		if (!strcmp(country_name, "end")) 
 			break;
-		fprintf(stderr, "%s \n", country_name);
+		fprintf(stderr, "%s\n", country_name);
 		/* Check if country is already in hash table of countries */
 		/* If not, insert country (c) in hash table of countries */
 		if ((c = HTSearch(ds.countries, country_name, compare_countries)) == NULL ){
@@ -55,7 +56,7 @@ int main(int argc, char **argv){
 		}
 	}
 
-    printf("Print countries for child %d\n", getpid());
+    printf("(monitor_main)Print countries for child %d\n", getpid());
     print_ht_countries(&ds);
 
     /* Deallocate memory */

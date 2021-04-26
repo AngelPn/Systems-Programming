@@ -147,10 +147,11 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
             perror("Error storing file desc in writing array");
             exit(EXIT_FAILURE);
         }
+		printf("(utils)%d %d\n", read_fd[i], write_fd[i]);
         free(name1);
         free(name2);
     }
-	printf("Opened named pipes and stored the file descs\n");
+	printf("(utils)Opened named pipes and stored the file descs\n");
     struct dirent *subdir; /* pointer to subdirs*/
 
     /* Open the input dir */
@@ -197,9 +198,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 	for (int i=0; i < numSubdirs; i++)
 		printf("%d. %s\n", i, countries[i]);
-
-	for (int i=0; i<numMonitors; i++)
-		printf("%d\n", monitors_pids[i]);
 
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);

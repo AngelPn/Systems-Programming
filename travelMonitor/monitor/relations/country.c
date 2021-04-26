@@ -141,7 +141,7 @@ void popStatusByAge(void *item, int key){
 
 void print_country(void *c){
     country nc = c;
-    printf("%s", nc->country_name);
+    printf("%s\n", nc->country_name);
 }
 
 int compare_countries(void *key, void *b){
