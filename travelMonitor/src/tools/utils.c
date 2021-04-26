@@ -95,60 +95,61 @@ char *concat_int_to_string(const char str[], int i){
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
-    // pid_t pid;
-	// pid_t monitors_pids[numMonitors]; /* stores the PIDs of the childs */
-    // int reading[numMonitors], writing[numMonitors]; /* stores the file descs for reading and writing */
-	// char *names1[numMonitors], *names2[numMonitors]; /* stores the names of named pipes */
+    pid_t pid;
+	pid_t monitors_pids[numMonitors]; /* stores the PIDs of the childs */
+    int read_fd[numMonitors], write_fd[numMonitors]; /* stores the file descs for reading and writing */
+	char *names1[numMonitors], *names2[numMonitors]; /* stores the names of named pipes */
 
-	// /* Create a temporary dir with read/write/search permissions for owner, group and others */
-    // mkdir("./temp", S_IRWXU | S_IRWXG | S_IRWXO);
+	/* Create a temporary dir with read/write/search permissions for owner, group and others */
+    mkdir("./temp", S_IRWXU | S_IRWXG | S_IRWXO);
 
-	// /* Create numMonitors child processes with fork and named pipes */
-    // for (int i = 0; i < numMonitors; i++) {
-    //     pid = fork();
+	/* Create numMonitors child processes with fork and named pipes */
+    for (int i = 0; i < numMonitors; i++) {
+        pid = fork();
 
-    //     /* Store the name of the 2 named pipes */
-	// 	names1[i] = concat_int_to_string("./temp/fifo1_", i);
-	// 	names2[i] = concat_int_to_string("./temp/fifo2_", i);
+        /* Store the name of the 2 named pipes */
+		names1[i] = concat_int_to_string("./temp/myfifo1_", i);
+		names2[i] = concat_int_to_string("./temp/myfifo2_", i);
 
-    //     if (pid > 0) { /* parent process */
-    //         monitors_pids[i] = pid; /* save child's pid */
+        if (pid > 0) { /* parent process */
+            monitors_pids[i] = pid; /* save child's pid */
 
-    //         /* Create named pipes */
-    //         if ((mkfifo(names1[i], 0666) == -1) && (errno != EEXIST)) {
-	// 			perror("Error creating named pipe");
-	// 			exit(EXIT_FAILURE);
-    //         }
-    //         if ((mkfifo(names2[i], 0666) == -1) && (errno != EEXIST)) {
-	// 			perror("Error creating named pipe");
-	// 			exit(EXIT_FAILURE);
-    //         }
-    //     }
-	// 	else{ /* child process */
-	// 		/* 	Replace the current running process with a new process
-	// 			representing the argument list available to the executed program */
-    //         // if (execl("../../monitor/Monitor", "Monitor", names1[i], names2[i], itoa(bufferSize), input_dir, "init", NULL) == -1){
-	// 		// 	perror("Error in execl");
-	// 		// 	exit(EXIT_FAILURE);				
-	// 		// }
-    //     }
-    // }
+            /* Create named pipes */
+            if ((mkfifo(names1[i], 0666) == -1) && (errno != EEXIST)) {
+				perror("Error creating named pipe");
+				exit(EXIT_FAILURE);
+            }
+            if ((mkfifo(names2[i], 0666) == -1) && (errno != EEXIST)) {
+				perror("Error creating named pipe");
+				exit(EXIT_FAILURE);
+            }
+        }
+		else{ /* child process */
+			/* 	Replace the current running process with a new process
+				representing the argument list available to the executed program */
+			char *path = "../../processMonitor";
+            if (execl(path, path, concat_int_to_string("", bufferSize), names1[i], names2[i], input_dir, "init", NULL) == -1){
+				perror("Error in execl");
+				exit(EXIT_FAILURE);				
+			}
+        }
+    }
 
-    // /* Οpen the named pipes and store the file descs */
-    // for (int i = 0; i < numMonitors; i++) {
-	// 	char *name1 = concat_int_to_string("./temp/fifo1_", i);
-	// 	char *name2 = concat_int_to_string("./temp/fifo2_", i);
-    //     if ((reading[i] = open(name1, O_RDONLY, 0666)) == -1) {
-    //         perror("Error storing file desc in reading array");
-    //         exit(EXIT_FAILURE);
-    //     }
-    //     if ((writing[i] = open(name2, O_WRONLY, 0666)) == -1) {
-    //         perror("Error storing file desc in writing array");
-    //         exit(EXIT_FAILURE);
-    //     }
-    //     free(name1);
-    //     free(name2);
-    // }
+    /* Οpen the named pipes and store the file descs */
+    for (int i = 0; i < numMonitors; i++) {
+		char *name1 = concat_int_to_string("./temp/fifo1_", i);
+		char *name2 = concat_int_to_string("./temp/fifo2_", i);
+        if ((read_fd[i] = open(name1, O_RDONLY, 0666)) == -1) {
+            perror("Error storing file desc in reading array");
+            exit(EXIT_FAILURE);
+        }
+        if ((write_fd[i] = open(name2, O_WRONLY, 0666)) == -1) {
+            perror("Error storing file desc in writing array");
+            exit(EXIT_FAILURE);
+        }
+        free(name1);
+        free(name2);
+    }
 
     struct dirent *subdir; /* pointer to subdirs*/
 
@@ -214,7 +215,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		}
 		/* Assign the country subdir to monitor */
 		add_country(m, countries[country_idx]); /* add country in monitor to handle */
-        // send_data(writing[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
+        // send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
 		
 		if ((monitor_idx++) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
@@ -227,28 +228,28 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Write 'end' into every pipe to note the end of distribution of countries per monitor */
     // for (int i = 0; i < numMonitors; i++)
-    //     send_data(writing[i], bufferSize, "end");
+    //     send_data(write_fd[i], bufferSize, "end");
 
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
 	printf("numActiveMonitors: %d\n", numActiveMonitors);
 
     /* call the print function to prin the stats from the incoming files */
-    // print_stats(numActiveMonitors, bufferSize, reading);
+    // print_stats(numActiveMonitors, bufferSize, read_fd);
 
 	HTDestroy(monitors);
 	
 
 }
 
-// void print_stats(int numActiveMonitors, int bufferSize, int *reading) {
+// void print_stats(int numActiveMonitors, int bufferSize, int *read_fd) {
 
 //     fd_set active, read; /* represent file descriptor sets for the select function */
 //     FD_ZERO(&active); /* initialize the file descriptor set 'active' to be the empty set */
 
-// 	/* Add file descriptors in reading array to the file descriptor set 'active' */
+// 	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
 //     for (int i = 0; i < numActiveMonitors; i++)
-//         FD_SET(reading[i], &active);
+//         FD_SET(read_fd[i], &active);
 	
 //     int done = 0;
 //     while (done < numActiveMonitors) {
@@ -262,24 +263,24 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 //         }
 //         // for all the workers that have already reported stats
 //         for (int i = 0; i < numActiveMonitors; i++) {
-//             if (FD_ISSET(reading[i], &read)) {
+//             if (FD_ISSET(read_fd[i], &read)) {
 //                 // first thing: how many files the worker reported
-//                 char* n = read_from_pipe(reading[i], bufferSize);
+//                 char* n = read_from_pipe(read_fd[i], bufferSize);
 //                 int n_files = atoi(n);
 //                 for (int j = 0; j < n_files; j++) {
 //                     // each file has a name, a country, and some diseases
-//                     char* name = read_from_pipe(reading[i], bufferSize);
-//                     char* country = read_from_pipe(reading[i], bufferSize);
-//                     char* n_dis = read_from_pipe(reading[i], bufferSize);
+//                     char* name = read_from_pipe(read_fd[i], bufferSize);
+//                     char* country = read_from_pipe(read_fd[i], bufferSize);
+//                     char* n_dis = read_from_pipe(read_fd[i], bufferSize);
 //                     int n_diseases = atoi(n_dis);
 //                     fprintf(stdout, "%s\n%s\n", name, country);
 //                     // for each disease
 //                     for (int k = 0; k < n_diseases; k++) {
 //                         // parse the stats
-//                         char* disease = read_from_pipe(reading[i], bufferSize);
+//                         char* disease = read_from_pipe(read_fd[i], bufferSize);
 //                         fprintf(stdout, "%s\n", disease);
 //                         free(disease);
-//                         char* info = read_from_pipe(reading[i], bufferSize);
+//                         char* info = read_from_pipe(read_fd[i], bufferSize);
 //                         fprintf(stdout, "%s\n", info);
 //                         free(info);
 //                     }
