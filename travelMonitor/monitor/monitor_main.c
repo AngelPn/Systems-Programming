@@ -25,17 +25,19 @@ int main(int argc, char **argv){
     set_signals();
 
     /* Get arguments */
-    int bufferSize = atoi(argv[1]), bloomSize = atoi(argv[2]), read_fd, write_fd;
+    int bufferSize, bloomSize, read_fd, write_fd;
 	/* Open named pipes for writing */
-	if ((write_fd = open(argv[3], O_WRONLY, 0666)) == -1) {
+	if ((write_fd = open(argv[1], O_WRONLY, 0666)) == -1) {
 		perror("Error in opening write_fd in monitor"); exit(EXIT_FAILURE);
 	}
     /* Open named pipes for reading */
-	if ((read_fd = open(argv[4], O_RDONLY, 0666)) == -1) {
+	if ((read_fd = open(argv[2], O_RDONLY, 0666)) == -1) {
 		perror("Error in opening read_fd in monitor"); exit(EXIT_FAILURE);
 	}
-    char *input_dir = argv[5];
-    printf("(monitor_main)Opened named pipes and stored the file descs %s: %d, %s: %d\n", argv[2], write_fd,argv[3],  read_fd);
+	char *input_dir;
+	receive_init(read_fd, &bufferSize, &bloomSize, &input_dir);
+    
+    printf("(monitor_main)Opened bufferSize: %d, bloomSize: %d, input_dir: %s\n", bufferSize, bloomSize, input_dir);
 
     /* Structures needed for queries */
     dataStore ds;

@@ -93,6 +93,10 @@ char *concat_int_to_string(const char str[], int i){
 	return result;
 }
 
+int cmpstr(const void* p1, const void* p2){
+	return strcmp(*(char* const*) p1, *(char* const*) p2);
+}
+
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
     pid_t pid;
@@ -128,16 +132,14 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 			/* 	Replace the current running process with a new process
 				representing the argument list available to the executed program */
 			char *path = "processMonitor";
-			char *buff_size = concat_int_to_string("", bufferSize);
-			char *bloom_size = concat_int_to_string("", bloomSize);
-            if (execl(path, path, buff_size, bloom_size, names1[i], names2[i], input_dir, "init", NULL) == -1){
+            if (execl(path, path, names1[i], names2[i], NULL) == -1){
 				perror("Error in execl");
 				exit(EXIT_FAILURE);				
 			}
         }
     }
 
-    /* Οpen the named pipes and store the file descs */
+    /* Οpen the named pipes, store the file descs and send init data */
     for (int i = 0; i < numMonitors; i++) {
 		char *name1 = concat_int_to_string("./tmp/myfifo1_", i);
 		char *name2 = concat_int_to_string("./tmp/myfifo2_", i);
@@ -150,6 +152,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
             exit(EXIT_FAILURE);
         }
 		printf("(utils)%d %d\n", read_fd[i], write_fd[i]);
+		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
         free(name1);
         free(name2);
     }
@@ -177,25 +180,13 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	while ((subdir = readdir(indir)) != NULL){
 		if (strcmp(subdir->d_name, ".") == 0 || strcmp(subdir->d_name, "..") == 0)
 			continue;
-		else{
-			countries[i] = strdup(subdir->d_name);
-			i++;
-		}
+		else
+			countries[i++] = strdup(subdir->d_name);
 	}
     closedir(indir); free(input_dir);
 
-	/* Sort countries array alphabetically */
-	char *temp = NULL;
-	for (int i = 0; i < numSubdirs; i++){
-		for (int j = i + 1; j < numSubdirs; j++){
-			if (strcmp(countries[i], countries[j]) > 0){
-				temp = strdup(countries[i]);
-				free(countries[i]); countries[i] = strdup(countries[j]);
-				free(countries[j]); countries[j] = strdup(temp);
-				free(temp);
-			}
-		}
-	}
+	/* Sort countries array alphabetically using qsort() from the C standard library */
+	qsort(countries, numSubdirs, sizeof(char *), cmpstr);
 
 	for (int i=0; i < numSubdirs; i++)
 		printf("%d. %s\n", i, countries[i]);
@@ -206,7 +197,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
 		monitor m = NULL;
 		pid_t monitor_pid = monitors_pids[monitor_idx];
-		// pid_t monitor_pid = monitor_idx;
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */

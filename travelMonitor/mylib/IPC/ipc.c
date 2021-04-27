@@ -67,3 +67,15 @@ void send_data(int fd, int bufferSize, char *data){
 		total_written_bytes += written_bytes;
 	}
 }
+
+void receive_init(int fd, int *bufferSize, int *bloomSize, char **input_dir){
+	read(fd, bufferSize, sizeof(int));
+	read(fd, bloomSize, sizeof(int));
+	*input_dir = strdup(receive_data(fd, *bufferSize));
+}
+
+void send_init(int fd, int bufferSize, int bloomSize, char *input_dir){
+	write(fd, &bufferSize, sizeof(int));
+	write(fd, &bloomSize, sizeof(int));
+	send_data(fd, bufferSize, input_dir);
+}
