@@ -10,6 +10,7 @@ void create_structs(dataStore *ds){
     ds->citizens = HTCreate(Integer, destroy_citizen);
     ds->viruses = HTCreate(String, destroy_virus);
     ds->countries = HTCreate(String, destroy_country);
+    ds->parsed_files = list_create(free);
 }
 
 void print_ht_citizens(dataStore *ds){
@@ -28,5 +29,6 @@ void destroy_structs(dataStore *ds){
     /* Deallocate memory */
     HTDestroy(ds->countries);
     HTDestroy(ds->citizens);
-    HTDestroy(ds->viruses); 
+    HTDestroy(ds->viruses);
+    list_destroy(ds->parsed_files);
 }

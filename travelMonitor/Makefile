@@ -16,11 +16,11 @@ EXEC = travelMonitor
 EXEC_MONITOR = processMonitor
 
 #compile options
-CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable 
+CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable -I$(MODULES)/IPC
 CFLAGS += -I$(MODULES)/BloomFilter -I$(MODULES)/Date -I$(TDIR) -I$(RDIR) -I$(MTDIR) -I$(MRDIR)
 
 COMMON_OBJS = $(MODULES)/BloomFilter/BloomFilter.o $(MODULES)/Date/date.o $(MODULES)/LinkedList/List.o
-COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o $(TDIR)/ipc.o
+COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o $(MODULES)/IPC/ipc.o
 
 #src .o
 OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(TDIR)/utils.o

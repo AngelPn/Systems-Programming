@@ -2,6 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <dirent.h> 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/select.h>
 
 #include "utils_monitor.h"
 #include "virus.h"
@@ -12,73 +22,80 @@
 #define YEL   "\033[1;33m"
 #define RESET "\033[0m"
 
-/* Does proper argument handling and stores variables from command prompt to vars bloomsize, filepath */
-int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath){
-
-	if (argc != 5){
-		printf(RED "ERROR: Invalid use of arguments, the process will terminate\n" RESET);
-		return 0;			
-	}
-	
-	if (strcmp(argv[1], "-c") == 0){
-		const static char dir[] = "testFiles/";
-		*filepath = (char *)malloc(sizeof(char)*(strlen(dir) + strlen(argv[2]) + 1));
-		strcpy(*filepath, dir);
-		strcat(*filepath, argv[2]);
-	}
-	else{
-		printf(RED "ERROR: Invalid use of -c flag, the process will terminate\n" RESET);				
-		return 0;				
-	}
-
-	if(strcmp(argv[3], "-b") == 0){
-		if(argv[4] <= 0 ){
-			printf(RED "ERROR: Invalid argument after -b flag. Number must be positive integer.\n" RESET);
-			return 0;
-		}
-		else
-			*bloomsize = atoi(argv[4]);
-	} 			
-	else{
-		printf(RED "ERROR: Invalid use of -b flag, the process will terminate\n" RESET);
-		return 0;			
-	}
-
-    return 1;
-}
-
 
 void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse);
 
 /* Does file parsing and builds structs in dataStore */
-void fileParse_and_buildStructs(char *filepath, int bytes, dataStore *ds){
+void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 
-	FILE *frecords;
-    /* Open the file given from filepath and read it*/
-    frecords = fopen(filepath, "r");
+	/* For each of monitor's assigned country subdirectory */
+	List head = NULL;
+	for (int i = 0; i < HTSize(ds->countries); i++){
+		head = get_HTchain(ds->countries, i);
+		if(head != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
-    if (frecords == NULL){
-        printf(RED "Error: Given inputFile does not exist in testFiles directory\n" RESET);
-        exit(EXIT_FAILURE);
-    }
+				/* Get the country name and create the path of subdir */
+				char *country_name = get_country_name(list_node_item(head, node));
+				char subdirPath[strlen(input_dir) + strlen(country_name) + 2];
+				snprintf(subdirPath, sizeof(subdirPath), "%s/%s", input_dir, country_name);
+				printf("country_name: %s, subdirPath: %s\n\n", country_name, subdirPath);
 
-	/* Parse the file and build the structs */
-    char *line = NULL;
-    size_t len = 0;
+				/* Open the country subdir */
+				DIR *countryDir;
+				if ((countryDir = opendir(subdirPath)) == NULL) {
+					perror(RED "Error opening country's subdirectory" RESET);
+					exit(EXIT_FAILURE);
+				}
+
+				/* Traverse all the files in the country subdri */
+				struct dirent *file;
+				while ((file = readdir(countryDir)) != NULL) {
+					
+					/* Ignore the . and .. files */
+					if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
+						continue;
+
+					/* Add the filename to parsed files */
+					char *filename = strdup(file->d_name);
+					list_insert_next(ds->parsed_files, NULL, filename);
+
+					/* Create the path of file */
+					char filePath[strlen(subdirPath) + strlen(filename) + 2];
+					snprintf(filePath, sizeof(filePath), "%s/%s", subdirPath, filename);
+
+					/* Open the file given from filePath and read it */
+					FILE *frecords;
+					if ((frecords = fopen(filePath, "r")) == NULL){
+						perror(RED "Error opening country's file"  RESET);
+						exit(EXIT_FAILURE);
+					}
+
+					/* Parse the file and build the structs */
+					char *line = NULL;
+					size_t len = 0;
+					
+					while (getline(&line, &len, frecords) != -1){
+
+						char *args[8];
+
+						args[0] = strtok(line, " ");
+						for (int i = 1; i < 8; ++i)
+							args[i] = strtok(NULL, " \n");
+
+						insertCitizen(args, bytes, ds, true);   
+					}
+
+					free(line);
+					fclose(frecords);
+				}
+			}
+		}		
+	}
+}
+
+void send_bloomFilters(dataStore &ds){
 	
-    while (getline(&line, &len, frecords) != -1){
-
-		char *args[8];
-
-		args[0] = strtok(line, " ");
-		for (int i = 1; i < 8; ++i)
-			args[i] = strtok(NULL, " \n");
-
-		insertCitizen(args, bytes, ds, true);   
-    }
-
-	free(line); free(filepath);
-    fclose(frecords);
 }
 
 

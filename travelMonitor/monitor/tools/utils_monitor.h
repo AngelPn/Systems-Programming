@@ -3,11 +3,11 @@
 
 #include "dataStore.h"
 
-/* Does proper argument handling and stores variables from command prompt to vars bloomsize, filepath */
-int argumentHandling(int argc, char **argv, int *bloomsize, char **filepath);
-
 /* Does file parsing and builds structs in dataStore */
-void fileParse_and_buildStructs(char *filepath, int bytes, dataStore *ds);
+void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds);
+
+/* Sends bloom filter for each of the viruses via named pipe */
+void send_bloomFilters(dataStore &ds);
 
 /* Executes queries */
 void queries(int bytes, dataStore *ds);

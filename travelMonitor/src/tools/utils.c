@@ -128,7 +128,9 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 			/* 	Replace the current running process with a new process
 				representing the argument list available to the executed program */
 			char *path = "processMonitor";
-            if (execl(path, path, concat_int_to_string("", bufferSize), names1[i], names2[i], input_dir, "init", NULL) == -1){
+			char *buff_size = concat_int_to_string("", bufferSize);
+			char *bloom_size = concat_int_to_string("", bloomSize);
+            if (execl(path, path, buff_size, bloom_size, names1[i], names2[i], input_dir, "init", NULL) == -1){
 				perror("Error in execl");
 				exit(EXIT_FAILURE);				
 			}
@@ -155,9 +157,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     struct dirent *subdir; /* pointer to subdirs*/
 
     /* Open the input dir */
-    DIR *indir = opendir(input_dir);
-
-    if (indir == NULL) {
+    DIR *indir;
+    if ((indir = opendir(input_dir)) == NULL) {
         perror("Error opening input directory");
         exit(EXIT_FAILURE);
     }
@@ -239,6 +240,10 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	printf("Print monitors hash table in parent\n");
 	HTPrint(monitors, print_monitor);
 	HTDestroy(monitors);
+
+	while(true){
+		
+	}
 
     /* Send a SIGKILL to the monitors to end them */
     for (int i = 0; i < numMonitors; i++) {

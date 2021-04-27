@@ -16,6 +16,9 @@ HashTable HTCreate(int keytype, DestroyFunc destroy_item);
 /* Returns the number of elements in the Hash Table */
 int HTSize(HashTable ht);
 
+/* Returns the i-th chain of Hash Table */
+List get_HTchain(HashTable ht, int i);
+
 /* Searches key in Hash Table and returns item, if found. If not, returns NULL
     Note that different key types need different specifier to compare keys */
 void *HTSearch(HashTable ht, void *key, CompareFunc compare);

@@ -9,6 +9,7 @@ typedef struct  data_store
     HashTable citizens;
     HashTable countries;
     HashTable viruses;
+    List parsed_files;
 
 } dataStore;
 

@@ -42,6 +42,10 @@ int HTSize(HashTable ht){
 	return ht->n;
 }
 
+List get_HTchain(HashTable ht, int i){
+	return ht->chains[i];
+}
+
 /* Hash function: takes into account the type of key: String or Integer */
 int Hash(HashTable ht, int keytype, void *key){
 	if (keytype == String){
