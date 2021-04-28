@@ -21,6 +21,7 @@ char *receive_data(int fd, int bufferSize){
 	int dataSize;
 	if ((read(fd, &dataSize, sizeof(int)) == -1) && (errno == EINTR)) 
 		return NULL;
+	printf("dataSize = %d\n", dataSize);
 
 	char *data = malloc(sizeof(char)*(dataSize + 1));
 	char buffer[bufferSize];

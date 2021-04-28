@@ -7,7 +7,7 @@
 void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds);
 
 /* Sends bloom filter for each of the viruses via named pipe */
-void send_bloomFilters(dataStore *ds);
+void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize);
 
 /* Executes queries */
 void queries(int bytes, dataStore *ds);

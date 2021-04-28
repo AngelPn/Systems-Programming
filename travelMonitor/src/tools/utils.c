@@ -17,6 +17,7 @@
 #include "HashTable.h"
 #include "monitor.h"
 #include "ipc.h"
+#include "virus_bloom.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -97,6 +98,8 @@ int cmpstr(const void* p1, const void* p2){
 	return strcmp(*(char* const*) p1, *(char* const*) p2);
 }
 
+void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
+
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
     pid_t pid;
@@ -131,8 +134,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		else{ /* child process */
 			/* 	Replace the current running process with a new process
 				representing the argument list available to the executed program */
-			char *path = "processMonitor";
-            if (execl(path, path, names1[i], names2[i], NULL) == -1){
+            if (execl("Monitor", "Monitor", names1[i], names2[i], NULL) == -1){
 				perror("Error in execl");
 				exit(EXIT_FAILURE);				
 			}
@@ -151,8 +153,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
             perror("Error storing file desc in writing array");
             exit(EXIT_FAILURE);
         }
-		printf("(utils)%d %d\n", read_fd[i], write_fd[i]);
 		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
+		printf("monitors_pids[%d] = %d\n", i, monitors_pids[i]);
         free(name1);
         free(name2);
     }
@@ -188,8 +190,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Sort countries array alphabetically using qsort() from the C standard library */
 	qsort(countries, numSubdirs, sizeof(char *), cmpstr);
 
-	for (int i=0; i < numSubdirs; i++)
-		printf("%d. %s\n", i, countries[i]);
+	// for (int i=0; i < numSubdirs; i++)
+	// 	printf("%d. %s\n", i, countries[i]);
 
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
@@ -208,7 +210,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 		add_country(m, countries[country_idx]); /* add country in monitor to handle */
         send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
 		
-		if ((monitor_idx++) == numMonitors){
+		if ((++monitor_idx) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
 			numActiveMonitors = 1; /* set numActiveMonitors to declare that all monitors are active */
 		}
@@ -222,18 +224,18 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
-	printf("numActiveMonitors: %d\n", numActiveMonitors);
+	// printf("numActiveMonitors: %d\n", numActiveMonitors);
 
-    /* call the print function to prin the stats from the incoming files */
-    // print_stats(numActiveMonitors, bufferSize, read_fd);
+    /* Get bloom filters from monitors */
+	get_bloom_filters(monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
+
+	// while(true){
+	// 	// printf("sad");
+	// }
 
 	printf("Print monitors hash table in parent\n");
 	HTPrint(monitors, print_monitor);
 	HTDestroy(monitors);
-
-	while(true){
-		
-	}
 
     /* Send a SIGKILL to the monitors to end them */
     for (int i = 0; i < numMonitors; i++) {
@@ -255,57 +257,90 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 }
 
-// void print_stats(int numActiveMonitors, int bufferSize, int *read_fd) {
+void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
 
-//     fd_set active, read; /* represent file descriptor sets for the select function */
-//     FD_ZERO(&active); /* initialize the file descriptor set 'active' to be the empty set */
+	printf("\n\n----------------GET-BLOOM-FILTERS-------------------\n\n");
+    fd_set active, ready; /* represents file descriptor sets for the select function */
+    FD_ZERO(&active); /* initializes the file descriptor set 'active' to be the empty set */
 
-// 	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
-//     for (int i = 0; i < numActiveMonitors; i++)
-//         FD_SET(read_fd[i], &active);
+	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
+    for (int i = 0; i < numActiveMonitors; i++){
+		FD_SET(read_fd[i], &active);
+	}
 	
-//     int done = 0;
-//     while (done < numActiveMonitors) {
-//         // print the incoming stats from each worker
-//         // Block until an input arrives from one of the workers
-//         read = active;
-//         // find out how many workers are ready
-//         if (select(FD_SETSIZE, &read, NULL, NULL, NULL) < 0) {
-//             perror("select");
-//             exit(EXIT_FAILURE);
-//         }
-//         // for all the workers that have already reported stats
-//         for (int i = 0; i < numActiveMonitors; i++) {
-//             if (FD_ISSET(read_fd[i], &read)) {
-//                 // first thing: how many files the worker reported
-//                 char* n = read_from_pipe(read_fd[i], bufferSize);
-//                 int n_files = atoi(n);
-//                 for (int j = 0; j < n_files; j++) {
-//                     // each file has a name, a country, and some diseases
-//                     char* name = read_from_pipe(read_fd[i], bufferSize);
-//                     char* country = read_from_pipe(read_fd[i], bufferSize);
-//                     char* n_dis = read_from_pipe(read_fd[i], bufferSize);
-//                     int n_diseases = atoi(n_dis);
-//                     fprintf(stdout, "%s\n%s\n", name, country);
-//                     // for each disease
-//                     for (int k = 0; k < n_diseases; k++) {
-//                         // parse the stats
-//                         char* disease = read_from_pipe(read_fd[i], bufferSize);
-//                         fprintf(stdout, "%s\n", disease);
-//                         free(disease);
-//                         char* info = read_from_pipe(read_fd[i], bufferSize);
-//                         fprintf(stdout, "%s\n", info);
-//                         free(info);
-//                     }
-//                     fprintf(stdout, "\n");
-//                     // no leaks!
-//                     free(name); 
-//                     free(country);
-//                     free(n_dis);
-//                 }
-//                 free(n);
-//                 done++;
-//             }
-//         }
-//     }
-// }
+	monitor m = NULL;
+	HashTable monitor_viruses = NULL;
+	virus_bloom v = NULL;
+	char *virus_name = NULL, *bloom_filter = NULL;
+    int counter = -1;
+
+	/* For each of the active monitors, get the incoming bloom filters */
+    while ((++counter) < numActiveMonitors){
+        // Block until an input arrives from one of the workers
+
+        /* Find out how many monitors are ready */
+		ready = active;
+        if (select(FD_SETSIZE, &(ready), NULL, NULL, NULL) < 0){
+            perror("Error in select");
+            exit(EXIT_FAILURE);
+        }
+        /* For all the monitors that have already sent bloom filters */
+        for (int i = 0; i < numActiveMonitors; i++){
+            if (FD_ISSET(read_fd[i], &ready)){
+
+				/* Get the number of viruses the monitor reported */
+				int n_viruses = atoi(receive_data(read_fd[i], bufferSize));
+				printf("\nReported n_viruses: %d\n", n_viruses);
+				printf("\n %s\n", receive_data(read_fd[i], bufferSize));
+				
+
+				/* Get the monitor with specified PID */
+				m = HTSearch(monitors, &(monitors_pids[i]), compare_monitor);
+
+				/* Read the bloom filters from the pipe */
+				for (int j = 0; j < n_viruses; j++){
+					virus_name = receive_data(read_fd[i], bufferSize);
+					if (!strcmp(virus_name, "ready")) 
+						break;
+					printf("GBF-%s\n", virus_name);
+
+					/* Get the hash table of viruses of monitor */
+					monitor_viruses = get_monitor_viruses(m);
+
+					/* Check if virus is already in hash table of viruses of monitor */
+					/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+					if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL ){
+						v = create_virus_bloom(virus_name, bloomSize);
+						HTInsert(&(monitor_viruses), v, get_virus_bloomName);
+					}
+
+					bloom_filter = receive_data(read_fd[i], bufferSize);
+					update_BloomFilter(v, bloom_filter);
+					free(bloom_filter);
+					virus_name = NULL;					
+				}
+				// while (true){
+				// 	virus_name = receive_data(read_fd[i], bufferSize);
+				// 	if (!strcmp(virus_name, "ready")) 
+				// 		break;
+				// 	fprintf(stderr, "GBF-%s\n", virus_name);
+
+				// 	/* Get the hash table of viruses of monitor */
+				// 	monitor_viruses = get_monitor_viruses(m);
+
+				// 	/* Check if virus is already in hash table of viruses of monitor */
+				// 	/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+				// 	if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL ){
+				// 		v = create_virus_bloom(virus_name, bloomSize);
+				// 		HTInsert(&(monitor_viruses), v, get_virus_bloomName);
+				// 	}
+
+				// 	bloom_filter = receive_data(read_fd[i], bufferSize);
+				// 	update_BloomFilter(v, bloom_filter);
+				// 	free(bloom_filter);
+				// 	virus_name = NULL;
+				// }
+            }
+        }
+    }
+}

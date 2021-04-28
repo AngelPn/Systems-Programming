@@ -3,11 +3,13 @@
 #include <stdlib.h>
 
 #include "monitor.h"
+#include "virus_bloom.h"
 
 struct monitor_struct
 {
     pid_t pid;
     List countries;
+    HashTable viruses;
 };
 
 monitor create_monitor(pid_t pid){
@@ -15,6 +17,7 @@ monitor create_monitor(pid_t pid){
 
     m->pid = pid;
     m->countries = list_create(free);
+    m->viruses = HTCreate(String, destroy_virus_bloom);
 
     return m;
 }
@@ -27,6 +30,11 @@ void *get_monitor_pid(void *m){
 List get_monitor_countries(void *m){
     monitor nm = m;
     return nm->countries;
+}
+
+HashTable get_monitor_viruses(void *m){
+    monitor nm = m;
+    return nm->viruses;
 }
 
 void add_country(monitor m, char *country){

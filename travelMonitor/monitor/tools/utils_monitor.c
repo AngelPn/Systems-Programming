@@ -16,6 +16,7 @@
 #include "utils_monitor.h"
 #include "virus.h"
 #include "country.h"
+#include "ipc.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -39,7 +40,7 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 				char *country_name = get_country_name(list_node_item(head, node));
 				char subdirPath[strlen(input_dir) + strlen(country_name) + 2];
 				snprintf(subdirPath, sizeof(subdirPath), "%s/%s", input_dir, country_name);
-				printf("country_name: %s, subdirPath: %s\n\n", country_name, subdirPath);
+				// printf("country_name: %s, subdirPath: %s\n\n", country_name, subdirPath);
 
 				/* Open the country subdir */
 				DIR *countryDir;
@@ -94,8 +95,45 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 	}
 }
 
-void send_bloomFilters(dataStore *ds){
-	
+char *concat_int_to_str(const char str[], int i){
+	char string_i[10];
+	snprintf(string_i, 10, "%d", i);
+	char *result = (char *)malloc(sizeof(char)*(strlen(str) + 1 + sizeof(string_i)));
+	strcpy(result, str);
+	strcat(result, string_i);
+	return result;
+}
+
+
+void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize){
+
+	/* Inform the parent how many viruses to read */
+	int n_viruses = HTSize(ds->viruses);
+	char *str_n_viruses = concat_int_to_str("", n_viruses);
+	send_data(write_fd, bufferSize, str_n_viruses);
+	free(str_n_viruses);
+
+	send_data(write_fd, bufferSize, "WHYTHO");
+
+	/* For each of monitor's virus */
+	List head = NULL;
+	for (int i = 0; i < n_viruses; i++){
+		head = get_HTchain(ds->viruses, i);
+		if(head != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+				char *virus_name = (char *)get_virusName(node);
+				char *lol = get_array(get_filter(node));
+				printf("\n\n!!!SEND VIRUSNAME: %s, BLOOM FILTER: %s\n\n", virus_name, lol);				
+				/* Send virus name, bloom filter of virus, and an end message */
+				send_data(write_fd, bufferSize, virus_name);
+
+				send_data(write_fd, bufferSize, lol);
+				// send_data(write_fd, bufferSize, "end_bloom");
+			}
+		}
+	}
+	/* Inform the parent that monitor is ready to run queries */
+	send_data(write_fd, bufferSize, "ready");
 }
 
 

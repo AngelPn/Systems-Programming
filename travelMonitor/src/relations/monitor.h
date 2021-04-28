@@ -4,6 +4,7 @@
 #include <sys/types.h>
 
 #include "List.h"
+#include "HashTable.h"
 
 /* "struct monitor_struct" is incomplete struct */
 typedef struct monitor_struct *monitor;
@@ -14,8 +15,11 @@ monitor create_monitor(pid_t pid);
 /* Returns pointer to pid of monitor_struct */
 void *get_monitor_pid(void *m);
 
-/* Returns list of countries of monitor */
+/* Returns the list of countries of monitor */
 List get_monitor_countries(void *m);
+
+/* Returns the hash table of viruses of monitor */
+HashTable get_monitor_viruses(void *m);
 
 /* Adds country in list of countries in monitor */
 void add_country(monitor m, char *country);

@@ -21,7 +21,7 @@
 
 struct bloom_filter
 {
-    uint8_t *array; /* array of unsigned integer type with width of exactly 8 bits (1 byte) */
+    char *array; /* array of char type with width of 8 bits (1 byte) */
     size_t size;    /* the size of bloom filter in bytes */
 };
 
@@ -30,12 +30,16 @@ BloomFilter BloomCreate(size_t bytes){
     BloomFilter bloom = (BloomFilter)malloc(sizeof(struct bloom_filter));
 
     bloom->size = bytes;
-    bloom->array = (uint8_t *)malloc(sizeof(uint8_t)*(bloom->size));
+    bloom->array = (char *)calloc(bloom->size, sizeof(char));
 
-    for (int i = 0; i < bloom->size; i++)
-        bloom->array[i] = (uint8_t)0;
+    // for (int i = 0; i < bloom->size; i++)
+    //     bloom->array[i] = (uint8_t)0;
 
     return bloom;
+}
+
+char *get_array(BloomFilter bf){
+    return bf->array;
 }
 
 unsigned long hash_i(unsigned char *str, unsigned int i);
@@ -57,6 +61,12 @@ bool BloomSearch(BloomFilter bf, void *item){
             return false;
     }
     return true;
+}
+
+void update_array(BloomFilter bf, char *new_array){
+    for (int i = 0; i < bf->size; i++){
+        bf->array[i] = (bf->array[i] | new_array[i]);
+    }
 }
 
 void BloomDestroy(BloomFilter bf){
