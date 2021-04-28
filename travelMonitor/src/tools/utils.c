@@ -16,6 +16,7 @@
 #include "utils.h"
 #include "HashTable.h"
 #include "monitor.h"
+#include "dataMonitor.h"
 #include "ipc.h"
 #include "virus_bloom.h"
 
@@ -197,17 +198,23 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
 	int monitor_idx = 0, numActiveMonitors = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
-		monitor m = NULL;
+		// monitor m = NULL;
+		dataMonitor m = NULL;
 		pid_t monitor_pid = monitors_pids[monitor_idx];
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
-		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
+		// if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
+		// 	m = create_monitor(monitor_pid);
+		// 	HTInsert(&(monitors), m, get_monitor_pid);
+		// }
+		if ((m = HTSearch(monitors, &monitor_pid, compare_dataMonitor)) == NULL ){
 			m = create_monitor(monitor_pid);
-			HTInsert(&(monitors), m, get_monitor_pid);
+			HTInsert(&(monitors), m, get_dataMonitor_pid);
 		}
 		/* Assign the country subdir to monitor */
-		add_country(m, countries[country_idx]); /* add country in monitor to handle */
+		// add_country(m, countries[country_idx]); /* add country in monitor to handle */
+		add_dataMonitor_country(m, countries[country_idx]);
         send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
 		
 		if ((++monitor_idx) == numMonitors){
@@ -234,7 +241,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	// }
 
 	printf("Print monitors hash table in parent\n");
-	HTPrint(monitors, print_monitor);
+	HTPrint(monitors, print_dataMonitor);
 	HTDestroy(monitors);
 
     /* Send a SIGKILL to the monitors to end them */
@@ -272,10 +279,10 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 	HashTable monitor_viruses = NULL;
 	virus_bloom v = NULL;
 	char *virus_name = NULL, *bloom_filter = NULL;
-    int counter = -1;
+    int counter = 0;
 
 	/* For each of the active monitors, get the incoming bloom filters */
-    while ((++counter) < numActiveMonitors){
+    while (counter < numActiveMonitors){
         // Block until an input arrives from one of the workers
 
         /* Find out how many monitors are ready */
@@ -300,24 +307,27 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 					virus_name = receive_data(read_fd[i], bufferSize);
 					if (!strcmp(virus_name, "ready")) 
 						break;
-					printf("GBF-%s\n", virus_name);
+					printf("GBF-%s-", virus_name);
 
 					/* Get the hash table of viruses of monitor */
-					monitor_viruses = get_monitor_viruses(m);
+					// monitor_viruses = get_monitor_viruses(m);
+					monitor_viruses = m.viruses;
 
 					/* Check if virus is already in hash table of viruses of monitor */
 					/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-					if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL ){
+					if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL){
 						v = create_virus_bloom(virus_name, bloomSize);
 						HTInsert(&(monitor_viruses), v, get_virus_bloomName);
 					}
-
+					printf("%s-",(char *)get_virus_bloomName(v));
 					bloom_filter = receive_data(read_fd[i], bufferSize);
 					printf("GBF\n");
 					update_BloomFilter(v, bloom_filter);
 					free(bloom_filter);
 					virus_name = NULL;					
 				}
+				counter++;
+				
 				// while (true){
 				// 	virus_name = receive_data(read_fd[i], bufferSize);
 				// 	if (!strcmp(virus_name, "ready")) 
@@ -341,5 +351,6 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 				// }
             }
         }
+		exit(1);
     }
 }

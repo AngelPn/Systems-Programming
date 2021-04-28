@@ -134,7 +134,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 		}
 	}
 	/* Inform the parent that monitor is ready to run queries */
-	send_data(write_fd, bufferSize, "ready");
+	// send_data(write_fd, bufferSize, "ready");
 }
 
 

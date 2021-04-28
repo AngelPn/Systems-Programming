@@ -78,7 +78,7 @@ int main(int argc, char **argv){
 	}
 
 
-	print_ht_citizens(&ds);
+	// print_ht_citizens(&ds);
 
     /* Deallocate memory */
     destroy_structs(&ds);

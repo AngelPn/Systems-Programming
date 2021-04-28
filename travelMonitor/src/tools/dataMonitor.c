@@ -2,18 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "monitor.h"
+#include "dataMonitor.h"
 #include "virus_bloom.h"
 
-struct monitor_struct
-{
-    pid_t pid;
-    List countries;
-    HashTable viruses;
-};
-
-monitor create_monitor(pid_t pid){
-    monitor m = (monitor)malloc(sizeof(struct monitor_struct));
+dataMonitor create_dataMonitor(pid_t pid){
+    dataMonitor m = (dataMonitor)malloc(sizeof(struct dataMonitor_struct));
 
     m->pid = pid;
     m->countries = list_create(free);
@@ -22,28 +15,28 @@ monitor create_monitor(pid_t pid){
     return m;
 }
 
-void *get_monitor_pid(void *m){
-    monitor nm = m;
-    return &(nm->pid);
+void *get_dataMonitor_pid(void *m){
+    dataMonitor nm = m;
+    return &(nm->pid);    
 }
 
-List get_monitor_countries(void *m){
-    monitor nm = m;
+List get_dataMonitor_countries(void *m){
+    dataMonitor nm = m;
     return nm->countries;
 }
 
-HashTable get_monitor_viruses(void *m){
-    monitor nm = m;
+HashTable get_dataMonitor_viruses(void *m){
+    dataMonitor nm = m;
     return nm->viruses;
 }
 
-void add_country(monitor m, char *country){
+void add_dataMonitor_country(dataMonitor m, char *country){
     List head = m->countries;
     list_insert_next(head, list_last(head), country);
 }
 
-void print_monitor(void *m){
-    monitor nm = m;
+void print_dataMonitor(void *m){
+    dataMonitor nm = m;
     printf("Monitor's PID: %d\n", nm->pid);
     printf("Countries of monitor:\n");
 
@@ -53,17 +46,17 @@ void print_monitor(void *m){
     printf("\n");
 }
 
-int compare_monitor(void *key, void *m){
+int compare_dataMonitor(void *key, void *m){
     int k = *(int *)key;
-    monitor nm = m;
+    dataMonitor nm = m;
 
     if (nm->pid == k) return 0;
     else if (nm->pid > k) return -1;
     else return 1;
 }
 
-void destroy_monitor(void *m){
-    monitor nm = m;
+void destroy_dataMonitor(void *m){
+    dataMonitor nm = m;
     list_destroy(nm->countries);
     HTDestroy(nm->viruses);
     free(nm);
