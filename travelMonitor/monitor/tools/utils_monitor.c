@@ -105,30 +105,31 @@ char *concat_int_to_str(const char str[], int i){
 }
 
 
-void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize){
+void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize){
 
 	/* Inform the parent how many viruses to read */
-	int n_viruses = HTSize(ds->viruses);
+	int n_viruses = HTEntries(ds->viruses);
 	char *str_n_viruses = concat_int_to_str("", n_viruses);
 	send_data(write_fd, bufferSize, str_n_viruses);
 	free(str_n_viruses);
 
-	send_data(write_fd, bufferSize, "WHYTHO");
+	virus v = NULL;
 
 	/* For each of monitor's virus */
 	List head = NULL;
-	for (int i = 0; i < n_viruses; i++){
+	for (int i = 0; i < HTSize(ds->viruses); i++){
 		head = get_HTchain(ds->viruses, i);
 		if(head != NULL){
+			
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-				char *virus_name = (char *)get_virusName(node);
-				char *lol = get_array(get_filter(node));
-				printf("\n\n!!!SEND VIRUSNAME: %s, BLOOM FILTER: %s\n\n", virus_name, lol);				
-				/* Send virus name, bloom filter of virus, and an end message */
+				v = list_node_item(head, node);
+				char *virus_name = (char *)get_virusName(v);
+				char *bloom_filter = get_array(get_filter(v));
+				// printf("\n\n!!!SEND VIRUSNAME: %s, BLOOM FILTER: %s\n\n", virus_name, lol);			
+				/* Send virus name, bloom filter of virus */
 				send_data(write_fd, bufferSize, virus_name);
-
-				send_data(write_fd, bufferSize, lol);
-				// send_data(write_fd, bufferSize, "end_bloom");
+				// send_data(write_fd, bufferSize, bloom_filter);
+				send_bloom_filter(write_fd, bufferSize, bloomSize, bloom_filter);
 			}
 		}
 	}

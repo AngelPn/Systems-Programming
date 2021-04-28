@@ -291,9 +291,7 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 				/* Get the number of viruses the monitor reported */
 				int n_viruses = atoi(receive_data(read_fd[i], bufferSize));
 				printf("\nReported n_viruses: %d\n", n_viruses);
-				printf("\n %s\n", receive_data(read_fd[i], bufferSize));
 				
-
 				/* Get the monitor with specified PID */
 				m = HTSearch(monitors, &(monitors_pids[i]), compare_monitor);
 
@@ -315,6 +313,7 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 					}
 
 					bloom_filter = receive_data(read_fd[i], bufferSize);
+					printf("GBF\n");
 					update_BloomFilter(v, bloom_filter);
 					free(bloom_filter);
 					virus_name = NULL;					

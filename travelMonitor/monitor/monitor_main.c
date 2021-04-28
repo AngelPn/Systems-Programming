@@ -62,7 +62,7 @@ int main(int argc, char **argv){
 
 
 	/* If at least one country is assigned to monitor */
-	if (HTSize(ds.countries)){
+	if (HTEntries(ds.countries)){
 		/* Parse the files and build the structs */
 		fileParse_and_buildStructs(input_dir, bloomSize, &ds);
 		printf("(monitor_main)Print HT for child %d\n", getpid());
@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 		printf("\n\n----------------------------------------------------\n\n");
 
 		/* Send bloom filters to parent process */
-		send_bloomFilters(&ds, write_fd, bufferSize);
+		send_bloomFilters(&ds, write_fd, bufferSize, bloomSize);
 	}
 	/* If no countries are assigned, wait for SIGKILL*/
 	else{

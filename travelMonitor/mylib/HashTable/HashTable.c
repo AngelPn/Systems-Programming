@@ -39,6 +39,10 @@ HashTable HTCreate(int keytype, DestroyFunc destroy_item){
 }
 
 int HTSize(HashTable ht){
+	return ht->size;
+}
+
+int HTEntries(HashTable ht){
 	return ht->n;
 }
 

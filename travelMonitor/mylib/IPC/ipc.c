@@ -80,3 +80,26 @@ void send_init(int fd, int bufferSize, int bloomSize, char *input_dir){
 	write(fd, &bloomSize, sizeof(int));
 	send_data(fd, bufferSize, input_dir);
 }
+
+void send_bloom_filter(int fd, int bufferSize, int bloomSize, char *bloom_filter){
+
+	/* Write the bloomSize in front of the message */
+	write(fd, &bloomSize, sizeof(int));
+
+	char buffer[bufferSize];
+	int written_bytes = 0, total_written_bytes = 0, diff, buf_size;
+	while (total_written_bytes < bloomSize){
+		/* Set the number of bytes to write */
+		diff = bloomSize - written_bytes;
+		buf_size = (diff < bufferSize) ? diff : bufferSize;
+
+		strncpy(buffer, bloom_filter + written_bytes, buf_size);  /* copy bytes from bloom_filter to buffer */
+
+		if ((written_bytes = write(fd, buffer, buf_size)) < 0){
+			perror("Error in write_pipe");
+			exit(EXIT_FAILURE);
+		}
+
+		total_written_bytes += written_bytes;
+	}
+}

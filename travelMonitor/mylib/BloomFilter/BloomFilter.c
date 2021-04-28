@@ -21,7 +21,7 @@
 
 struct bloom_filter
 {
-    char *array; /* array of char type with width of 8 bits (1 byte) */
+    char *array;    /* array of char type with width of 8 bits (1 byte) */
     size_t size;    /* the size of bloom filter in bytes */
 };
 
@@ -30,7 +30,9 @@ BloomFilter BloomCreate(size_t bytes){
     BloomFilter bloom = (BloomFilter)malloc(sizeof(struct bloom_filter));
 
     bloom->size = bytes;
-    bloom->array = (char *)calloc(bloom->size, sizeof(char));
+    // bloom->array = (char *)calloc(bloom->size, sizeof(char));
+    bloom->array = (char *)malloc((bloom->size)*sizeof(char));
+    memset(bloom->array, 0, (bloom->size)*sizeof(char));
 
     // for (int i = 0; i < bloom->size; i++)
     //     bloom->array[i] = (uint8_t)0;

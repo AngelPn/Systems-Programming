@@ -13,8 +13,11 @@ typedef struct hashtable *HashTable;
     If destroy_item!=NULL, the destroy_item(item) is called every time an item is removed */
 HashTable HTCreate(int keytype, DestroyFunc destroy_item);
 
-/* Returns the number of elements in the Hash Table */
+/* Returns the size of Hash Table */
 int HTSize(HashTable ht);
+
+/* Returns the number of elements in the Hash Table */
+int HTEntries(HashTable ht);
 
 /* Returns the i-th chain of Hash Table */
 List get_HTchain(HashTable ht, int i);
