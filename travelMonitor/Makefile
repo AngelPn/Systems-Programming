@@ -23,7 +23,7 @@ COMMON_OBJS = $(MODULES)/BloomFilter/BloomFilter.o $(MODULES)/Date/date.o $(MODU
 COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o $(MODULES)/IPC/ipc.o
 
 #src .o
-OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(RDIR)/virus_bloom.o $(TDIR)/utils.o $(TDIR)/dataMonitor.o
+OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(RDIR)/virus_bloom.o $(TDIR)/utils.o
 
 #monitor .o
 MNTR_OBJS = $(MNTR)/monitor_main.o $(MTDIR)/signal_functions.o $(MTDIR)/dataStore.o

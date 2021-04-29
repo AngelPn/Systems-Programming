@@ -5,9 +5,7 @@
 #include "dataMonitor.h"
 #include "virus_bloom.h"
 
-dataMonitor create_dataMonitor(pid_t pid){
-    dataMonitor m = (dataMonitor)malloc(sizeof(struct dataMonitor_struct));
-
+void create_dataMonitor(dataMonitor *m, pid_t pid){
     m->pid = pid;
     m->countries = list_create(free);
     m->viruses = HTCreate(String, destroy_virus_bloom);

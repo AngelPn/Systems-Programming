@@ -15,7 +15,7 @@ typedef struct dataMonitor_struct
 } dataMonitor;
 
 /* Creates dataMonitor_struct */
-dataMonitor create_dataMonitor(pid_t pid);
+void create_dataMonitor(dataMonitor *m, pid_t pid);
 
 /* Returns pointer to pid of dataMonitor_struct */
 void *get_dataMonitor_pid(void *m);

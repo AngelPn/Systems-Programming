@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "monitor.h"
-#include "virus_bloom.h"
 
 struct monitor_struct
 {
@@ -40,6 +39,10 @@ HashTable get_monitor_viruses(void *m){
 void add_country(monitor m, char *country){
     List head = m->countries;
     list_insert_next(head, list_last(head), country);
+}
+
+void add_virus(monitor m, virus_bloom v){
+    HTInsert(&(m->viruses), v, get_virus_bloomName);
 }
 
 void print_monitor(void *m){

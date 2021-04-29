@@ -99,7 +99,7 @@ int cmpstr(const void* p1, const void* p2){
 	return strcmp(*(char* const*) p1, *(char* const*) p2);
 }
 
-void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
+void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
@@ -198,24 +198,24 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
 	int monitor_idx = 0, numActiveMonitors = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
-		// monitor m = NULL;
-		dataMonitor m = NULL;
+		monitor m = NULL;
+		// dataMonitor m = NULL;
 		pid_t monitor_pid = monitors_pids[monitor_idx];
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
-		// if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
-		// 	m = create_monitor(monitor_pid);
-		// 	HTInsert(&(monitors), m, get_monitor_pid);
-		// }
-		if ((m = HTSearch(monitors, &monitor_pid, compare_dataMonitor)) == NULL ){
+		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
 			m = create_monitor(monitor_pid);
-			HTInsert(&(monitors), m, get_dataMonitor_pid);
+			HTInsert(&(monitors), m, get_monitor_pid);
 		}
+		// if ((m = HTSearch(monitors, &monitor_pid, compare_dataMonitor)) == NULL ){
+		// 	m = create_monitor(monitor_pid);
+		// 	HTInsert(&(monitors), m, get_dataMonitor_pid);
+		// }
 		/* Assign the country subdir to monitor */
-		// add_country(m, countries[country_idx]); /* add country in monitor to handle */
-		add_dataMonitor_country(m, countries[country_idx]);
-        send_data(write_fd[monitor_idx], bufferSize, countries[country_idx]); /* inform the child process through the pipe */
+		add_country(m, countries[country_idx]); /* add country in monitor to handle */
+		// add_dataMonitor_country(m, countries[country_idx]);
+        send_data(write_fd[monitor_idx], bufferSize, countries[country_idx], 0); /* inform the child process through the pipe */
 		
 		if ((++monitor_idx) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
@@ -226,7 +226,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Write 'end' into every pipe to note the end of distribution of countries per monitor */
     for (int i = 0; i < numMonitors; i++){
-		send_data(write_fd[i], bufferSize, "end");
+		send_data(write_fd[i], bufferSize, "end", 0);
 	}
 
 	/* Update numActiveMonitors to declare the number of active monitors */
@@ -234,14 +234,14 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	// printf("numActiveMonitors: %d\n", numActiveMonitors);
 
     /* Get bloom filters from monitors */
-	get_bloom_filters(monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
+	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
 	// while(true){
 	// 	// printf("sad");
 	// }
 
 	printf("Print monitors hash table in parent\n");
-	HTPrint(monitors, print_dataMonitor);
+	HTPrint(monitors, print_monitor);
 	HTDestroy(monitors);
 
     /* Send a SIGKILL to the monitors to end them */
@@ -264,9 +264,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 }
 
-void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
+void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
 
-	printf("\n\n----------------GET-BLOOM-FILTERS-------------------\n\n");
     fd_set active, ready; /* represents file descriptor sets for the select function */
     FD_ZERO(&active); /* initializes the file descriptor set 'active' to be the empty set */
 
@@ -276,14 +275,12 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
 	}
 	
 	monitor m = NULL;
-	HashTable monitor_viruses = NULL;
 	virus_bloom v = NULL;
 	char *virus_name = NULL, *bloom_filter = NULL;
     int counter = 0;
 
 	/* For each of the active monitors, get the incoming bloom filters */
     while (counter < numActiveMonitors){
-        // Block until an input arrives from one of the workers
 
         /* Find out how many monitors are ready */
 		ready = active;
@@ -291,66 +288,38 @@ void get_bloom_filters(HashTable monitors, pid_t *monitors_pids, int numActiveMo
             perror("Error in select");
             exit(EXIT_FAILURE);
         }
+
         /* For all the monitors that have already sent bloom filters */
         for (int i = 0; i < numActiveMonitors; i++){
-            if (FD_ISSET(read_fd[i], &ready)){
 
-				/* Get the number of viruses the monitor reported */
-				int n_viruses = atoi(receive_data(read_fd[i], bufferSize));
-				printf("\nReported n_viruses: %d\n", n_viruses);
-				
-				/* Get the monitor with specified PID */
-				m = HTSearch(monitors, &(monitors_pids[i]), compare_monitor);
+			if (!(FD_ISSET(read_fd[i], &ready)))
+				continue;
+			fprintf(stderr, "\ni=%d\n", i);
+			/* Get the monitor with specified PID */
+			m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
 
-				/* Read the bloom filters from the pipe */
-				for (int j = 0; j < n_viruses; j++){
-					virus_name = receive_data(read_fd[i], bufferSize);
-					if (!strcmp(virus_name, "ready")) 
-						break;
-					printf("GBF-%s-", virus_name);
+			/* Read the bloom filters from the pipe */
+			while (true){
+				virus_name = receive_data(read_fd[i], bufferSize);
+				if (!strcmp(virus_name, "BLOOMFILTERSREADYKDL")) 
+					break;
+				fprintf(stderr, "GBF-%s", virus_name);
 
-					/* Get the hash table of viruses of monitor */
-					// monitor_viruses = get_monitor_viruses(m);
-					monitor_viruses = m.viruses;
-
-					/* Check if virus is already in hash table of viruses of monitor */
-					/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-					if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL){
-						v = create_virus_bloom(virus_name, bloomSize);
-						HTInsert(&(monitor_viruses), v, get_virus_bloomName);
-					}
-					printf("%s-",(char *)get_virus_bloomName(v));
-					bloom_filter = receive_data(read_fd[i], bufferSize);
-					printf("GBF\n");
-					update_BloomFilter(v, bloom_filter);
-					free(bloom_filter);
-					virus_name = NULL;					
+				/* Check if virus is already in hash table of viruses of monitor */
+				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+				if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
+					v = create_virus_bloom(virus_name, bloomSize);
+					add_virus(m, v);
 				}
-				counter++;
-				
-				// while (true){
-				// 	virus_name = receive_data(read_fd[i], bufferSize);
-				// 	if (!strcmp(virus_name, "ready")) 
-				// 		break;
-				// 	fprintf(stderr, "GBF-%s\n", virus_name);
+				fprintf(stderr, " -AND- ");
+				bloom_filter = receive_data(read_fd[i], bufferSize);
+				fprintf(stderr, "BLOOM-GBF\n");
+				update_BloomFilter(v, bloom_filter);
 
-				// 	/* Get the hash table of viruses of monitor */
-				// 	monitor_viruses = get_monitor_viruses(m);
-
-				// 	/* Check if virus is already in hash table of viruses of monitor */
-				// 	/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-				// 	if ((v = HTSearch(monitor_viruses, virus_name, compare_virus_bloomName)) == NULL ){
-				// 		v = create_virus_bloom(virus_name, bloomSize);
-				// 		HTInsert(&(monitor_viruses), v, get_virus_bloomName);
-				// 	}
-
-				// 	bloom_filter = receive_data(read_fd[i], bufferSize);
-				// 	update_BloomFilter(v, bloom_filter);
-				// 	free(bloom_filter);
-				// 	virus_name = NULL;
-				// }
-            }
+				free(bloom_filter);
+				free(virus_name);
+			}
+            counter++;
         }
-		exit(1);
     }
 }

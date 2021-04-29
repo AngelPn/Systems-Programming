@@ -5,6 +5,7 @@
 
 #include "List.h"
 #include "HashTable.h"
+#include "virus_bloom.h"
 
 /* "struct monitor_struct" is incomplete struct */
 typedef struct monitor_struct *monitor;
@@ -23,6 +24,8 @@ HashTable get_monitor_viruses(void *m);
 
 /* Adds country in list of countries in monitor */
 void add_country(monitor m, char *country);
+
+void add_virus(monitor m, virus_bloom v);
 
 /*Prints the fields of monitor */
 void print_monitor(void *m);

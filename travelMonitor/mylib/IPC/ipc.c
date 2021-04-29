@@ -21,7 +21,7 @@ char *receive_data(int fd, int bufferSize){
 	int dataSize;
 	if ((read(fd, &dataSize, sizeof(int)) == -1) && (errno == EINTR)) 
 		return NULL;
-	// printf("dataSize = %d\n", dataSize);
+	fprintf(stderr, "dataSize=%d: ", dataSize);
 
 	char *data = malloc(sizeof(char)*(dataSize + 1));
 	char buffer[bufferSize];
@@ -45,10 +45,11 @@ char *receive_data(int fd, int bufferSize){
 	return data;
 }
 
-void send_data(int fd, int bufferSize, char *data){
+void send_data(int fd, int bufferSize, char *data, int dataSize){
 
 	/* Write the dataSize in front of the message */
-    int dataSize = strlen(data);
+	if (!dataSize)
+    	dataSize = strlen(data);
 	write(fd, &dataSize, sizeof(int));
 
 	char buffer[bufferSize];
@@ -78,28 +79,5 @@ void receive_init(int fd, int *bufferSize, int *bloomSize, char **input_dir){
 void send_init(int fd, int bufferSize, int bloomSize, char *input_dir){
 	write(fd, &bufferSize, sizeof(int));
 	write(fd, &bloomSize, sizeof(int));
-	send_data(fd, bufferSize, input_dir);
-}
-
-void send_bloom_filter(int fd, int bufferSize, int bloomSize, char *bloom_filter){
-
-	/* Write the bloomSize in front of the message */
-	write(fd, &bloomSize, sizeof(int));
-
-	char buffer[bufferSize];
-	int written_bytes = 0, total_written_bytes = 0, diff, buf_size;
-	while (total_written_bytes < bloomSize){
-		/* Set the number of bytes to write */
-		diff = bloomSize - written_bytes;
-		buf_size = (diff < bufferSize) ? diff : bufferSize;
-
-		strncpy(buffer, bloom_filter + written_bytes, buf_size);  /* copy bytes from bloom_filter to buffer */
-
-		if ((written_bytes = write(fd, buffer, buf_size)) < 0){
-			perror("Error in write_pipe");
-			exit(EXIT_FAILURE);
-		}
-
-		total_written_bytes += written_bytes;
-	}
+	send_data(fd, bufferSize, input_dir, 0);
 }
