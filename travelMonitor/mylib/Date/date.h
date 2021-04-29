@@ -12,6 +12,9 @@ date create_date(char *str);
 /* Creates date with current date */
 date current_date();
 
+/* Returns date as string */
+char *get_date_as_str(date d);
+
 /* Prints date */
 void print_date(date d);
 

@@ -82,8 +82,14 @@ date current_date(){
   return d;
 }
 
+char *get_date_as_str(date d){
+  char *str_date = (char *)malloc(sizeof(char)*9);
+  snprintf(str_date, sizeof(str_date), "%02d-%02d-%4d", d->day, d->month, d->year);
+  return str_date;
+}
+
 void print_date(date d){
-    printf("%02d-%02d-%4d\n", d->day, d->month, d->year);
+  printf("%02d-%02d-%4d\n", d->day, d->month, d->year);
 }
 
 // Returns -1 if a < b

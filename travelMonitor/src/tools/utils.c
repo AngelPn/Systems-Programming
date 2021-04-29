@@ -16,7 +16,6 @@
 #include "utils.h"
 #include "HashTable.h"
 #include "monitor.h"
-#include "dataMonitor.h"
 #include "ipc.h"
 #include "virus_bloom.h"
 
@@ -100,6 +99,7 @@ int cmpstr(const void* p1, const void* p2){
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
+void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd);
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
@@ -133,8 +133,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
             }
         }
 		else{ /* child process */
-			/* 	Replace the current running process with a new process
-				representing the argument list available to the executed program */
             if (execl("Monitor", "Monitor", names1[i], names2[i], NULL) == -1){
 				perror("Error in execl");
 				exit(EXIT_FAILURE);				
@@ -155,11 +153,10 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
             exit(EXIT_FAILURE);
         }
 		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
-		printf("monitors_pids[%d] = %d\n", i, monitors_pids[i]);
         free(name1);
         free(name2);
     }
-	printf("(utils)Opened named pipes and stored the file descs\n");
+
     struct dirent *subdir; /* pointer to subdirs*/
 
     /* Open the input dir */
@@ -191,37 +188,28 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Sort countries array alphabetically using qsort() from the C standard library */
 	qsort(countries, numSubdirs, sizeof(char *), cmpstr);
 
-	// for (int i=0; i < numSubdirs; i++)
-	// 	printf("%d. %s\n", i, countries[i]);
-
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
 	int monitor_idx = 0, numActiveMonitors = 0;
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
 		monitor m = NULL;
-		// dataMonitor m = NULL;
 		pid_t monitor_pid = monitors_pids[monitor_idx];
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
 		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
-			m = create_monitor(monitor_pid);
+			m = create_monitor(monitor_pid, monitor_idx);
 			HTInsert(&(monitors), m, get_monitor_pid);
 		}
-		// if ((m = HTSearch(monitors, &monitor_pid, compare_dataMonitor)) == NULL ){
-		// 	m = create_monitor(monitor_pid);
-		// 	HTInsert(&(monitors), m, get_dataMonitor_pid);
-		// }
+
 		/* Assign the country subdir to monitor */
 		add_country(m, countries[country_idx]); /* add country in monitor to handle */
-		// add_dataMonitor_country(m, countries[country_idx]);
         send_data(write_fd[monitor_idx], bufferSize, countries[country_idx], 0); /* inform the child process through the pipe */
 		
 		if ((++monitor_idx) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
 			numActiveMonitors = 1; /* set numActiveMonitors to declare that all monitors are active */
 		}
-			
 	}
 
     /* Write 'end' into every pipe to note the end of distribution of countries per monitor */
@@ -231,14 +219,12 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
-	// printf("numActiveMonitors: %d\n", numActiveMonitors);
 
     /* Get bloom filters from monitors */
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
-	// while(true){
-	// 	// printf("sad");
-	// }
+	/* Run queries */
+	run_queries(&monitors, bufferSize, read_fd, write_fd);
 
 	printf("Print monitors hash table in parent\n");
 	HTPrint(monitors, print_monitor);
@@ -260,8 +246,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     for (int i = 0; i < numMonitors; i++) {
         wait(&monitors_pids[i]);
     }
-	
-
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
@@ -294,16 +278,18 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 			if (!(FD_ISSET(read_fd[i], &ready)))
 				continue;
-			fprintf(stderr, "\ni=%d\n", i);
+			// fprintf(stderr, "\n-----------------------i=%d------------------------\n", i);
 			/* Get the monitor with specified PID */
 			m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
 
 			/* Read the bloom filters from the pipe */
 			while (true){
 				virus_name = receive_data(read_fd[i], bufferSize);
-				if (!strcmp(virus_name, "BLOOMFILTERSREADYKDL")) 
+				if (!strcmp(virus_name, "ready")){
+					free(virus_name);
 					break;
-				fprintf(stderr, "GBF-%s", virus_name);
+				}
+				// fprintf(stderr, "GBF-%s", virus_name);
 
 				/* Check if virus is already in hash table of viruses of monitor */
 				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
@@ -311,15 +297,131 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					v = create_virus_bloom(virus_name, bloomSize);
 					add_virus(m, v);
 				}
-				fprintf(stderr, " -AND- ");
+				// fprintf(stderr, " -AND- ");
 				bloom_filter = receive_data(read_fd[i], bufferSize);
-				fprintf(stderr, "BLOOM-GBF\n");
+				// fprintf(stderr, "BLOOM-GBF\n");
 				update_BloomFilter(v, bloom_filter);
 
 				free(bloom_filter);
 				free(virus_name);
 			}
             counter++;
+			FD_CLR(read_fd[i], &active);
         }
     }
+}
+
+void travelRequest(args, HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
+
+	/* Get data from arguments with right order */
+	char *id = args[0];
+	char *str_date = args[1];
+	char *countryFrom = args[2];
+	char *countryTo = args[3];
+	char *virusName = args[4];
+
+	/* Find the monitor that handles countryFrom */
+	monitor m = NULL;
+	virus_bloom v = NULL;
+	List head = NULL;
+	bool broke = false;
+	for (int i = 0; i < HTSize(*monitors); i++){
+		if ((head = get_HTchain(*monitors, i)) != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+				m = list_node_item(head, node);
+				if (handles_country(m, countryFrom)){
+					broke = true;
+					break;
+				}
+			}
+		}
+		if (broke) break;
+	}
+
+	if (m == NULL){
+		printf(RED "\nERROR: Given countryFrom not in database\n" RESET);
+		return;
+	}
+
+	/* Check if virus is in hash table of viruses of monitor */
+	if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
+		printf(RED "\nERROR: Given virusName not in database\n" RESET);
+		return;		
+	}	
+
+	/* Search in bloom filter of monitor */
+	if (!(BloomSearch(get_bloom(v), id)))
+		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+	else{
+		/* Create the query and write it to pipe */
+		char *travelRequest = "/travelRequest";
+		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
+		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
+		send_data(get_fd_index(m), bufferSize, query, 0);
+
+
+
+
+	}
+
+
+
+}
+
+void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
+	/* Read input from stdin */
+	char *line = NULL;
+    size_t len = 0;
+	virus v = NULL;
+	bool broke = false;
+
+	printf(GRN "\nEnter command:\n" RESET);
+
+	while (getline(&line, &len, stdin) != -1){
+
+		char *query = strtok(line, " \n");
+
+		if (strcmp(query, "/travelRequest") == 0){
+			
+			char *args[5];
+			for (int i = 0; i < 5; i++){
+				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL){
+					printf( RED "\nERROR: Invalid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/travelRequest citizenID date countryFrom countryTo virusName\n"
+							GRN "\nEnter command:\n" RESET);
+					broke = true;
+					break;
+				}
+			}
+			if (broke){
+				broke = false;
+				continue;
+			}
+			travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
+		}
+		else if (strcmp(query, "/travelStats") == 0){
+
+		}
+		else if (strcmp(query, "/addVaccinationRecords") == 0){
+
+		}
+		else if (strcmp(query, "/searchVaccinationStatus") == 0){
+
+		}
+		else if (strcmp(query, "/exit") == 0)
+			break;
+		else
+			printf( RED "\nERROR: Invalid input\n" RESET
+				YEL "Input format for every command:\n" RESET
+				"/travelRequest citizenID date countryFrom countryTo virusName\n"
+				"/travelStats virusName [date1 date2] [country]\n"
+				"/addVaccinationRecords country\n"
+				"/searchVaccinationStatus citizenID\n"
+				"/exit\n");			
+		printf(GRN "\nEnter command:\n" RESET);
+	}
+	free(line);
 }

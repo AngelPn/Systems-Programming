@@ -6,15 +6,17 @@
 
 struct monitor_struct
 {
-    pid_t pid;
-    List countries;
-    HashTable viruses;
+    pid_t pid;          /* PID of monitor */
+    int fd_index;       /* index of read_fd and write_fd arrays that keep the file descriptor */
+    List countries;     /* list of the countries name that monitor handles */
+    HashTable viruses;  /* hash table of viruses and bloom filters the monitor handles */
 };
 
-monitor create_monitor(pid_t pid){
+monitor create_monitor(pid_t pid, int fd_index){
     monitor m = (monitor)malloc(sizeof(struct monitor_struct));
 
     m->pid = pid;
+    m->fd_index = fd_index;
     m->countries = list_create(free);
     m->viruses = HTCreate(String, destroy_virus_bloom);
 
@@ -24,6 +26,16 @@ monitor create_monitor(pid_t pid){
 void *get_monitor_pid(void *m){
     monitor nm = m;
     return &(nm->pid);
+}
+
+int get_fd_index(monitor m){
+    return m->fd_index;
+}
+
+bool handles_country(monitor m, char *country){
+    if (list_find(m->countries, country, strcmp) != NULL)
+        return true;
+    else return false;
 }
 
 List get_monitor_countries(void *m){

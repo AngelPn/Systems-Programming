@@ -122,7 +122,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 		}
 	}
 	/* Inform the parent that monitor is ready to run queries */
-	send_data(write_fd, bufferSize, "BLOOMFILTERSREADYKDL", 0);
+	send_data(write_fd, bufferSize, "ready", 0);
 }
 
 
@@ -379,8 +379,57 @@ void population_queries(char *args[5], dataStore *ds){
 	free(date1); free(date2);
 }
 
+void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 
-void queries(int bytes, dataStore *ds){
+	virus v = NULL;
+	vaccinated vaccinated_citizen = NULL;
+	country c = NULL;
+
+	while(true){
+		char *line = receive_data(read_fd, bufferSize);
+
+		char *query = strtok(line, " \n");
+
+		if (strcmp(query, "/travelRequest") == 0){
+
+			char *id = strtok(NULL, " \n");
+			char *virusName = strtok(NULL, " \n");
+			
+			v = HTSearch(ds->viruses, virusName, compare_virusName); /* get virus */
+
+			/* If citizen is in vaccinated_persons skip list */
+			int citizenID = atoi(id);
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
+				char response[strlen(str_date) + 4];
+				snprintf(response, sizeof(response), "%s %s", "YES ", str_date);
+				send_data(write_fd, bufferSize, response, 0);
+				free(str_date);
+				continue;
+			}
+			else
+				send_data(write_fd, bufferSize, "NO", 0);
+
+		}
+		else if (strcmp(query, "/travelStats") == 0){
+
+		}
+		else if (strcmp(query, "/addVaccinationRecords") == 0){
+
+		}
+		else if (strcmp(query, "/searchVaccinationStatus") == 0){
+
+		}
+		else if (strcmp(query, "/exit") == 0){
+
+		}	
+
+		free(line);
+	}
+}
+
+
+void queries2(int bytes, dataStore *ds){
 
 	/* Read input from stdin */
 	char *line = NULL;
