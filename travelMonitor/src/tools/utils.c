@@ -302,10 +302,8 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 				}
 				// fprintf(stderr, " -AND- ");
 				bloom_filter = receive_data(read_fd[i], bufferSize);
-				// for (int i = 0; i < bloomSize; i++)
-        		// 	printf("%d", (int)bloom_filter[i]);
-				// fprintf(stderr, "BLOOM-GBF\n");
 				update_BloomFilter(v, bloom_filter);
+				// print_bl(get_bloom(v));
 
 				free(bloom_filter);
 				free(virus_name);
@@ -357,10 +355,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 	print_bl(get_bloom(v));
 	/* Search in bloom filter of monitor */
 	if (!(BloomSearch(get_bloom(v), id))){
-		printf("bloom of parent\n");
+		printf("\nbloom of parent\n");
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 	}
-	else{
+	// else{
 		/* Create the query and write it to pipe */
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
@@ -383,7 +381,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
 		}
 		free(response);
-	}
+	// }
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){

@@ -51,7 +51,8 @@ char *get_array(BloomFilter bf){
 }
 
 void print_bl(BloomFilter bf){
-    for (int i = 0; i < bf->size; i++)
+    printf("bloomSize: %d\n",(int)bf->size);
+    for (int i = 0; i < (int)bf->size; i++)
         printf("%d", (int)bf->array[i]);
 }
 
@@ -90,6 +91,7 @@ void update_array(BloomFilter bf, char *new_array){
     // printf("\n--------------UPDATE----------\n");
     // for (int i = 0; i < bf->size; i++)
     //     printf("%d", (int)new_array[i]);
+    memset(bf->array, 0, (bf->size)*sizeof(char));
     memmove(bf->array, new_array, bf->size);
     // printf("\n--------------UPDATE2----------\n");
     // for (int i = 0; i < bf->size; i++)
