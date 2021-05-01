@@ -17,6 +17,7 @@
 #include "virus.h"
 #include "country.h"
 #include "ipc.h"
+#include "BloomFilter.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -117,7 +118,8 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 				v = list_node_item(head, node);
 				send_data(write_fd, bufferSize, (char *)get_virusName(v), 0);
-				send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
+				// send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
+				send_bloom_filter(get_filter(v), write_fd, bufferSize);
 			}
 		}
 	}
@@ -387,7 +389,6 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 
 	while(true){
 		char *line = receive_data(read_fd, bufferSize);
-		printf("\nline in monitor: %s", line);
 
 		char *query = strtok(line, " \n");
 
@@ -400,16 +401,17 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 				printf("Something went wrong\n");
 				exit(1);
 			}
-			print_virus(v);
-
-			printf("\nID: %s, virusName: %s\n", id, virusName);
+			printf("\n--------------MONITOR----------\n");
+    		print_bl(get_filter(v));
+			if (!(BloomSearch(get_filter(v), id))){
+				printf("NOT IN BLOOM FILTER");
+			}
 			/* If citizen is in vaccinated_persons skip list */
 			int citizenID = atoi(id);
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
-				printf("\nVACCINATED\n");
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){			
 				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
-				char response[strlen(str_date) + 4];
-				snprintf(response, sizeof(response), "%s %s", "YES ", str_date);
+				char response[strlen(str_date) + 5];
+				snprintf(response, sizeof(response), "%s%s", "YES ", str_date);
 				send_data(write_fd, bufferSize, response, 0);
 				free(str_date);
 				continue;

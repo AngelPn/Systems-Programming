@@ -13,6 +13,8 @@ BloomFilter BloomCreate(size_t bytes);
 /* Returns the array of bloom filter */
 char *get_array(BloomFilter bf);
 
+void send_bloom_filter(BloomFilter bf, int fd, int bufferSize);
+
 /* Inserts in bloom filter the item */
 void BloomInsert(BloomFilter bf, void *item);
 
@@ -21,6 +23,8 @@ bool BloomSearch(BloomFilter bf, void *item);
 
 /* Updates array of bloom filter given new with bitwise OR */
 void update_array(BloomFilter bf, char *new);
+
+void print_bl(BloomFilter bf);
 
 /* Destroys bloom filter*/
 void BloomDestroy(BloomFilter bf);

@@ -15,6 +15,7 @@
 
 #include "utils.h"
 #include "HashTable.h"
+#include "BloomFilter.h"
 #include "monitor.h"
 #include "ipc.h"
 #include "virus_bloom.h"
@@ -301,6 +302,8 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 				}
 				// fprintf(stderr, " -AND- ");
 				bloom_filter = receive_data(read_fd[i], bufferSize);
+				// for (int i = 0; i < bloomSize; i++)
+        		// 	printf("%d", (int)bloom_filter[i]);
 				// fprintf(stderr, "BLOOM-GBF\n");
 				update_BloomFilter(v, bloom_filter);
 
@@ -344,21 +347,20 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		printf(RED "\nERROR: Given countryFrom not in database\n" RESET);
 		return;
 	}
-	printf("Monitor PID: %d", *((int *)get_monitor_pid(m)));
 
 	/* Check if virus is in hash table of viruses of monitor */
 	if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
 		printf(RED "\nERROR: Given virusName not in database\n" RESET);
 		return;		
-	}	
-
+	}
+	printf("\n--------------PARENT----------\n");
+	print_bl(get_bloom(v));
 	/* Search in bloom filter of monitor */
-	// if (!(BloomSearch(get_bloom(v), id))){
-	// 	printf("bloom of parent\n");
-	// 	printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
-	// }
-		
-	// else{
+	if (!(BloomSearch(get_bloom(v), id))){
+		printf("bloom of parent\n");
+		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+	}
+	else{
 		/* Create the query and write it to pipe */
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
@@ -372,9 +374,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		if (!strcmp(response, "NO"))
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 		else{
-			// char *yes = strtok(response, " ");
-			// char *str_dateVaccinated = strtok(NULL, " \n");
-			char *str_dateVaccinated = response + 5;
+			char *str_dateVaccinated = response + 4;
 			date dateVaccinated = create_date(str_dateVaccinated);
 			date dateTravel = create_date(str_date);
 			if (date_between(dateVaccinated, dateTravel, six_months_ago(dateTravel)))
@@ -383,7 +383,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
 		}
 		free(response);
-	// }
+	}
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){

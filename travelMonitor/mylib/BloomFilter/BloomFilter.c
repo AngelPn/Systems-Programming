@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "BloomFilter.h"
+#include "ipc.h"
 
 #define K 16 /* K is the number of hash functions */
 
@@ -34,6 +35,8 @@ BloomFilter BloomCreate(size_t bytes){
     bloom->array = (char *)malloc((bloom->size)*sizeof(char));
     memset(bloom->array, 0, (bloom->size)*sizeof(char));
 
+    // bloom->array = (uint8_t *)malloc((bloom->size)*sizeof(uint8_t));
+    // memset(bloom->array, 0, (bloom->size)*sizeof(uint8_t));
     // for (int i = 0; i < bloom->size; i++)
     //     bloom->array[i] = (uint8_t)0;
 
@@ -45,6 +48,20 @@ char *get_array(BloomFilter bf){
     for (int i = 0; i < bf->size; i++)
         array[i] = bf->array[i];
     return array;
+}
+
+void print_bl(BloomFilter bf){
+    for (int i = 0; i < bf->size; i++)
+        printf("%d", (int)bf->array[i]);
+}
+
+void send_bloom_filter(BloomFilter bf, int fd, int bufferSize){
+    char arr[bf->size];
+    memmove(arr, bf->array, bf->size);
+    // printf("\n--------------SEND----------\n");
+    // for (int i = 0; i < bf->size; i++)
+    //     printf("%d", (int)arr[i]);
+    send_data(fd, bufferSize, arr, bf->size);
 }
 
 unsigned long hash_i(unsigned char *str, unsigned int i);
@@ -61,7 +78,7 @@ bool BloomSearch(BloomFilter bf, void *item){
     /* For every index returned by hash function */
     for (int i = 0; i < K; i++){
         unsigned int hash = hash_i((unsigned char *)item, i)%(bf->size);
-        /* If at least one of index's bit is 0, item is not in bloom filter, return false */
+        /* If at least one of indices bit is 0, item is not in bloom filter, return false */
         if (!TestBit(bf->array, hash))
             return false;
     }
@@ -69,9 +86,20 @@ bool BloomSearch(BloomFilter bf, void *item){
 }
 
 void update_array(BloomFilter bf, char *new_array){
-    for (int i = 0; i < bf->size; i++){
-        bf->array[i] = (bf->array[i] | new_array[i]);
-    }
+    // printf("update_array\n");
+    // printf("\n--------------UPDATE----------\n");
+    // for (int i = 0; i < bf->size; i++)
+    //     printf("%d", (int)new_array[i]);
+    memmove(bf->array, new_array, bf->size);
+    // printf("\n--------------UPDATE2----------\n");
+    // for (int i = 0; i < bf->size; i++)
+    //     printf("%d", (int)bf->array[i]);   
+    // for (int i = 0; i < bf->size; i++)
+    //     printf("%d", (int)bf->array[i]);
+    // strcpy(bf->array, new_array);
+    // for (int i = 0; i < bf->size; i++){
+    //     bf->array[i] = (bf->array[i] | new_array[i]);
+    // }
 }
 
 void BloomDestroy(BloomFilter bf){
