@@ -21,6 +21,9 @@ void print_date(date d);
 /* Compares two dates */
 int compare_dates(void *a, void *b);
 
+/* Returns the same date of curr_date but six months ago */
+date six_months_ago(date curr_date);
+
 /* Returns true if curr_date is between begin_date and end_date */
 bool date_between(date curr_date, date begin_date, date end_date);
 

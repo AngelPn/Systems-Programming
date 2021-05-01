@@ -383,10 +383,11 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
-	country c = NULL;
+	// country c = NULL;
 
 	while(true){
 		char *line = receive_data(read_fd, bufferSize);
+		printf("\nline in monitor: %s", line);
 
 		char *query = strtok(line, " \n");
 
@@ -395,11 +396,17 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 			char *id = strtok(NULL, " \n");
 			char *virusName = strtok(NULL, " \n");
 			
-			v = HTSearch(ds->viruses, virusName, compare_virusName); /* get virus */
+			if ((v = HTSearch(ds->viruses, virusName, compare_virusName)) == NULL){ /* get virus */
+				printf("Something went wrong\n");
+				exit(1);
+			}
+			print_virus(v);
 
+			printf("\nID: %s, virusName: %s\n", id, virusName);
 			/* If citizen is in vaccinated_persons skip list */
 			int citizenID = atoi(id);
 			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+				printf("\nVACCINATED\n");
 				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
 				char response[strlen(str_date) + 4];
 				snprintf(response, sizeof(response), "%s %s", "YES ", str_date);

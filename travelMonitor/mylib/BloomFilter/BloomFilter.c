@@ -41,7 +41,10 @@ BloomFilter BloomCreate(size_t bytes){
 }
 
 char *get_array(BloomFilter bf){
-    return bf->array;
+    char *array = (char *)malloc((bf->size)*sizeof(char));
+    for (int i = 0; i < bf->size; i++)
+        array[i] = bf->array[i];
+    return array;
 }
 
 unsigned long hash_i(unsigned char *str, unsigned int i);

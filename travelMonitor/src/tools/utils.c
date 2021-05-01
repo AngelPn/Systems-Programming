@@ -18,6 +18,8 @@
 #include "monitor.h"
 #include "ipc.h"
 #include "virus_bloom.h"
+#include "date.h"
+#include "virus.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -311,13 +313,13 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
     }
 }
 
-void travelRequest(args, HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
+void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
 	char *str_date = args[1];
 	char *countryFrom = args[2];
-	char *countryTo = args[3];
+	// char *countryTo = args[3];
 	char *virusName = args[4];
 
 	/* Find the monitor that handles countryFrom */
@@ -342,6 +344,7 @@ void travelRequest(args, HashTable *monitors, int bufferSize, int *read_fd, int 
 		printf(RED "\nERROR: Given countryFrom not in database\n" RESET);
 		return;
 	}
+	printf("Monitor PID: %d", *((int *)get_monitor_pid(m)));
 
 	/* Check if virus is in hash table of viruses of monitor */
 	if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
@@ -350,29 +353,44 @@ void travelRequest(args, HashTable *monitors, int bufferSize, int *read_fd, int 
 	}	
 
 	/* Search in bloom filter of monitor */
-	if (!(BloomSearch(get_bloom(v), id)))
-		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
-	else{
+	// if (!(BloomSearch(get_bloom(v), id))){
+	// 	printf("bloom of parent\n");
+	// 	printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+	// }
+		
+	// else{
 		/* Create the query and write it to pipe */
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
-		send_data(get_fd_index(m), bufferSize, query, 0);
 
+		int fd_index = get_fd_index(m);
+		send_data(write_fd[fd_index], bufferSize, query, 0);
 
-
-
-	}
-
-
-
+		char *response = receive_data(read_fd[fd_index], bufferSize);
+		printf("\nresponse in parent: %s\n", response);
+		if (!strcmp(response, "NO"))
+			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+		else{
+			// char *yes = strtok(response, " ");
+			// char *str_dateVaccinated = strtok(NULL, " \n");
+			char *str_dateVaccinated = response + 5;
+			date dateVaccinated = create_date(str_dateVaccinated);
+			date dateTravel = create_date(str_date);
+			if (date_between(dateVaccinated, dateTravel, six_months_ago(dateTravel)))
+				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
+			else
+				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
+		}
+		free(response);
+	// }
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
 	/* Read input from stdin */
 	char *line = NULL;
     size_t len = 0;
-	virus v = NULL;
+	// virus v = NULL;
 	bool broke = false;
 
 	printf(GRN "\nEnter command:\n" RESET);

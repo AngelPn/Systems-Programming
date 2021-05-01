@@ -83,8 +83,8 @@ date current_date(){
 }
 
 char *get_date_as_str(date d){
-  char *str_date = (char *)malloc(sizeof(char)*9);
-  snprintf(str_date, sizeof(str_date), "%02d-%02d-%4d", d->day, d->month, d->year);
+  char *str_date = (char *)malloc(sizeof(char)*11);
+  snprintf(str_date, sizeof(char)*11, "%02d-%02d-%4d", d->day, d->month, d->year);
   return str_date;
 }
 
@@ -112,6 +112,22 @@ int compare_dates(void *a, void *b){
     return 1;
 
   return 0;
+}
+
+date six_months_ago(date curr_date){
+  date d = (date)malloc(sizeof(struct date_struct));
+  d->day = curr_date->day;
+
+  int mm = curr_date->month - 6;
+  if (mm < 1){
+    d->month = 12 + mm;
+    d->year = curr_date->year - 1;
+  }
+  else{
+    d->month = mm;
+    d->year = curr_date->year;
+  }
+  return d;
 }
 
 bool date_between(date curr_date, date start_date, date end_date){

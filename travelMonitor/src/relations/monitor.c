@@ -32,8 +32,12 @@ int get_fd_index(monitor m){
     return m->fd_index;
 }
 
+int compare_monitor_country(void *country1, void *country2){
+    return strcmp((char *)country1, (char *)country2);    
+}
+
 bool handles_country(monitor m, char *country){
-    if (list_find(m->countries, country, strcmp) != NULL)
+    if (list_find(m->countries, country, compare_monitor_country) != NULL)
         return true;
     else return false;
 }
