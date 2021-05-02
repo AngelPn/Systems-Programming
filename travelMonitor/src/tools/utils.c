@@ -323,19 +323,24 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 	char *id = args[0];
 	char *str_date = args[1];
 	char *countryFrom = args[2];
-	// char *countryTo = args[3];
+	char *countryTo = args[3];
 	char *virusName = args[4];
 
-	/* Find the monitor that handles countryFrom */
-	monitor m = NULL;
-	virus_bloom v = NULL;
+	/* Find the monitor that handles countryFrom (m1)
+	   and the monitor that handles countryTo (m2) */
+	monitor m1 = NULL, m2 = NULL, curr = NULL;
+	virus_bloom v1 = NULL, v2 = NULL;
 	List head = NULL;
 	bool broke = false;
 	for (int i = 0; i < HTSize(*monitors); i++){
 		if ((head = get_HTchain(*monitors, i)) != NULL){
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-				m = list_node_item(head, node);
-				if (handles_country(m, countryFrom)){
+				curr = list_node_item(head, node);
+				if (m1 == NULL && handles_country(curr, countryFrom))
+					m1 = curr;
+				if (m2 == NULL && handles_country(curr, countryTo))
+					m2 = curr;
+				if (m1 != NULL && m2 != NULL){
 					broke = true;
 					break;
 				}
@@ -344,45 +349,137 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		if (broke) break;
 	}
 
-	if (m == NULL){
+	if (m1 == NULL){
 		printf(RED "\nERROR: Given countryFrom not in database\n" RESET);
 		return;
 	}
+	if (m2 == NULL){
+		printf(RED "\nERROR: Given countryTo not in database\n" RESET);
+		return;
+	}
 
-	/* Check if virus is in hash table of viruses of monitor */
-	if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
+	/* Check if virus is in hash table of viruses of monitors */
+	if ((v1 = HTSearch(get_monitor_viruses(m1), virusName, compare_virus_bloomName)) == NULL){
 		printf(RED "\nERROR: Given virusName not in database\n" RESET);
 		return;		
 	}
+	/* If v2 == NULL, the monitor m2 does not check vaccinations for the virus */
+	v2 = HTSearch(get_monitor_viruses(m1), virusName, compare_virus_bloomName);
+
+	date dateTravel = create_date(str_date);
 	// printf("\n--------------PARENT----------\n");
 	// print_bl(get_bloom(v));
-	/* Search in bloom filter of monitor */
-	if (!(BloomSearch(get_bloom(v), id))){
+	/* Search in bloom filter of monitor m1 */
+	if (!(BloomSearch(get_bloom(v1), id))){
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+
+		if (v2 != NULL)
+			list_insert_next(get_rejected(v2), NULL, dateTravel);
 	}
 	else{
 		/* Create the query and write it to pipe */
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
-
-		int fd_index = get_fd_index(m);
+		printf("query: %s\n", query);
+		int fd_index = get_fd_index(m1);
 		send_data(write_fd[fd_index], bufferSize, query, 0);
 
+		/* Read from pipe the response */
 		char *response = receive_data(read_fd[fd_index], bufferSize);
-		if (!strcmp(response, "NO"))
+		if (!strcmp(response, "NO")){
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
+
+			if (v2 != NULL)
+				list_insert_next(get_rejected(v2), NULL, dateTravel);
+		}
 		else{
 			char *str_dateVaccinated = response + 4;
 			date dateVaccinated = create_date(str_dateVaccinated);
-			date dateTravel = create_date(str_date);
-			if (date_between(dateVaccinated, dateTravel, six_months_ago(dateTravel)))
+			date dateTravel_6_months_ago = six_months_ago(dateTravel);
+			if (date_between(dateVaccinated, dateTravel, dateTravel_6_months_ago)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
-			else
+
+				if (v2 != NULL)
+					list_insert_next(get_accepted(v2), NULL, dateTravel);
+			}
+			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
+
+				if (v2 != NULL)
+					list_insert_next(get_rejected(v2), NULL, dateTravel);
+			}
+			free(dateVaccinated); free(dateTravel_6_months_ago);		
 		}
 		free(response);
 	}
+}
+
+void travelStats(char *args[4], HashTable *monitors){
+
+	/* Get data from arguments with right order */
+	char *virusName = args[0];
+	char *country = args[3];
+	date date1 = NULL, date2 = NULL;
+
+	/* If date1 exists, make sure date2 exists too */
+	if ((date1 = create_date(args[1])) != NULL){
+		if((date2 = create_date(args[2])) == NULL){
+			printf(RED "\nERROR: date1 must come up with date2 in format: dd-mm-yy\n" RESET);
+			free(date1);
+			return;
+		}
+	}
+
+	int accepted = 0, rejected = 0;
+	virus_bloom v = NULL;
+	monitor m = NULL;
+	List head = NULL;
+
+	if (country == NULL){
+		for (int i = 0; i < HTSize(*monitors); i++){
+			if ((head = get_HTchain(*monitors, i)) != NULL){
+				for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+					m = list_node_item(head, node);
+					if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) != NULL){
+						accepted += accepted_requests(v, date1, date2);
+						rejected += rejected_requests(v, date1, date2);
+					}
+				}
+			}
+		}
+	}
+	else{
+		/* Find the monitor that handles country (m) */
+		bool broke = false;
+		for (int i = 0; i < HTSize(*monitors); i++){
+			if ((head = get_HTchain(*monitors, i)) != NULL){
+				for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+					m = list_node_item(head, node);
+					if (handles_country(m, country)){
+						broke = true;
+						break;
+					}
+				}
+			}
+			if (broke) break;
+		}
+		if (m == NULL){
+			printf(RED "\nERROR: Given country not in database\n" RESET);
+			return;
+		}
+
+		/* Check if virus is in hash table of viruses of monitors */
+		if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
+			printf(RED "\nERROR: Given virusName not in database\n" RESET);
+			return;		
+		}
+		accepted += accepted_requests(v, date1, date2);
+		rejected += rejected_requests(v, date1, date2);
+	}
+	printf("TRAVEL REQUESTS %d\n
+			ACCEPTED %d\n
+			REJECTED %d\n", accepted + rejected, accepted, rejected);
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
@@ -420,7 +517,25 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 			travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
 		}
 		else if (strcmp(query, "/travelStats") == 0){
+			
+			char *args[4];
+			for (int i = 0; i < 3; i++){
+				args[i] = strtok(NULL, " \n");
 
+				if (args[i] == NULL){
+					printf( RED "\nERROR: Invalid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/travelStats virusName date1 date2 [country]\n"
+							GRN "\nEnter command:\n" RESET);
+					broke = true;
+					break;				
+			}
+			if (broke){
+				broke = false;
+				continue;
+			}
+			args[3] = args[i] = strtok(NULL, " \n");
+			travelStats(args, monitors);
 		}
 		else if (strcmp(query, "/addVaccinationRecords") == 0){
 

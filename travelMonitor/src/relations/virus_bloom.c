@@ -8,6 +8,8 @@ struct virus_bloom_struct
 {
     char *virusName;
     BloomFilter filter;
+    List accepted_requests;
+    List rejected_requests;
 };
 
 virus_bloom create_virus_bloom(char *virusName, size_t bytes){
@@ -17,6 +19,8 @@ virus_bloom create_virus_bloom(char *virusName, size_t bytes){
     strcpy(v->virusName, virusName);
 
     v->filter = BloomCreate(bytes);
+    v->accepted_requests = list_create(free);
+    v->rejected_requests = list_create(free);
 
     return v;
 }
@@ -29,6 +33,40 @@ void *get_virus_bloomName(void *v){
 BloomFilter get_bloom(void *v){
     virus_bloom nv = v;
     return nv->filter;    
+}
+
+List get_accepted(virus_bloom v){
+    return v->accepted_requests;
+}
+
+List get_rejected(virus_bloom v){
+    return v->rejected_requests;
+}
+
+int accepted_requests(virus_bloom v, date date1, date date2){
+    int accepted = 0;
+    date curr = NULL;
+    List head = v->accepted_requests;
+    for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+        curr = list_node_item(head, node);
+        if (date_between(curr, date1, date2)){
+            accepted++;
+        }
+    }
+    return accepted;
+}
+
+int rejected_requests(virus_bloom v, date date1, date date2){
+    int rejected = 0;
+    date curr = NULL;
+    List head = v->rejected_requests;
+    for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+        curr = list_node_item(head, node);
+        if (date_between(curr, date1, date2)){
+            rejected++;
+        }
+    }
+    return rejected;
 }
 
 void update_BloomFilter(void *v, char *bloom_filter){
