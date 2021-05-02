@@ -18,6 +18,7 @@
 #include "country.h"
 #include "ipc.h"
 #include "BloomFilter.h"
+#include "signal_functions.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -50,7 +51,7 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 					exit(EXIT_FAILURE);
 				}
 
-				/* Traverse all the files in the country subdri */
+				/* Traverse all the files in the country subdir */
 				struct dirent *file;
 				while ((file = readdir(countryDir)) != NULL) {
 					
@@ -58,8 +59,12 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 					if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
 						continue;
 
-					/* Add the filename to parsed files */
+					/* Add the filename to parsed files, if it is not already parsed */
 					char *filename = strdup(file->d_name);
+					if (is_parsed(ds, filename)){
+						free(filename);
+						continue;
+					}
 					list_insert_next(ds->parsed_files, NULL, filename);
 
 					/* Create the path of file */
@@ -382,16 +387,60 @@ void population_queries(char *args[5], dataStore *ds){
 	free(date1); free(date2);
 }
 
-void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
+
+
+/*  Shows whether a signal raised and awaits handling.
+    0 if no signal is pending, else 1. */
+static volatile sig_atomic_t sig_intquit_raised;
+static volatile sig_atomic_t sig_usr1_raised;
+
+/* Functions to handle signals */
+void handle_intquit(int signo) { sig_intquit_raised = signo; }
+void handle_usr1(int signo) { sig_usr1_raised = signo; }
+
+
+
+void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize){
+
+	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR1 respectively */
+	struct sigaction act_intquit, act_usr1;
+
+    /* Identify the action to be taken when the signal signo is received */
+    act_intquit.sa_handler = handle_intquit;
+    act_usr1.sa_handler = handle_usr1;
+
+    /* Create a full mask: the signals specified here will be
+       blocked during the execution of the sa_handler. */
+    sigfillset(&(act_intquit.sa_mask));
+    sigfillset(&(act_usr1.sa_mask));
+
+    /* Control specified signals */
+    sigaction(SIGINT, &act_intquit, NULL);
+    sigaction(SIGQUIT, &act_intquit, NULL);
+    sigaction(SIGUSR1, &act_usr1, NULL);
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
 	// country c = NULL;
 
 	while(true){
-		char *line = receive_data(read_fd, bufferSize);
+		printf("in while loop\n");
 
+		char *line = receive_data(read_fd, bufferSize);
+		
 		char *query = strtok(line, " \n");
+		printf("NOT blocking, query: %s\n", query);
+		if (sig_usr1_raised) {
+			fprintf(stderr, "SIGUSR1 caught in main\n");
+			/* Parse the added files */
+			fileParse_and_buildStructs(input_dir, bloomSize, ds);
+
+			/* Inform the parent that we've read stuff by sending a SIGUSR2 */
+			kill(getppid(), SIGUSR2);
+			
+			sig_usr1_raised = 0; /* reset value */
+			continue;
+		}
 
 		if (strcmp(query, "/travelRequest") == 0){
 
@@ -422,18 +471,15 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 				send_data(write_fd, bufferSize, "NO", 0);
 
 		}
-		else if (strcmp(query, "/travelStats") == 0){
-
-		}
-		else if (strcmp(query, "/addVaccinationRecords") == 0){
-
-		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 
 		}
 		else if (strcmp(query, "/exit") == 0){
 
-		}	
+		}
+		else if (query == NULL){/* Check for a possible signal */
+			printf("here\n");
+		}
 
 		free(line);
 	}

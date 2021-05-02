@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include <stdbool.h>
+
 #include "HashTable.h"
 #include "List.h"
 
@@ -14,6 +16,8 @@ typedef struct  data_store
 } dataStore;
 
 void create_structs(dataStore *ds);
+
+bool is_parsed(dataStore *ds, char *filename);
 
 void print_ht_citizens(dataStore *ds);
 void print_ht_countries(dataStore *ds);

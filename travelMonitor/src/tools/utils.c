@@ -102,7 +102,7 @@ int cmpstr(const void* p1, const void* p2){
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
-void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd);
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd);
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
@@ -229,7 +229,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
 	/* Run queries */
-	run_queries(&monitors, bufferSize, read_fd, write_fd);
+	run_queries(&monitors, bufferSize, bloomSize, read_fd, write_fd);
 
 	// printf("Print monitors hash table in parent\n");
 	// HTPrint(monitors, print_monitor);
@@ -487,7 +487,38 @@ void travelStats(char *args[4], HashTable *monitors){
 	free(date1); free(date2);
 }
 
-void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
+
+
+/*  Shows whether a signal raised and awaits handling.
+    0 if no signal is pending, else 1. */
+static volatile sig_atomic_t sig_intquit_raised;
+static volatile sig_atomic_t sig_usr_raised;
+
+/* Functions to handle signals */
+void handle_intquit(int signo) { sig_intquit_raised = signo; }
+void handle_usr(int signo) { sig_usr_raised = signo; }
+
+
+
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd){
+
+	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR2 respectively */
+	struct sigaction act_intquit = {0}, act_usr = {0};
+
+    /* Identify the action to be taken when the signal signo is received */
+    act_intquit.sa_handler = handle_intquit;
+    act_usr.sa_handler = handle_usr;
+
+    /* Create a full mask: the signals specified here will be
+       blocked during the execution of the sa_handler. */
+    sigfillset(&(act_intquit.sa_mask));
+	sigaction(SIGINT, &act_intquit, NULL);
+    sigaction(SIGQUIT, &act_intquit, NULL);
+
+    sigfillset(&(act_usr.sa_mask));
+    /* Control specified signals */
+    sigaction(SIGUSR1, &act_usr, NULL);
+
 	/* Read input from stdin */
 	char *line = NULL;
     size_t len = 0;
@@ -555,6 +586,7 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 			}
 			/* Find the monitor that handles country (m) */
 			monitor m = NULL;
+			virus_bloom v = NULL;
 			List head = NULL;
 			bool broke = false;
 			for (int i = 0; i < HTSize(*monitors); i++){
@@ -569,7 +601,45 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 				}
 				if (broke) break;
 			}
-			kill(get_monitor_pid(m), SIGUSR1);
+			if (m == NULL){
+				printf(RED "\nERROR: Given country not in database\n" RESET);
+				return;
+			}
+			printf("send SIGUSR1\n");
+
+			int fd_index = get_fd_index(m);
+			pid_t monitor_pid = *((pid_t *)get_monitor_pid(m));
+			kill(monitor_pid, SIGUSR1);
+
+			/* Wait for the signal that informs that the monitor has written in its fd */
+			while (!sig_usr_raised){ }
+			sig_usr_raised = 0; /* reset value */
+
+			/* Read the bloom filters from the pipe */
+			while (true){
+				char *virus_name = receive_data(read_fd[fd_index], bufferSize);
+				if (!strcmp(virus_name, "ready")){
+					free(virus_name);
+					break;
+				}
+				// fprintf(stderr, "GBF-%s", virus_name);
+
+				/* Check if virus is already in hash table of viruses of monitor */
+				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+				if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
+					v = create_virus_bloom(virus_name, bloomSize);
+					add_virus(m, v);
+				}
+				// fprintf(stderr, " -AND- ");
+				// bloom_filter = receive_data(read_fd[i], bufferSize);
+				char *bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
+				update_BloomFilter(v, bloom_filter);
+				// print_bl(get_bloom(v));
+
+				free(bloom_filter);
+				free(virus_name);
+			}
+			
 
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "dataStore.h"
 #include "virus.h"
@@ -11,6 +12,16 @@ void create_structs(dataStore *ds){
     ds->viruses = HTCreate(String, destroy_virus);
     ds->countries = HTCreate(String, destroy_country);
     ds->parsed_files = list_create(free);
+}
+
+int compare_filename(void *filename1, void *filename2){
+    return strcmp((char *)filename1, (char *)filename2);    
+}
+
+bool is_parsed(dataStore *ds, char *filename){
+    if (list_find(ds->parsed_files, filename, compare_filename) != NULL)
+        return true;
+    else return false;
 }
 
 void print_ht_citizens(dataStore *ds){

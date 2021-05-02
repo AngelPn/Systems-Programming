@@ -20,8 +20,11 @@ char *receive_data(int fd, int bufferSize){
 
 	/* Read the dataSize */
 	int dataSize;
+	// printf("IPC blocking\n");
+	/* If read fails due to an interupt, return NULL */
 	if ((read(fd, &dataSize, sizeof(int)) == -1) && (errno == EINTR)) 
 		return NULL;
+	// printf("IPC NOT blocking\n");
 	// fprintf(stderr, "dataSize=%d: ", dataSize);
 
 	char *data = (char *)malloc(sizeof(char)*(dataSize + 1));

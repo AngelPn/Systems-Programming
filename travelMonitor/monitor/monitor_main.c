@@ -13,7 +13,6 @@
 #include <signal.h>
 #include <sys/select.h>
 
-#include "signal_functions.h"
 #include "dataStore.h"
 #include "ipc.h"
 #include "country.h"
@@ -21,8 +20,6 @@
 
 int main(int argc, char **argv){
     // fprintf(stderr, "child %d\n", getpid());
-
-    set_signals();
 
     /* Get arguments */
     int bufferSize, bloomSize, read_fd, write_fd;
@@ -72,7 +69,7 @@ int main(int argc, char **argv){
 		send_bloomFilters(&ds, write_fd, bufferSize, bloomSize);
 
 		/* Execute queries*/
-		queries(&ds, read_fd, write_fd, bufferSize);
+		queries(&ds, input_dir, read_fd, write_fd, bufferSize, bloomSize);
 	}
 	/* If no countries are assigned, wait for SIGKILL*/
 	else{
