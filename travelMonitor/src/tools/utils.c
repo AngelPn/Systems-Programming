@@ -294,7 +294,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					free(virus_name);
 					break;
 				}
-				fprintf(stderr, "GBF-%s", virus_name);
+				// fprintf(stderr, "GBF-%s", virus_name);
 
 				/* Check if virus is already in hash table of viruses of monitor */
 				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
@@ -302,7 +302,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					v = create_virus_bloom(virus_name, bloomSize);
 					add_virus(m, v);
 				}
-				fprintf(stderr, " -AND- ");
+				// fprintf(stderr, " -AND- ");
 				// bloom_filter = receive_data(read_fd[i], bufferSize);
 				bloom_filter = receive_BloomFilter(read_fd[i], bufferSize);
 				update_BloomFilter(v, bloom_filter);
@@ -381,7 +381,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
-		printf("query: %s\n", query);
+		// printf("query: %s\n", query);
 		int fd_index = get_fd_index(m1);
 		send_data(write_fd[fd_index], bufferSize, query, 0);
 
@@ -396,8 +396,11 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		else{
 			char *str_dateVaccinated = response + 4;
 			date dateVaccinated = create_date(str_dateVaccinated);
-			date dateTravel_6_months_ago = six_months_ago(dateTravel);
-			if (date_between(dateVaccinated, dateTravel, dateTravel_6_months_ago)){
+			date date_6_months_later = six_months_later(dateVaccinated);
+			// printf("dateVaccinated: "); print_date(dateVaccinated);
+			// printf("dateTravel: "); print_date(dateTravel);
+			// printf("date 6 months later: "); print_date(date_6_months_later);
+			if (date_between(dateTravel, dateVaccinated, date_6_months_later)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
 
 				if (v2 != NULL)
@@ -409,7 +412,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 				if (v2 != NULL)
 					list_insert_next(get_rejected(v2), NULL, dateTravel);
 			}
-			free(dateVaccinated); free(dateTravel_6_months_ago);		
+			free(dateVaccinated); free(date_6_months_later);		
 		}
 		free(response);
 	}
@@ -480,6 +483,8 @@ void travelStats(char *args[4], HashTable *monitors){
 	printf("TRAVEL REQUESTS %d\n"
 			"ACCEPTED %d\n"
 			"REJECTED %d\n", accepted + rejected, accepted, rejected);
+
+	free(date1); free(date2);
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
@@ -540,6 +545,32 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 		}
 		else if (strcmp(query, "/addVaccinationRecords") == 0){
 
+			char *country = strtok(NULL, " \n");
+			if (country == NULL){
+				printf( RED "\nERROR: Invalid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/addVaccinationRecords country\n"
+						GRN "\nEnter command:\n" RESET);
+				continue;
+			}
+			/* Find the monitor that handles country (m) */
+			monitor m = NULL;
+			List head = NULL;
+			bool broke = false;
+			for (int i = 0; i < HTSize(*monitors); i++){
+				if ((head = get_HTchain(*monitors, i)) != NULL){
+					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+						m = list_node_item(head, node);
+						if (handles_country(m, country)){
+							broke = true;
+							break;
+						}
+					}
+				}
+				if (broke) break;
+			}
+			kill(get_monitor_pid(m), SIGUSR1);
+
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 
@@ -550,7 +581,7 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 			printf( RED "\nERROR: Invalid input\n" RESET
 				YEL "Input format for every command:\n" RESET
 				"/travelRequest citizenID date countryFrom countryTo virusName\n"
-				"/travelStats virusName [date1 date2] [country]\n"
+				"/travelStats virusName date1 date2 [country]\n"
 				"/addVaccinationRecords country\n"
 				"/searchVaccinationStatus citizenID\n"
 				"/exit\n");			

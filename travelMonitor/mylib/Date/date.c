@@ -114,14 +114,14 @@ int compare_dates(void *a, void *b){
   return 0;
 }
 
-date six_months_ago(date curr_date){
+date six_months_later(date curr_date){
   date d = (date)malloc(sizeof(struct date_struct));
   d->day = curr_date->day;
 
-  int mm = curr_date->month - 6;
-  if (mm < 1){
-    d->month = 12 + mm;
-    d->year = curr_date->year - 1;
+  int mm = curr_date->month + 6;
+  if (mm > 12){
+    d->month = mm - 12;
+    d->year = curr_date->year + 1;
   }
   else{
     d->month = mm;

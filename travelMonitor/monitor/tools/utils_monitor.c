@@ -413,6 +413,7 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
 				char response[strlen(str_date) + 5];
 				snprintf(response, sizeof(response), "%s%s", "YES ", str_date);
+				// printf("response: %s\n", response);
 				send_data(write_fd, bufferSize, response, 0);
 				free(str_date);
 				continue;

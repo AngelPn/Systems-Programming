@@ -48,7 +48,7 @@ int main(int argc, char **argv){
 	/* Read the dirs from the pipe */
 	while (true) {
 		country_name = receive_data(read_fd, bufferSize);
-		printf("%s\n", country_name);
+		// printf("%s\n", country_name);
 		if (!strcmp(country_name, "end")){
 			free(country_name);
 			break;
