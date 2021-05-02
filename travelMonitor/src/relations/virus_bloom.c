@@ -85,6 +85,8 @@ void destroy_virus_bloom(void *v){
     virus_bloom nv = v;
     free(nv->virusName);
     BloomDestroy(nv->filter);
+    list_destroy(nv->accepted_requests);
+    list_destroy(nv->rejected_requests);
     free(nv);
 }
 

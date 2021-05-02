@@ -23,7 +23,7 @@ List get_rejected(virus_bloom v);
 
 /* Returns the number of accepted/rejected requests between date1 and date2 */
 int accepted_requests(virus_bloom v, date date1, date date2);
-int rejected_requests(virus_bloom v, date date1, date date2)
+int rejected_requests(virus_bloom v, date date1, date date2);
 
 /* Updates bloom filter of vires */
 void update_BloomFilter(void *v, char *bloom_filter);

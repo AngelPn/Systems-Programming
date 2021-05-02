@@ -30,7 +30,10 @@ char *receive_data(int fd, int bufferSize){
 	while (total_read_bytes < dataSize){
 		/* Set the number of bytes to read */
 		diff = dataSize - read_bytes;
-		buf_size = (diff < bufferSize) ? diff : bufferSize;
+		if (diff < bufferSize)
+			buf_size = diff;
+		else buf_size = bufferSize;
+		// buf_size = (diff < bufferSize) ? diff : bufferSize;
 
 		if ((read_bytes = read(fd, buffer, buf_size)) < 0){
 			perror("Error in read_pipe");
@@ -44,6 +47,7 @@ char *receive_data(int fd, int bufferSize){
 	}
 
 	data[dataSize] = '\0';
+	printf("data: %s, read dataSize: %d, total_read: %d\n", data, dataSize, total_read_bytes);
 	return data;
 }
 
@@ -52,7 +56,7 @@ void send_data(int fd, int bufferSize, char *data, int dataSize){
 	/* Write the dataSize in front of the message */
 	if (dataSize == 0){
 		dataSize = strlen(data);
-		// printf("write dataSize %d\n", dataSize);
+		
 	}
 	write(fd, &dataSize, sizeof(int));
 
@@ -61,7 +65,10 @@ void send_data(int fd, int bufferSize, char *data, int dataSize){
 	while (total_written_bytes < dataSize){
 		/* Set the number of bytes to write */
 		diff = dataSize - written_bytes;
-		buf_size = (diff < bufferSize) ? diff : bufferSize;
+		if (diff < bufferSize)
+			buf_size = diff;
+		else buf_size = bufferSize;
+		// buf_size = (diff < bufferSize) ? diff : bufferSize;
 
 		/* Copy bytes from data to buffer */
 		memcpy(buffer, data + written_bytes, buf_size); 
@@ -72,6 +79,7 @@ void send_data(int fd, int bufferSize, char *data, int dataSize){
 		}
 		total_written_bytes += written_bytes;
 	}
+	printf("data: %s, write dataSize: %d, total_written: %d\n", data, dataSize, total_written_bytes);
 }
 
 void receive_init(int fd, int *bufferSize, int *bloomSize, char **input_dir){

@@ -231,8 +231,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Run queries */
 	run_queries(&monitors, bufferSize, read_fd, write_fd);
 
-	printf("Print monitors hash table in parent\n");
-	HTPrint(monitors, print_monitor);
+	// printf("Print monitors hash table in parent\n");
+	// HTPrint(monitors, print_monitor);
 	HTDestroy(monitors);
 
     /* Send a SIGKILL to the monitors to end them */
@@ -294,7 +294,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					free(virus_name);
 					break;
 				}
-				// fprintf(stderr, "GBF-%s", virus_name);
+				fprintf(stderr, "GBF-%s", virus_name);
 
 				/* Check if virus is already in hash table of viruses of monitor */
 				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
@@ -302,7 +302,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					v = create_virus_bloom(virus_name, bloomSize);
 					add_virus(m, v);
 				}
-				// fprintf(stderr, " -AND- ");
+				fprintf(stderr, " -AND- ");
 				// bloom_filter = receive_data(read_fd[i], bufferSize);
 				bloom_filter = receive_BloomFilter(read_fd[i], bufferSize);
 				update_BloomFilter(v, bloom_filter);
@@ -477,9 +477,9 @@ void travelStats(char *args[4], HashTable *monitors){
 		accepted += accepted_requests(v, date1, date2);
 		rejected += rejected_requests(v, date1, date2);
 	}
-	printf("TRAVEL REQUESTS %d\n
-			ACCEPTED %d\n
-			REJECTED %d\n", accepted + rejected, accepted, rejected);
+	printf("TRAVEL REQUESTS %d\n"
+			"ACCEPTED %d\n"
+			"REJECTED %d\n", accepted + rejected, accepted, rejected);
 }
 
 void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
@@ -528,13 +528,14 @@ void run_queries(HashTable *monitors, int bufferSize, int *read_fd, int *write_f
 							"/travelStats virusName date1 date2 [country]\n"
 							GRN "\nEnter command:\n" RESET);
 					broke = true;
-					break;				
+					break;
+				}		
 			}
 			if (broke){
 				broke = false;
 				continue;
 			}
-			args[3] = args[i] = strtok(NULL, " \n");
+			args[3] = strtok(NULL, " \n");
 			travelStats(args, monitors);
 		}
 		else if (strcmp(query, "/addVaccinationRecords") == 0){
