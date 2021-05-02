@@ -31,23 +31,14 @@ BloomFilter BloomCreate(size_t bytes){
     BloomFilter bloom = (BloomFilter)malloc(sizeof(struct bloom_filter));
 
     bloom->size = bytes;
-    // bloom->array = (char *)calloc(bloom->size, sizeof(char));
     bloom->array = (char *)malloc((bloom->size)*sizeof(char));
     memset(bloom->array, 0, (bloom->size)*sizeof(char));
-
-    // bloom->array = (uint8_t *)malloc((bloom->size)*sizeof(uint8_t));
-    // memset(bloom->array, 0, (bloom->size)*sizeof(uint8_t));
-    // for (int i = 0; i < bloom->size; i++)
-    //     bloom->array[i] = (uint8_t)0;
 
     return bloom;
 }
 
 char *get_array(BloomFilter bf){
-    char *array = (char *)malloc((bf->size)*sizeof(char));
-    for (int i = 0; i < bf->size; i++)
-        array[i] = bf->array[i];
-    return array;
+    return bf->array;
 }
 
 void print_bl(BloomFilter bf){
@@ -57,12 +48,7 @@ void print_bl(BloomFilter bf){
 }
 
 void send_bloom_filter(BloomFilter bf, int fd, int bufferSize){
-    char arr[bf->size];
-    memmove(arr, bf->array, bf->size);
-    // printf("\n--------------SEND----------\n");
-    // for (int i = 0; i < bf->size; i++)
-    //     printf("%d", (int)arr[i]);
-    send_data(fd, bufferSize, arr, bf->size);
+    send_data(fd, bufferSize, bf->array, bf->size);
 }
 
 unsigned long hash_i(unsigned char *str, unsigned int i);
@@ -87,21 +73,8 @@ bool BloomSearch(BloomFilter bf, void *item){
 }
 
 void update_array(BloomFilter bf, char *new_array){
-    // printf("update_array\n");
-    // printf("\n--------------UPDATE----------\n");
-    // for (int i = 0; i < bf->size; i++)
-    //     printf("%d", (int)new_array[i]);
     memset(bf->array, 0, (bf->size)*sizeof(char));
     memmove(bf->array, new_array, bf->size);
-    // printf("\n--------------UPDATE2----------\n");
-    // for (int i = 0; i < bf->size; i++)
-    //     printf("%d", (int)bf->array[i]);   
-    // for (int i = 0; i < bf->size; i++)
-    //     printf("%d", (int)bf->array[i]);
-    // strcpy(bf->array, new_array);
-    // for (int i = 0; i < bf->size; i++){
-    //     bf->array[i] = (bf->array[i] | new_array[i]);
-    // }
 }
 
 void BloomDestroy(BloomFilter bf){

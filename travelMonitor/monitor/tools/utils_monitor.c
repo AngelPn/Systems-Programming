@@ -117,7 +117,8 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 		if(head != NULL){
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 				v = list_node_item(head, node);
-				send_data(write_fd, bufferSize, (char *)get_virusName(v), 0);
+				char *virusName =  (char *)get_virusName(v);
+				send_data(write_fd, bufferSize, virusName, 0);
 				// send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
 				send_bloom_filter(get_filter(v), write_fd, bufferSize);
 			}
@@ -401,8 +402,8 @@ void queries(dataStore *ds, int read_fd, int write_fd, int bufferSize){
 				printf("Something went wrong\n");
 				exit(1);
 			}
-			printf("\n--------------MONITOR----------\n");
-    		print_bl(get_filter(v));
+			// printf("\n--------------MONITOR----------\n");
+    		// print_bl(get_filter(v));
 			if (!(BloomSearch(get_filter(v), id))){
 				printf("NOT IN BLOOM FILTER");
 			}

@@ -11,4 +11,6 @@ void send_data(int fd, int bufferSize, char *data, int dataSize);
 void receive_init(int fd, int *bufferSize, int *bloomSize, char **input_dir);
 void send_init(int fd, int bufferSize, int bloomSize, char *input_dir);
 
+char *receive_BloomFilter(int fd, int bufferSize);
+
 #endif
