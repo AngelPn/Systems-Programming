@@ -102,7 +102,7 @@ int cmpstr(const void* p1, const void* p2){
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd);
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors);
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
@@ -229,7 +229,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
 	/* Run queries */
-	run_queries(&monitors, bufferSize, bloomSize, read_fd, write_fd);
+	run_queries(&monitors, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors);
 
 	// printf("Print monitors hash table in parent\n");
 	// HTPrint(monitors, print_monitor);
@@ -487,6 +487,11 @@ void travelStats(char *args[4], HashTable *monitors){
 	free(date1); free(date2);
 }
 
+void searchVaccinationStatus(char *id, HashTable monitors, int bufferSize, int *read_fd, int *write_fd){
+
+
+}
+
 
 
 /*  Shows whether a signal raised and awaits handling.
@@ -500,24 +505,24 @@ void handle_usr(int signo) { sig_usr_raised = signo; }
 
 
 
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd){
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors){
 
 	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR2 respectively */
 	struct sigaction act_intquit = {0}, act_usr = {0};
 
     /* Identify the action to be taken when the signal signo is received */
-    act_intquit.sa_handler = handle_intquit;
+    // act_intquit.sa_handler = handle_intquit;
     act_usr.sa_handler = handle_usr;
 
     /* Create a full mask: the signals specified here will be
        blocked during the execution of the sa_handler. */
     sigfillset(&(act_intquit.sa_mask));
-	sigaction(SIGINT, &act_intquit, NULL);
-    sigaction(SIGQUIT, &act_intquit, NULL);
+	// sigaction(SIGINT, &act_intquit, NULL);
+    // sigaction(SIGQUIT, &act_intquit, NULL);
 
     sigfillset(&(act_usr.sa_mask));
     /* Control specified signals */
-    sigaction(SIGUSR1, &act_usr, NULL);
+    sigaction(SIGUSR2, &act_usr, NULL);
 
 	/* Read input from stdin */
 	char *line = NULL;
@@ -612,8 +617,8 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_f
 			kill(monitor_pid, SIGUSR1);
 
 			/* Wait for the signal that informs that the monitor has written in its fd */
-			while (!sig_usr_raised){ }
-			sig_usr_raised = 0; /* reset value */
+			// while (!sig_usr_raised){ }
+			// sig_usr_raised = 0; /* reset value */
 
 			/* Read the bloom filters from the pipe */
 			while (true){
@@ -643,7 +648,21 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_f
 
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
-
+			char *id = strtok(NULL, " \n");
+			if (id == NULL){
+				printf( RED "\nERROR: Invalid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/searchVaccinationStatus citizenID\n"
+						GRN "\nEnter command:\n" RESET);
+				continue;
+			}
+			// searchVaccinationStatus(id, monitors, bufferSize, read_fd, write_fd);
+			
+			/* Send the query to each of the monitors */
+			// char searchQuery[strlen[query] + strlen[id] +]
+			for (int i = 0; i < numActiveMonitors; i++){
+				send_data(write_fd[i], bufferSize, line, 0);
+			}
 		}
 		else if (strcmp(query, "/exit") == 0)
 			break;
