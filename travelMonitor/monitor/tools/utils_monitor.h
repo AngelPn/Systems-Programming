@@ -12,4 +12,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 /* Executes queries */
 void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize);
 
+/* Concatenate int to string */
+char *concat_int_to_str(const char str[], int i);
+
 #endif

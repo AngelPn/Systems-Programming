@@ -16,6 +16,7 @@ void *get_citizenID(void *rec);
 
 country get_country(citizenRecord rec);
 int get_age(citizenRecord rec);
+char *get_citizen_info(citizenRecord rec);
 
 /* Cross-check citizen's informations with arguments
     If data are identical, returns true. Else, returns false */

@@ -102,7 +102,7 @@ int cmpstr(const void* p1, const void* p2){
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors);
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors);
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
@@ -229,7 +229,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
 	/* Run queries */
-	run_queries(&monitors, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors);
+	run_queries(&monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors);
 
 	// printf("Print monitors hash table in parent\n");
 	// HTPrint(monitors, print_monitor);
@@ -487,9 +487,47 @@ void travelStats(char *args[4], HashTable *monitors){
 	free(date1); free(date2);
 }
 
-void searchVaccinationStatus(char *id, HashTable monitors, int bufferSize, int *read_fd, int *write_fd){
+void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int *read_fd){
 
+    fd_set active, ready; /* represents file descriptor sets for the select function */
+    FD_ZERO(&active); /* initializes the file descriptor set 'active' to be the empty set */
 
+	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
+    for (int i = 0; i < numActiveMonitors; i++){
+		FD_SET(read_fd[i], &active);
+	}
+
+	/* Find out the monitor that responded */
+	bool broke = false;
+    while (true){
+		ready = active;
+        if (select(FD_SETSIZE, &(ready), NULL, NULL, NULL) < 0){
+            perror("Error in select");
+            exit(EXIT_FAILURE);
+        }
+
+        for (int i = 0; i < numActiveMonitors; i++){
+
+			if (!(FD_ISSET(read_fd[i], &ready)))
+				continue;
+
+			/* Read from the pipe */
+			char *msg = NULL;
+			while (true){
+				msg = receive_data(read_fd[i], bufferSize);
+				if (!strcmp(msg, "end-vaccineStatus")){
+					free(msg);
+					break;
+				}
+				// fprintf(stderr, "GBF-%s", virus_name);
+				printf("%s", msg);
+				free(msg);
+			}
+			broke = true;
+            break;
+        }
+		if (broke) break;
+    }
 }
 
 
@@ -505,7 +543,7 @@ void handle_usr(int signo) { sig_usr_raised = signo; }
 
 
 
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors){
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors){
 
 	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR2 respectively */
 	struct sigaction act_intquit = {0}, act_usr = {0};
@@ -656,13 +694,16 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, int *read_f
 						GRN "\nEnter command:\n" RESET);
 				continue;
 			}
-			// searchVaccinationStatus(id, monitors, bufferSize, read_fd, write_fd);
 			
 			/* Send the query to each of the monitors */
-			// char searchQuery[strlen[query] + strlen[id] +]
+			char searchQuery[strlen(query) + strlen(id) + 2];
+			snprintf(searchQuery, sizeof(searchQuery), "%s %s", query, id);
 			for (int i = 0; i < numActiveMonitors; i++){
-				send_data(write_fd[i], bufferSize, line, 0);
+				send_data(write_fd[i], bufferSize, searchQuery, 0);
 			}
+
+			get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, read_fd);
+
 		}
 		else if (strcmp(query, "/exit") == 0)
 			break;

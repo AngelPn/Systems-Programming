@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "citizenRecord.h"
+#include "utils_monitor.h"
 
 struct record
 {
@@ -44,6 +45,19 @@ country get_country(citizenRecord rec){
 
 int get_age(citizenRecord rec){
     return rec->age;
+}
+
+char *get_citizen_info(citizenRecord rec){
+    char *id = concat_int_to_str("", rec->citizenID);
+    char *age = concat_int_to_str("", rec->age);
+    char *countryName = get_country_name(rec->cntry);
+
+    size_t len = strlen(id) + strlen(rec->firstname) + strlen(rec->firstname) + strlen(countryName) + strlen(age) + 8;
+    char *info = (char *)malloc(sizeof(char)*len);
+    snprintf(info, len, "%s %s %s %s\nAGE %s", id, rec->firstname, rec->lastname, countryName, age);
+
+    free(id); free(age);
+    return info;
 }
 
 bool cross_check(citizenRecord rec, char *firstname, char *lastname, country cntry, int age){

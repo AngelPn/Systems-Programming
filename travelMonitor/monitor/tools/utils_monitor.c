@@ -247,6 +247,41 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 	}
 }
 
+void send_vaccineStatus(dataStore *ds, int citizenID, int write_fd, int bufferSize){
+
+	virus v = NULL;
+	vaccinated vaccinated_citizen = NULL;
+
+	/* For each of monitor's virus, send vaccineStatus */
+	List head = NULL;
+	for (int i = 0; i < HTSize(ds->viruses); i++){
+		head = get_HTchain(ds->viruses, i);
+		if(head != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+				v = list_node_item(head, node);
+				char *virusName =  (char *)get_virusName(v);
+
+				if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
+					char *dateVaccinated = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
+					char vaccineStatus[strlen(virusName) + strlen(dateVaccinated) + 17];
+					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s VACCINATED ON %s\n", virusName, dateVaccinated);
+					free(dateVaccinated);
+					// printf("send: %s\n", vaccineStatus);
+					send_data(write_fd, bufferSize, vaccineStatus, 0);
+				}
+				else if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
+					char vaccineStatus[strlen(virusName) + 21];
+					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s NOT YET VACCINATED\n", virusName);
+					// printf("send: %s\n", vaccineStatus);
+					send_data(write_fd, bufferSize, vaccineStatus, 0);
+				}
+			}
+		}
+	}
+	/* Inform the parent that monitor is ready to run queries */
+	send_data(write_fd, bufferSize, "end-vaccineStatus", 0);
+}
+
 
 
 /*  Shows whether a signal raised and awaits handling.
@@ -284,12 +319,12 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 	// country c = NULL;
 
 	while(true){
-		printf("in while loop\n");
+		// printf("in while loop\n");
 
 		char *line = receive_data(read_fd, bufferSize);
-		
+		// printf("line: %s\n", line);
 		char *query = strtok(line, " \n");
-		printf("NOT blocking, query: %s\n", query);
+		// printf("NOT blocking, query: %s, line: %s\n", query, line);
 		if (sig_usr1_raised) {
 			fprintf(stderr, "SIGUSR1 caught in main\n");
 
@@ -340,10 +375,16 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			int citizenID = atoi(strtok(NULL, " \n"));
 
 			/* Get citizen */
-			citizenRecord citizen = NULL;
-			if ((c = HTSearch(ds->citizens, citizenID, compare_citizen)) == NULL)
+			citizenRecord c = NULL;
+			if ((c = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL)
 				continue;
-			
+			// printf("found citizen: "); print_citizen(c);
+			char *citizen_info = get_citizen_info(c);
+			// printf("(utils_monitor)citizen_info: %s\n", citizen_info);
+			send_data(write_fd, bufferSize, citizen_info, 0);
+			send_vaccineStatus(ds, citizenID, write_fd, bufferSize);
+
+			free(citizen_info);
 
 		}
 		else if (strcmp(query, "/exit") == 0){
