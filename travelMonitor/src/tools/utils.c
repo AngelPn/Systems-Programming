@@ -231,10 +231,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Run queries */
 	run_queries(&monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors);
 
-	// printf("Print monitors hash table in parent\n");
-	// HTPrint(monitors, print_monitor);
-	HTDestroy(monitors);
-
     /* Send a SIGKILL to the monitors to end them */
     for (int i = 0; i < numMonitors; i++) {
         kill(monitors_pids[i], SIGKILL);
@@ -251,6 +247,67 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     for (int i = 0; i < numMonitors; i++) {
         wait(&monitors_pids[i]);
     }
+
+	/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
+    mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
+
+	int accepted = 0, rejected = 0;
+	monitor m = NULL;
+	virus_bloom v = NULL;
+	List head1 = NULL, head2 = NULL, m_countries = NULL;
+
+	/* Traverse Hash Table of monitors */
+	for (int i = 0; i < HTSize(monitors); i++){
+		if ((head1 = get_HTchain(monitors, i)) != NULL){
+			for (ListNode node1 = list_first(head1); node1 != NULL; node1 = list_next(head1, node1)){
+
+				/* Create the log_file.xxx for monitor with PID xxx */
+				m = list_node_item(head1, node1);
+				char *filepath = concat_int_to_string("./LogFiles/log_file.", *((int *)get_monitor_pid(m)));
+				if ((mkfifo(filepath, 0666) == -1) && (errno != EEXIST)) {
+					perror("Error creating Log file");
+					exit(EXIT_FAILURE);
+				}
+
+				/* Open the log_file.xxx given from filepath to write */
+				FILE *logfile;
+				if ((logfile = fopen(filepath, "w")) == NULL){
+					perror(RED "Error opening Log file"  RESET);
+					exit(EXIT_FAILURE);
+				}
+
+				/* Write to log_file.xxx the countries that monitor handles */
+				m_countries = get_monitor_countries(m);
+				char *countryName = NULL;
+				for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
+					countryName = (char *)list_node_item(m_countries, n);
+					fprintf(logfile, "%s\n", countryName);
+				}
+
+				/* Traverse the Hash Table of viruses that monitor handles 
+				   to count the total number of accepted/rejected requests*/
+				HashTable viruses = get_monitor_viruses(m);
+				for (int j = 0; j < HTSize(viruses); j++){
+					if ((head2 = get_HTchain(viruses, j)) != NULL){
+						for (ListNode node2 = list_first(head2); node2 != NULL; node2 = list_next(head2, node2)){
+
+							v = list_node_item(head2, node2);
+							accepted += accepted_requests(v, NULL, NULL);
+							rejected += rejected_requests(v, NULL, NULL);
+						}
+					}
+				}
+
+				/* Write to log_file.xxx the total number of requests */
+				fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+				fclose(logfile);
+				accepted = rejected = 0;
+			}
+		}
+	}
+
+	/* Deallocate memory */
+	HTDestroy(monitors);	
 }
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
@@ -706,7 +763,7 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 
 		}
 		else if (strcmp(query, "/exit") == 0)
-			break;
+			break; /* kill the children and create Log file at the caller function (aggregator) */
 		else
 			printf( RED "\nERROR: Invalid input\n" RESET
 				YEL "Input format for every command:\n" RESET
