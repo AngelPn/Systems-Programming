@@ -12,6 +12,8 @@ typedef struct  data_store
     HashTable countries;
     HashTable viruses;
     List parsed_files;
+    int accepted_requests;
+    int rejected_requests;
 
 } dataStore;
 

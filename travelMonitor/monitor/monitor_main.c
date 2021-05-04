@@ -19,7 +19,7 @@
 #include "utils_monitor.h"
 
 int main(int argc, char **argv){
-    // fprintf(stderr, "child %d\n", getpid());
+    fprintf(stderr, "child %d\n", getpid());
 
     /* Get arguments */
     int bufferSize, bloomSize, read_fd, write_fd;

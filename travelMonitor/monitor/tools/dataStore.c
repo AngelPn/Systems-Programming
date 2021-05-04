@@ -12,6 +12,8 @@ void create_structs(dataStore *ds){
     ds->viruses = HTCreate(String, destroy_virus);
     ds->countries = HTCreate(String, destroy_country);
     ds->parsed_files = list_create(free);
+    ds->accepted_requests = 0;
+    ds->rejected_requests = 0;
 }
 
 int compare_filename(void *filename1, void *filename2){
