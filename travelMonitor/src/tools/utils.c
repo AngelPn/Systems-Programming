@@ -235,7 +235,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     for (int i = 0; i < numMonitors; i++) {
         kill(monitors_pids[i], SIGKILL);
     }
-    /* Delete named pipes */
+    /* Delete named pipes and remove tmp dir */
     for (int i = 0; i < numMonitors; i++) {
         unlink(names1[i]);
         unlink(names2[i]);
@@ -243,6 +243,8 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
         free(names1[i]);
         free(names2[i]);
     }
+	rmdir("./tmp");
+	
     /* Wait until all the children are dead */
     for (int i = 0; i < numMonitors; i++) {
         wait(&monitors_pids[i]);
