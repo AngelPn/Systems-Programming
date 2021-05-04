@@ -10,6 +10,8 @@ struct monitor_struct
     int fd_index;       /* index of read_fd and write_fd arrays that keep the file descriptor */
     List countries;     /* list of the countries name that monitor handles */
     HashTable viruses;  /* hash table of viruses and bloom filters the monitor handles */
+    int total_accepted; /* number of total accepted requests for monitor */
+    int total_rejected; /* number of total rejected requests for monitor */
 };
 
 monitor create_monitor(pid_t pid, int fd_index){
@@ -19,6 +21,8 @@ monitor create_monitor(pid_t pid, int fd_index){
     m->fd_index = fd_index;
     m->countries = list_create(free);
     m->viruses = HTCreate(String, destroy_virus_bloom);
+    m->total_accepted = 0;
+    m->total_rejected = 0;
 
     return m;
 }
@@ -52,6 +56,14 @@ HashTable get_monitor_viruses(void *m){
     return nm->viruses;
 }
 
+int get_total_accepted(monitor m){
+    return m->total_accepted;
+}
+
+int get_total_rejected(monitor m){
+    return m->total_rejected;
+}
+
 void add_country(monitor m, char *country){
     List head = m->countries;
     list_insert_next(head, list_last(head), country);
@@ -59,6 +71,14 @@ void add_country(monitor m, char *country){
 
 void add_virus(monitor m, virus_bloom v){
     HTInsert(&(m->viruses), v, get_virus_bloomName);
+}
+
+void increase_accepted_requests(monitor m){
+    (m->total_accepted)++;
+}
+
+void increase_rejected_requests(monitor m){
+    (m->total_rejected)++;
 }
 
 void print_monitor(void *m){

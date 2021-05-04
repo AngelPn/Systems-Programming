@@ -255,24 +255,17 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 	int accepted = 0, rejected = 0;
 	monitor m = NULL;
-	virus_bloom v = NULL;
-	List head1 = NULL, head2 = NULL, m_countries = NULL;
+	List head = NULL, m_countries = NULL;
 
 	/* Traverse Hash Table of monitors */
 	for (int i = 0; i < HTSize(monitors); i++){
-		if ((head1 = get_HTchain(monitors, i)) != NULL){
-			for (ListNode node1 = list_first(head1); node1 != NULL; node1 = list_next(head1, node1)){
+		if ((head = get_HTchain(monitors, i)) != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
-				/* Create the log_file.xxx for monitor with PID xxx */
-				m = list_node_item(head1, node1);
+				/* Create the log_file.xxx for monitor with PID xxx and open it */
+				m = list_node_item(head, node);
 				char *filepath = concat_int_to_string("./LogFiles/log_file.", *((int *)get_monitor_pid(m)));
-				if ((mkfifo(filepath, 0666) == -1) && (errno != EEXIST)) {
-					perror("Error creating Log file");
-					exit(EXIT_FAILURE);
-				}
-
-				/* Open the log_file.xxx given from filepath to write */
-				FILE *logfile;
+				FILE *logfile = NULL;
 				if ((logfile = fopen(filepath, "w")) == NULL){
 					perror(RED "Error opening Log file"  RESET);
 					exit(EXIT_FAILURE);
@@ -280,28 +273,15 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
 				/* Write to log_file.xxx the countries that monitor handles */
 				m_countries = get_monitor_countries(m);
-				char *countryName = NULL;
 				for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
-					countryName = (char *)list_node_item(m_countries, n);
-					fprintf(logfile, "%s\n", countryName);
-				}
-
-				/* Traverse the Hash Table of viruses that monitor handles 
-				   to count the total number of accepted/rejected requests*/
-				HashTable viruses = get_monitor_viruses(m);
-				for (int j = 0; j < HTSize(viruses); j++){
-					if ((head2 = get_HTchain(viruses, j)) != NULL){
-						for (ListNode node2 = list_first(head2); node2 != NULL; node2 = list_next(head2, node2)){
-
-							v = list_node_item(head2, node2);
-							accepted += accepted_requests(v, NULL, NULL);
-							rejected += rejected_requests(v, NULL, NULL);
-						}
-					}
+					fprintf(logfile, "%s\n", (char *)list_node_item(m_countries, n));
 				}
 
 				/* Write to log_file.xxx the total number of requests */
+				accepted = get_total_accepted(m);
+				rejected = get_total_rejected(m);
 				fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+				
 				fclose(logfile);
 				accepted = rejected = 0;
 			}
@@ -423,7 +403,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		return;		
 	}
 	/* If v2 == NULL, the monitor m2 does not check vaccinations for the virus */
-	v2 = HTSearch(get_monitor_viruses(m1), virusName, compare_virus_bloomName);
+	v2 = HTSearch(get_monitor_viruses(m2), virusName, compare_virus_bloomName);
 
 	date dateTravel = create_date(str_date);
 	// printf("\n--------------PARENT----------\n");
@@ -432,8 +412,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 	if (!(BloomSearch(get_bloom(v1), id))){
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-		if (v2 != NULL)
+		if (v2 != NULL){
 			list_insert_next(get_rejected(v2), NULL, dateTravel);
+			increase_rejected_requests(m2);
+		}	
 	}
 	else{
 		/* Create the query and write it to pipe */
@@ -449,8 +431,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		if (!strcmp(response, "NO")){
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-			if (v2 != NULL)
+			if (v2 != NULL){
 				list_insert_next(get_rejected(v2), NULL, dateTravel);
+				increase_rejected_requests(m2);				
+			}
 		}
 		else{
 			char *str_dateVaccinated = response + 4;
@@ -462,14 +446,18 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 			if (date_between(dateTravel, dateVaccinated, date_6_months_later)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
 
-				if (v2 != NULL)
+				if (v2 != NULL){
 					list_insert_next(get_accepted(v2), NULL, dateTravel);
+					increase_accepted_requests(m2);
+				}
 			}
 			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
 
-				if (v2 != NULL)
+				if (v2 != NULL){
 					list_insert_next(get_rejected(v2), NULL, dateTravel);
+					increase_rejected_requests(m2);					
+				}
 			}
 			free(dateVaccinated); free(date_6_months_later);		
 		}

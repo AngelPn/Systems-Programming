@@ -29,11 +29,19 @@ List get_monitor_countries(void *m);
 /* Returns the hash table of viruses of monitor */
 HashTable get_monitor_viruses(void *m);
 
+/* Returns the number of total accepted/rejected requests for monitor */
+int get_total_accepted(monitor m);
+int get_total_rejected(monitor m);
+
 /* Adds country in list of countries in monitor */
 void add_country(monitor m, char *country);
 
 /* Adds virus in hash table of viruses in monitor */
 void add_virus(monitor m, virus_bloom v);
+
+/* Increases accepted/rejected counter of monitor */
+void increase_accepted_requests(monitor m);
+void increase_rejected_requests(monitor m);
 
 /*Prints the fields of monitor */
 void print_monitor(void *m);
