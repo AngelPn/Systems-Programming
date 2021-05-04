@@ -298,20 +298,20 @@ void handle_usr1(int signo) { sig_usr1_raised = signo; }
 void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize){
 
 	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR1 respectively */
-	struct sigaction act_intquit, act_usr1;
+	struct sigaction act_intquit = {0}, act_usr1 = {0};
 
     /* Identify the action to be taken when the signal signo is received */
-    act_intquit.sa_handler = handle_intquit;
+    // act_intquit.sa_handler = handle_intquit;
     act_usr1.sa_handler = handle_usr1;
 
     /* Create a full mask: the signals specified here will be
        blocked during the execution of the sa_handler. */
-    sigfillset(&(act_intquit.sa_mask));
+    // sigfillset(&(act_intquit.sa_mask));
     sigfillset(&(act_usr1.sa_mask));
 
     /* Control specified signals */
-    sigaction(SIGINT, &act_intquit, NULL);
-    sigaction(SIGQUIT, &act_intquit, NULL);
+    // sigaction(SIGINT, &act_intquit, NULL);
+    // sigaction(SIGQUIT, &act_intquit, NULL);
     sigaction(SIGUSR1, &act_usr1, NULL);
 
 	virus v = NULL;
@@ -325,39 +325,39 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 		// printf("line: %s\n", line);
 		char *query = strtok(line, " \n");
 		printf("NOT blocking, query: %s, line: %s\n", query, line);
-		if (sig_intquit_raised){
-			fprintf(stderr, "SIGΙΝΤ caught in monitors queries\n");
+		// if (sig_intquit_raised){
+		// 	fprintf(stderr, "SIGΙΝΤ caught in monitors queries\n");
 
-			/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
-    		mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
+		// 	/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
+    	// 	mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
 
-			/* Create the log_file.xxx for monitor with PID xxx and open it */
-			char *filepath = concat_int_to_str("./LogFiles/log_file.", (int)getpid());
-			FILE *logfile = NULL;
-			if ((logfile = fopen(filepath, "w")) == NULL){
-				perror(RED "Error opening Log file"  RESET);
-				exit(EXIT_FAILURE);
-			}
+		// 	/* Create the log_file.xxx for monitor with PID xxx and open it */
+		// 	char *filepath = concat_int_to_str("./LogFiles/log_file.", (int)getpid());
+		// 	FILE *logfile = NULL;
+		// 	if ((logfile = fopen(filepath, "w")) == NULL){
+		// 		perror(RED "Error opening Log file"  RESET);
+		// 		exit(EXIT_FAILURE);
+		// 	}
 
-			/* Write to log_file.xxx the countries that monitor handles */
-			List head = NULL;
-			for (int i = 0; i < HTSize(ds->countries); i++){
-				if((head = get_HTchain(ds->countries, i)) != NULL){
-					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-						fprintf(logfile, "%s\n", (char *)get_country_name(list_node_item(head, node)));
-					}
-				}
-			}
+		// 	/* Write to log_file.xxx the countries that monitor handles */
+		// 	List head = NULL;
+		// 	for (int i = 0; i < HTSize(ds->countries); i++){
+		// 		if((head = get_HTchain(ds->countries, i)) != NULL){
+		// 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+		// 				fprintf(logfile, "%s\n", (char *)get_country_name(list_node_item(head, node)));
+		// 			}
+		// 		}
+		// 	}
 
-			/* Write to log_file.xxx the total number of requests */
-			int accepted = ds->accepted_requests;
-			int rejected = ds->rejected_requests;
-			fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+		// 	/* Write to log_file.xxx the total number of requests */
+		// 	int accepted = ds->accepted_requests;
+		// 	int rejected = ds->rejected_requests;
+		// 	fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
 
-			fclose(logfile);
-			sig_intquit_raised = 0; /* reset value */
-			continue;
-		}		
+		// 	fclose(logfile);
+		// 	sig_intquit_raised = 0; /* reset value */
+		// 	continue;
+		// }		
 		if (sig_usr1_raised) {
 			fprintf(stderr, "SIGUSR1 caught in monitors queries\n");
 

@@ -596,14 +596,14 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 	struct sigaction act_intquit = {0}, act_usr = {0};
 
     /* Identify the action to be taken when the signal signo is received */
-    // act_intquit.sa_handler = handle_intquit;
+    act_intquit.sa_handler = handle_intquit;
     act_usr.sa_handler = handle_usr;
 
     /* Create a full mask: the signals specified here will be
        blocked during the execution of the sa_handler. */
     sigfillset(&(act_intquit.sa_mask));
-	// sigaction(SIGINT, &act_intquit, NULL);
-    // sigaction(SIGQUIT, &act_intquit, NULL);
+	sigaction(SIGINT, &act_intquit, NULL);
+    sigaction(SIGQUIT, &act_intquit, NULL);
 
     sigfillset(&(act_usr.sa_mask));
     /* Control specified signals */
@@ -761,7 +761,11 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 				"/travelStats virusName date1 date2 [country]\n"
 				"/addVaccinationRecords country\n"
 				"/searchVaccinationStatus citizenID\n"
-				"/exit\n");			
+				"/exit\n");
+
+		if (sig_intquit_raised){
+			break;
+		}
 		printf(GRN "\nEnter command:\n" RESET);
 	}
 	free(line);
