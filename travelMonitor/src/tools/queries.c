@@ -84,8 +84,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
 		if (v2 != NULL){
-			list_insert_next(get_rejected(v2), NULL, dateTravel);
-			increase_rejected_requests(m2);
+			list_insert_next(get_rejected(v2), NULL, dateTravel); /* save dateTravel as rejected request*/
+			increase_rejected_requests(m2); /* increase counter of rejected requests*/
+            /* Inform monitor that handles countryTo (m2) that the request was rejected*/
+            send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
 		}	
 	}
 	else{
@@ -104,7 +106,9 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 
 			if (v2 != NULL){
 				list_insert_next(get_rejected(v2), NULL, dateTravel);
-				increase_rejected_requests(m2);				
+				increase_rejected_requests(m2);
+                /* Inform monitor that handles countryTo (m2) that the request was rejected*/
+                send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
 			}
 		}
 		else{
@@ -120,6 +124,8 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 				if (v2 != NULL){
 					list_insert_next(get_accepted(v2), NULL, dateTravel);
 					increase_accepted_requests(m2);
+                    /* Inform monitor that handles countryTo (m2) that the request was accepted*/
+                    send_data(write_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
 				}
 			}
 			else{
@@ -127,7 +133,9 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 
 				if (v2 != NULL){
 					list_insert_next(get_rejected(v2), NULL, dateTravel);
-					increase_rejected_requests(m2);					
+					increase_rejected_requests(m2);
+                    /* Inform monitor that handles countryTo (m2) that the request was rejected*/
+                    send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
 				}
 			}
 			free(dateVaccinated); free(date_6_months_later);		
@@ -254,31 +262,36 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
     0 if no signal is pending, else 1. */
 static volatile sig_atomic_t sig_intquit_raised;
 static volatile sig_atomic_t sig_usr_raised;
+static volatile sig_atomic_t sig_chld_raised;
 
 /* Functions to handle signals */
 void handle_intquit(int signo) { sig_intquit_raised = signo; }
 void handle_usr(int signo) { sig_usr_raised = signo; }
+void handle_chld(int signo) { sig_chld_raised = signo; }
 
 
 
 void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors){
 
-	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR2 respectively */
-	struct sigaction act_intquit = {0}, act_usr = {0};
+	/* Signal sets to handle SIGINT/SIGQUIT, SIGUSR2 and SIGCHLD respectively */
+	struct sigaction act_intquit = {0}, act_usr = {0}, act_chld = {0};
 
     /* Identify the action to be taken when the signal signo is received */
     act_intquit.sa_handler = handle_intquit;
     act_usr.sa_handler = handle_usr;
+    act_chld.sa_handler = handle_chld;
 
     /* Create a full mask: the signals specified here will be
        blocked during the execution of the sa_handler. */
     sigfillset(&(act_intquit.sa_mask));
-	sigaction(SIGINT, &act_intquit, NULL);
-    sigaction(SIGQUIT, &act_intquit, NULL);
-
     sigfillset(&(act_usr.sa_mask));
+    sigfillset(&(act_chld.sa_mask));
+    
     /* Control specified signals */
+	sigaction(SIGINT, &act_intquit, NULL);
+    sigaction(SIGQUIT, &act_intquit, NULL);    
     sigaction(SIGUSR2, &act_usr, NULL);
+    sigaction(SIGCHLD, &act_chld, NULL);
 
 	/* Read input from stdin */
 	char *line = NULL;
@@ -291,6 +304,11 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 	while (getline(&line, &len, stdin) != -1){
 
 		char *query = strtok(line, " \n");
+
+        /* If a child process is dead, replace it */
+        if (sig_chld_raised){
+
+        }
 
 		if (strcmp(query, "/travelRequest") == 0){
 			
@@ -435,7 +453,7 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 				"/exit\n");
 
 		if (sig_intquit_raised){
-			break;
+			break; /* do the same as '/exit' */
 		}
 		printf(GRN "\nEnter command:\n" RESET);
 	}

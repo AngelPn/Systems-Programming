@@ -7,4 +7,6 @@ int argumentHandling(int argc, char **argv, int *numMonitors, int *buffersize, i
 
 void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir);
 
+void reborn_child(HashTable *monitors, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors);
+
 #endif

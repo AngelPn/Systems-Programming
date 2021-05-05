@@ -354,3 +354,60 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
         }
     }
 }
+
+
+void reborn_child(HashTable *monitors, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors){
+
+	pid_t dead, reborn;
+	char *name1, name2;
+	
+	/* Loop all the children, to see if they have died */
+	while ((dead = waitpid(-1, NULL, WNOHANG)) > 0) {
+
+		/* Get the position (fd index) of dead child */
+		int i = 0;
+		for (i = 0; i < numActiveMonitors; i++){
+			if (dead == monitors_pids[i])
+				break;
+		}
+
+		reborn = fork();
+
+        /* Store the name of the 2 named pipes */
+		name1 = concat_int_to_string("./tmp/myfifo1_", i);
+		name2 = concat_int_to_string("./tmp/myfifo2_", i);
+
+        if (reborn > 0) { /* parent process */
+            monitors_pids[i] = reborn; /* save child's pid */
+        }
+		else{ /* child process */
+            if (execl("Monitor", "Monitor", name1, name2, NULL) == -1){
+				perror("Error in execl");
+				exit(EXIT_FAILURE);				
+			}
+        }
+
+		/* Child has gone to another executable, close the old file descriptors */
+		close(read_fd[i]);
+		close(write_fd[i]);
+
+		/* Οpen the named pipes, store the file descs and send init data */
+		if ((read_fd[i] = open(name1, O_RDONLY, 0666)) == -1) {
+			perror("Error storing file desc in reading array");
+			exit(EXIT_FAILURE);
+		}
+		if ((write_fd[i] = open(name2, O_WRONLY, 0666)) == -1) {
+			perror("Error storing file desc in writing array");
+			exit(EXIT_FAILURE);
+		}
+		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
+		free(name1);
+		free(name2);
+
+		/* Get dead monitor from Hash Table and reborn it */
+		monitor m = HTSearch(*monitors, &dead, compare_monitor);
+		change_pid(m, reborn);
+		HTInsert(monitors, m, get_monitor_pid);
+
+	}
+}
