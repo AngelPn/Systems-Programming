@@ -13,12 +13,11 @@
 #include <signal.h>
 #include <sys/select.h>
 
-#include "utils_monitor.h"
+#include "utils_queries.h"
 #include "virus.h"
 #include "country.h"
 #include "ipc.h"
 #include "BloomFilter.h"
-#include "signal_functions.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"

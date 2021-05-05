@@ -23,11 +23,11 @@ COMMON_OBJS = $(MODULES)/BloomFilter/BloomFilter.o $(MODULES)/Date/date.o $(MODU
 COMMON_OBJS += $(MODULES)/HashTable/HashTable.o $(MODULES)/SkipList/SkipList.o $(MODULES)/IPC/ipc.o
 
 #src .o
-OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(RDIR)/virus_bloom.o $(TDIR)/utils.o
+OBJS = $(SRC)/main.o $(RDIR)/monitor.o $(RDIR)/virus_bloom.o $(TDIR)/utils.o $(TDIR)/queries.o
 
 #monitor .o
-MNTR_OBJS = $(MNTR)/monitor_main.o $(MTDIR)/signal_functions.o $(MTDIR)/dataStore.o
-MNTR_OBJS += $(MTDIR)/utils_monitor.o $(MRDIR)/country.o $(MRDIR)/virus.o $(MRDIR)/citizenRecord.o
+MNTR_OBJS = $(MNTR)/monitor_main.o $(MTDIR)/dataStore.o $(MTDIR)/utils_queries.o
+MNTR_OBJS += $(MRDIR)/country.o $(MRDIR)/virus.o $(MRDIR)/citizenRecord.o
 
 all: $(EXEC) $(EXEC_MONITOR)
 	mkdir -p $(ODIR)
