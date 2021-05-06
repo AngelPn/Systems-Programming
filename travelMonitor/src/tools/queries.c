@@ -271,7 +271,7 @@ void handle_chld(int signo) { sig_chld_raised = signo; }
 
 
 
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors){
+void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
 	/* Signal sets to handle SIGINT/SIGQUIT, SIGUSR2 and SIGCHLD respectively */
 	struct sigaction act_intquit = {0}, act_usr = {0}, act_chld = {0};
@@ -307,7 +307,10 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 
         /* If a child process is dead, replace it */
         if (sig_chld_raised){
-
+			printf("SIGCHLD raised\n");
+			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
+			sig_chld_raised = 0;
+			continue;
         }
 
 		if (strcmp(query, "/travelRequest") == 0){

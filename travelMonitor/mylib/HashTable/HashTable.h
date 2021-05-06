@@ -1,6 +1,8 @@
 #ifndef HT_H
 #define HT_H
 
+#include <stdbool.h>
+
 #include "List.h"
 
 /* enumeration to determine the key type of hash table */
@@ -23,11 +25,15 @@ int HTEntries(HashTable ht);
 List get_HTchain(HashTable ht, int i);
 
 /* Searches key in Hash Table and returns item, if found. If not, returns NULL
-    Note that different key types need different specifier to compare keys */
+   Note that different key types need different specifier to compare keys */
 void *HTSearch(HashTable ht, void *key, CompareFunc compare);
 
 /* Inserts item in Hash Table with key specified by GetKey */
 void HTInsert(HashTable *pht, void *item, GetKey key);
+
+/* Deletes item in Hash Table specified by key 
+   If default is false, the destroy func is set to NULL */
+void HTDelete(HashTable ht, void *key, CompareFunc compare, bool default_destroy);
 
 /* Visits every node of Hash Table and calls visit function passed with arg key */
 void HTVisit(HashTable ht, VisitFunc visit, int key);

@@ -228,7 +228,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
 	/* Run queries */
-	run_queries(&monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors);
+	run_queries(&monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
 
     /* Send a SIGKILL to the monitors to end them */
     for (int i = 0; i < numMonitors; i++) {
@@ -356,10 +356,10 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 }
 
 
-void reborn_child(HashTable *monitors, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors){
+void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
 	pid_t dead, reborn;
-	char *name1, name2;
+	char *name1, *name2;
 	
 	/* Loop all the children, to see if they have died */
 	while ((dead = waitpid(-1, NULL, WNOHANG)) > 0) {
@@ -405,9 +405,17 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int *read_fd, int *
 		free(name2);
 
 		/* Get dead monitor from Hash Table and reborn it */
-		monitor m = HTSearch(*monitors, &dead, compare_monitor);
+		monitor m = HTSearch(*monitors, &dead, compare_monitor);		
+		HTDelete(*monitors, get_monitor_pid(m), compare_monitor, false); /* superficial delete of dead monitor from Hash Table */
 		change_pid(m, reborn);
 		HTInsert(monitors, m, get_monitor_pid);
+
+		/* Send the names of countries that new child will handle through pipe */
+		List m_countries = get_monitor_countries(m);
+		for (ListNode node = list_first(m_countries); node != NULL; node = list_next(m_countries, node)){
+			send_data(write_fd[i], bufferSize, (char *)list_node_item(m_countries, node), 0);
+		}
+		send_data(write_fd[i], bufferSize, "end", 0);
 
 	}
 }
