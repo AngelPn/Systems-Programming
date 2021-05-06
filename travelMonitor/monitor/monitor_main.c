@@ -20,7 +20,7 @@
 
 int main(int argc, char **argv){
     fprintf(stderr, "child %d\n", getpid());
-	printf("here\n");
+
     /* Get arguments */
     int bufferSize, bloomSize, read_fd, write_fd;
 	/* Open named pipes for writing */
@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 	char *input_dir;
 	receive_init(read_fd, &bufferSize, &bloomSize, &input_dir);
     
-    printf("(monitor_main)Opened bufferSize: %d, bloomSize: %d, input_dir: %s\n", bufferSize, bloomSize, input_dir);
+    // printf("(monitor_main)Opened bufferSize: %d, bloomSize: %d, input_dir: %s\n", bufferSize, bloomSize, input_dir);
 
     /* Structures needed for queries */
     dataStore ds;

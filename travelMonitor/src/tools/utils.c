@@ -358,12 +358,13 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
+	printf("\nINSIDE REBORN - ");
 	pid_t dead, reborn;
 	char *name1, *name2;
 	
 	/* Loop all the children, to see if they have died */
 	while ((dead = waitpid(-1, NULL, WNOHANG)) > 0) {
-
+		printf("dead pid: %d\n", dead);
 		/* Get the position (fd index) of dead child */
 		int i = 0;
 		for (i = 0; i < numActiveMonitors; i++){
@@ -418,4 +419,6 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 		send_data(write_fd[i], bufferSize, "end", 0);
 
 	}
+
+	printf("OUTSIDE REBORN\n");
 }

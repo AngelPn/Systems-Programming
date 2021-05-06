@@ -274,7 +274,10 @@ void handle_chld(int signo) { sig_chld_raised = signo; }
 void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
 	/* Signal sets to handle SIGINT/SIGQUIT, SIGUSR2 and SIGCHLD respectively */
-	struct sigaction act_intquit = {0}, act_usr = {0}, act_chld = {0};
+	struct sigaction act_intquit, act_usr, act_chld;
+	memset(&act_intquit, 0, sizeof(act_intquit));
+	memset(&act_usr, 0, sizeof(act_usr));
+	memset(&act_chld, 0, sizeof(act_chld));
 
     /* Identify the action to be taken when the signal signo is received */
     act_intquit.sa_handler = handle_intquit;
@@ -301,17 +304,20 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 
 	printf(GRN "\nEnter command:\n" RESET);
 
+	kill(monitors_pids[0], SIGKILL);
+
+	/* If a child process is dead, replace it */
+	// if (sig_chld_raised){
+	// 	printf("SIGCHLD raised\n");
+	
+		reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
+	// 	sig_chld_raised = 0;
+	// }
+
 	while (getline(&line, &len, stdin) != -1){
 
 		char *query = strtok(line, " \n");
-
-        /* If a child process is dead, replace it */
-        if (sig_chld_raised){
-			printf("SIGCHLD raised\n");
-			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
-			sig_chld_raised = 0;
-			continue;
-        }
+		reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
 
 		if (strcmp(query, "/travelRequest") == 0){
 			

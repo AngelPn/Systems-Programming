@@ -147,7 +147,7 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 	char *str_date = args[7];
 	
 	if (strcmp(check_vaccinated, "NO") == 0 && str_date != NULL){
-		printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
+		// printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 		return;
 	}
 	else{
@@ -168,7 +168,7 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		int citizenID = atoi(id);
 		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
 			if ((citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age))) == NULL){
-				printf(RED "ERROR: Given citizen's age is not between 0 and 120\n" RESET);
+				// printf(RED "ERROR: Given citizen's age is not between 0 and 120\n" RESET);
 				return;
 			}
 			else
@@ -177,9 +177,9 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		/* If citizen is already in hash tbale of citizens, cross-check given data */
 		else{
 			if (!cross_check(citizen, firstname, lastname, c, atoi(age))){
-				printf(RED "ERROR: Given citizen's data do not match with data in database\n" RESET
-						"Data in database:\n");
-				print_citizen(citizen);
+				// printf(RED "ERROR: Given citizen's data do not match with data in database\n" RESET
+				// 		"Data in database:\n");
+				// print_citizen(citizen);
 				return;
 			}
 		}
@@ -196,8 +196,8 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 
 			/* Make sure vaccinated citizen is not already in skip list */
 			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
-				printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
-				print_vaccinated_date(vaccinated_citizen);
+				// printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
+				// print_vaccinated_date(vaccinated_citizen);
 				return;
 			}
 			else{
@@ -205,7 +205,7 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 				if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
 					/* If process is file parsing, then this record is considered inconsistent, so dismiss insertion */
 					if (fileparse){
-						printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
+						// printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
 						return;
 					}
 					/* If process is queries, then remove citizen from not_vaccinated persons skip list */
@@ -219,7 +219,7 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 				/* Else, vaccinated date is current date */
 				if (str_date != NULL){
 					if ( (dateVaccinated = create_date(str_date)) == NULL){
-						printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT\n" RESET);
+						// printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT\n" RESET);
 						return;
 					}					
 				}
@@ -236,8 +236,8 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		else{
 			/* Make sure citizen is not already in vaccinated_persons skip list */
 			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
-				printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
-				print_vaccinated_date(vaccinated_citizen);
+				// printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
+				// print_vaccinated_date(vaccinated_citizen);
 				return;
 			}
 			else
@@ -322,8 +322,7 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 
 		char *line = receive_data(read_fd, bufferSize);
 		// printf("line: %s\n", line);
-		char *query = strtok(line, " \n");
-		printf("NOT blocking, query: %s, line: %s\n", query, line);
+
 		if (sig_intquit_raised){
 			printf("SIGΙΝΤ caught in monitor with PID = %d and PPID = %d\n", getpid(), getppid());
 
@@ -370,7 +369,8 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			continue;
 		}
 
-
+		char *query = strtok(line, " \n");
+		printf("NOT blocking, query: %s, line: %s\n", query, line);
 		if (strcmp(query, "/travelRequest") == 0){
 
 			char *id = strtok(NULL, " \n");
