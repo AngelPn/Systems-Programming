@@ -64,9 +64,11 @@ int main(int argc, char **argv){
 	if (HTEntries(ds.countries)){
 		/* Parse the files and build the structs */
 		fileParse_and_buildStructs(input_dir, bloomSize, &ds);
+		printf("FILES PARSED\n");
 
 		/* Send bloom filters to parent process */
 		send_bloomFilters(&ds, write_fd, bufferSize, bloomSize);
+		printf("BLOOM FILTERS SENT\n");
 
 		/* Execute queries*/
 		queries(&ds, input_dir, read_fd, write_fd, bufferSize, bloomSize);

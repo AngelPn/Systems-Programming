@@ -14,7 +14,6 @@
 #include <sys/select.h>
 
 #include "utils.h"
-#include "HashTable.h"
 #include "BloomFilter.h"
 #include "monitor.h"
 #include "ipc.h"
@@ -306,14 +305,6 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 
 	// kill(monitors_pids[0], SIGTERM);
 
-	/* If a child process is dead, replace it */
-	if (sig_chld_raised){
-		printf("SIGCHLD raised\n");
-	
-		reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
-		sig_chld_raised = 0;
-	}
-
 	while (true){
 
 		while (getline(&line, &len, stdin) != -1){
@@ -475,7 +466,9 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 			printf("SIGCHLD raised\n");
 		
 			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
+
 			sig_chld_raised = 0;
+			continue;
 		}
 	}
 

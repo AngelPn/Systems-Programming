@@ -96,6 +96,7 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 					free(line);
 					fclose(frecords);
 				}
+				closedir(countryDir);
 			}
 		}		
 	}
@@ -113,6 +114,7 @@ char *concat_int_to_str(const char str[], int i){
 
 void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize){
 
+	printf("INSIDE SEND BLOOM - ");
 	virus v = NULL;
 
 	/* For each of monitor's virus, send virus name and bloom filter of virus */
@@ -131,6 +133,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 	}
 	/* Inform the parent that monitor is ready to run queries */
 	send_data(write_fd, bufferSize, "ready", 0);
+	printf("OUTSIDE\n");
 }
 
 
