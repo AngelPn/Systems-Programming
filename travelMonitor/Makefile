@@ -46,3 +46,4 @@ clean:
 	rm -f $(EXEC)
 	rm -f $(EXEC_MONITOR)
 	rm -rf $(ODIR)
+	rm -rf tmp

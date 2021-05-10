@@ -83,7 +83,6 @@ int argumentHandling(int argc, char **argv, int *numMonitors, int *buffersize, i
 		printf(RED "ERROR: Invalid use of -i flag, the process will terminate\n" RESET);				
 		return 0;				
 	}
-
     return 1;
 }
 
@@ -224,7 +223,6 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
 
-	printf("utils - get_bloom_filters\n");
     /* Get bloom filters from monitors */
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, bufferSize, bloomSize, read_fd);
 
@@ -284,6 +282,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 				fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
 				
 				fclose(logfile);
+				free(filepath);
 				accepted = rejected = 0;
 			}
 		}
@@ -358,30 +357,30 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 			m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
 
 			/* Read the bloom filters from the pipe */
-			// read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
-			while (true){
-				virus_name = receive_data(read_fd[i], bufferSize);
-				if (!strcmp(virus_name, "ready")){
-					free(virus_name);
-					break;
-				}
-				// fprintf(stderr, "GBF-%s", virus_name);
+			read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
+			// while (true){
+			// 	virus_name = receive_data(read_fd[i], bufferSize);
+			// 	if (!strcmp(virus_name, "ready")){
+			// 		free(virus_name);
+			// 		break;
+			// 	}
+			// 	// fprintf(stderr, "GBF-%s", virus_name);
 
-				/* Check if virus is already in hash table of viruses of monitor */
-				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-				if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
-					v = create_virus_bloom(virus_name, bloomSize);
-					add_virus(m, v);
-				}
-				// fprintf(stderr, " -AND- ");
-				// bloom_filter = receive_data(read_fd[i], bufferSize);
-				bloom_filter = receive_BloomFilter(read_fd[i], bufferSize);
-				update_BloomFilter(v, bloom_filter);
-				// print_bl(get_bloom(v));
+			// 	/* Check if virus is already in hash table of viruses of monitor */
+			// 	/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+			// 	if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
+			// 		v = create_virus_bloom(virus_name, bloomSize);
+			// 		add_virus(m, v);
+			// 	}
+			// 	// fprintf(stderr, " -AND- ");
+			// 	// bloom_filter = receive_data(read_fd[i], bufferSize);
+			// 	bloom_filter = receive_BloomFilter(read_fd[i], bufferSize);
+			// 	update_BloomFilter(v, bloom_filter);
+			// 	// print_bl(get_bloom(v));
 
-				free(bloom_filter);
-				free(virus_name);
-			}
+			// 	free(bloom_filter);
+			// 	free(virus_name);
+			// }
 
             counter++;
 			FD_CLR(read_fd[i], &active);

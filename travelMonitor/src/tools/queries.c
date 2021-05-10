@@ -21,6 +21,7 @@
 #include "date.h"
 #include "queries.h"
 
+#define MAX_CMD_LEN 100
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
 #define YEL   "\033[1;33m"
@@ -256,6 +257,168 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 }
 
 
+void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir, bool *broke){
+	
+    int len = MAX_CMD_LEN;
+	char line[len];
+	printf("INSIDE execute_queries - ");
+
+	while (fgets(line, len, stdin) != NULL){
+		printf("query: %s\n", line);
+		char *query = strtok(line, " \n");
+
+		if (strcmp(query, "/travelRequest") == 0){
+			
+			char *args[5];
+			for (int i = 0; i < 5; i++){
+				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL){
+					printf( RED "\nERROR: Invalid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/travelRequest citizenID date countryFrom countryTo virusName\n"
+							GRN "\nEnter command:\n" RESET);
+					*broke = true;
+					break;
+				}
+			}
+			if (*broke){
+				*broke = false;
+				continue;
+			}
+			travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
+		}
+		else if (strcmp(query, "/travelStats") == 0){
+			
+			char *args[4];
+			for (int i = 0; i < 3; i++){
+				args[i] = strtok(NULL, " \n");
+
+				if (args[i] == NULL){
+					printf( RED "\nERROR: Invalid input\n" RESET
+							YEL "Input format for this command: " RESET
+							"/travelStats virusName date1 date2 [country]\n"
+							GRN "\nEnter command:\n" RESET);
+					*broke = true;
+					break;
+				}		
+			}
+			if (*broke){
+				*broke = false;
+				continue;
+			}
+			args[3] = strtok(NULL, " \n");
+			travelStats(args, monitors);
+		}
+		else if (strcmp(query, "/addVaccinationRecords") == 0){
+
+			char *country = strtok(NULL, " \n");
+			if (country == NULL){
+				printf( RED "\nERROR: Invalid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/addVaccinationRecords country\n"
+						GRN "\nEnter command:\n" RESET);
+				continue;
+			}
+			/* Find the monitor that handles country (m) */
+			monitor m = NULL;
+			virus_bloom v = NULL;
+			List head = NULL;
+			for (int i = 0; i < HTSize(*monitors); i++){
+				if ((head = get_HTchain(*monitors, i)) != NULL){
+					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+						m = list_node_item(head, node);
+						if (handles_country(m, country)){
+							*broke = true;
+							break;
+						}
+					}
+				}
+				if (*broke) break;
+			}
+			if (m == NULL){
+				printf(RED "\nERROR: Given country not in database\n" RESET);
+				return;
+			}
+			printf("send SIGUSR1\n");
+
+			int fd_index = get_fd_index(m);
+			pid_t monitor_pid = *((pid_t *)get_monitor_pid(m));
+			kill(monitor_pid, SIGUSR1);
+
+			/* Wait for the signal that informs that the monitor has written in its fd */
+			// while (!sig_usr_raised){ }
+			// sig_usr_raised = 0; /* reset value */
+
+			/* Read the bloom filters from the pipe */
+			while (true){
+				char *virus_name = receive_data(read_fd[fd_index], bufferSize);
+				if (!strcmp(virus_name, "ready")){
+					free(virus_name);
+					break;
+				}
+				// fprintf(stderr, "GBF-%s", virus_name);
+
+				/* Check if virus is already in hash table of viruses of monitor */
+				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
+				if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
+					v = create_virus_bloom(virus_name, bloomSize);
+					add_virus(m, v);
+				}
+				// fprintf(stderr, " -AND- ");
+				// bloom_filter = receive_data(read_fd[i], bufferSize);
+				char *bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
+				update_BloomFilter(v, bloom_filter);
+				// print_bl(get_bloom(v));
+
+				free(bloom_filter);
+				free(virus_name);
+			}
+			
+
+		}
+		else if (strcmp(query, "/searchVaccinationStatus") == 0){
+			char *id = strtok(NULL, " \n");
+			if (id == NULL){
+				printf( RED "\nERROR: Invalid input\n" RESET
+						YEL "Input format for this command: " RESET
+						"/searchVaccinationStatus citizenID\n"
+						GRN "\nEnter command:\n" RESET);
+				continue;
+			}
+			
+			/* Send the query to each of the monitors */
+			char searchQuery[strlen(query) + strlen(id) + 2];
+			snprintf(searchQuery, sizeof(searchQuery), "%s %s", query, id);
+			for (int i = 0; i < numActiveMonitors; i++){
+				send_data(write_fd[i], bufferSize, searchQuery, 0);
+			}
+
+			get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, read_fd);
+
+		}
+		/* Kill the children and create Log file at the caller function (aggregator) */
+		else if (strcmp(query, "/exit") == 0){
+			*broke = true;
+			break;
+		}
+		else
+			printf( RED "\nERROR: Invalid input\n" RESET
+				YEL "Input format for every command:\n" RESET
+				"/travelRequest citizenID date countryFrom countryTo virusName\n"
+				"/travelStats virusName date1 date2 [country]\n"
+				"/addVaccinationRecords country\n"
+				"/searchVaccinationStatus citizenID\n"
+				"/exit\n");
+
+
+		printf(GRN "\nEnter command:\n" RESET);
+
+	}
+	// free(line);
+
+	printf("OUTSIDE execut_queries\n");
+}
 
 /*  Shows whether a signal raised and awaits handling.
     0 if no signal is pending, else 1. */
@@ -265,213 +428,60 @@ static volatile sig_atomic_t sig_chld_raised;
 
 /* Functions to handle signals */
 void handle_intquit(int signo) { sig_intquit_raised = signo; }
-void handle_usr(int signo) { sig_usr_raised = signo; }
 void handle_chld(int signo) { sig_chld_raised = signo; }
-
 
 
 void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
-	/* Signal sets to handle SIGINT/SIGQUIT, SIGUSR2 and SIGCHLD respectively */
+	/* Signal sets to handle SIGINT/SIGQUIT and SIGCHLD respectively */
 	struct sigaction act_intquit, act_chld;
 	memset(&act_intquit, 0, sizeof(act_intquit));
-	// memset(&act_usr, 0, sizeof(act_usr));
 	memset(&act_chld, 0, sizeof(act_chld));
 
     /* Identify the action to be taken when the signal signo is received */
     act_intquit.sa_handler = handle_intquit;
-    // act_usr.sa_handler = handle_usr;
     act_chld.sa_handler = handle_chld;
 
     /* Create a full mask: the signals specified here will be
        blocked during the execution of the sa_handler. */
     sigfillset(&(act_intquit.sa_mask));
-    // sigfillset(&(act_usr.sa_mask));
     sigfillset(&(act_chld.sa_mask));
     
     /* Control specified signals */
 	sigaction(SIGINT, &act_intquit, NULL);
     sigaction(SIGQUIT, &act_intquit, NULL);    
-    // sigaction(SIGUSR2, &act_usr, NULL);
     sigaction(SIGCHLD, &act_chld, NULL);
 
 	/* Read input from stdin */
-	char *line = NULL;
-    size_t len = 0;
-	// virus v = NULL;
+	// char *line = NULL;
+    // size_t len = 0;
 	bool broke = false;
 
 	printf(GRN "\nEnter command:\n" RESET);
 
-	// kill(monitors_pids[0], SIGTERM);
-
 	while (true){
+		// char *line = NULL;
+		// size_t len = 0;
+		// bool broke = false;
+		// printf("!");
 
-		while (getline(&line, &len, stdin) != -1){
+		execute_queries(monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir, &broke);
 
-			char *query = strtok(line, " \n");
-
-			if (strcmp(query, "/travelRequest") == 0){
-				
-				char *args[5];
-				for (int i = 0; i < 5; i++){
-					args[i] = strtok(NULL, " \n");
-
-					if (args[i] == NULL){
-						printf( RED "\nERROR: Invalid input\n" RESET
-								YEL "Input format for this command: " RESET
-								"/travelRequest citizenID date countryFrom countryTo virusName\n"
-								GRN "\nEnter command:\n" RESET);
-						broke = true;
-						break;
-					}
-				}
-				if (broke){
-					broke = false;
-					continue;
-				}
-				travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
-			}
-			else if (strcmp(query, "/travelStats") == 0){
-				
-				char *args[4];
-				for (int i = 0; i < 3; i++){
-					args[i] = strtok(NULL, " \n");
-
-					if (args[i] == NULL){
-						printf( RED "\nERROR: Invalid input\n" RESET
-								YEL "Input format for this command: " RESET
-								"/travelStats virusName date1 date2 [country]\n"
-								GRN "\nEnter command:\n" RESET);
-						broke = true;
-						break;
-					}		
-				}
-				if (broke){
-					broke = false;
-					continue;
-				}
-				args[3] = strtok(NULL, " \n");
-				travelStats(args, monitors);
-			}
-			else if (strcmp(query, "/addVaccinationRecords") == 0){
-
-				char *country = strtok(NULL, " \n");
-				if (country == NULL){
-					printf( RED "\nERROR: Invalid input\n" RESET
-							YEL "Input format for this command: " RESET
-							"/addVaccinationRecords country\n"
-							GRN "\nEnter command:\n" RESET);
-					continue;
-				}
-				/* Find the monitor that handles country (m) */
-				monitor m = NULL;
-				virus_bloom v = NULL;
-				List head = NULL;
-				bool broke = false;
-				for (int i = 0; i < HTSize(*monitors); i++){
-					if ((head = get_HTchain(*monitors, i)) != NULL){
-						for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-							m = list_node_item(head, node);
-							if (handles_country(m, country)){
-								broke = true;
-								break;
-							}
-						}
-					}
-					if (broke) break;
-				}
-				if (m == NULL){
-					printf(RED "\nERROR: Given country not in database\n" RESET);
-					return;
-				}
-				printf("send SIGUSR1\n");
-
-				int fd_index = get_fd_index(m);
-				pid_t monitor_pid = *((pid_t *)get_monitor_pid(m));
-				kill(monitor_pid, SIGUSR1);
-
-				/* Wait for the signal that informs that the monitor has written in its fd */
-				// while (!sig_usr_raised){ }
-				// sig_usr_raised = 0; /* reset value */
-
-				/* Read the bloom filters from the pipe */
-				while (true){
-					char *virus_name = receive_data(read_fd[fd_index], bufferSize);
-					if (!strcmp(virus_name, "ready")){
-						free(virus_name);
-						break;
-					}
-					// fprintf(stderr, "GBF-%s", virus_name);
-
-					/* Check if virus is already in hash table of viruses of monitor */
-					/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-					if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
-						v = create_virus_bloom(virus_name, bloomSize);
-						add_virus(m, v);
-					}
-					// fprintf(stderr, " -AND- ");
-					// bloom_filter = receive_data(read_fd[i], bufferSize);
-					char *bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
-					update_BloomFilter(v, bloom_filter);
-					// print_bl(get_bloom(v));
-
-					free(bloom_filter);
-					free(virus_name);
-				}
-				
-
-			}
-			else if (strcmp(query, "/searchVaccinationStatus") == 0){
-				char *id = strtok(NULL, " \n");
-				if (id == NULL){
-					printf( RED "\nERROR: Invalid input\n" RESET
-							YEL "Input format for this command: " RESET
-							"/searchVaccinationStatus citizenID\n"
-							GRN "\nEnter command:\n" RESET);
-					continue;
-				}
-				
-				/* Send the query to each of the monitors */
-				char searchQuery[strlen(query) + strlen(id) + 2];
-				snprintf(searchQuery, sizeof(searchQuery), "%s %s", query, id);
-				for (int i = 0; i < numActiveMonitors; i++){
-					send_data(write_fd[i], bufferSize, searchQuery, 0);
-				}
-
-				get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, read_fd);
-
-			}
-			else if (strcmp(query, "/exit") == 0)
-				break; /* kill the children and create Log file at the caller function (aggregator) */
-			else
-				printf( RED "\nERROR: Invalid input\n" RESET
-					YEL "Input format for every command:\n" RESET
-					"/travelRequest citizenID date countryFrom countryTo virusName\n"
-					"/travelStats virusName date1 date2 [country]\n"
-					"/addVaccinationRecords country\n"
-					"/searchVaccinationStatus citizenID\n"
-					"/exit\n");
-
-
-			printf(GRN "\nEnter command:\n" RESET);
-
+		if (sig_intquit_raised || broke){ /* do the same as '/exit' */
+			// free(line);
+			break;
 		}
-
-		if (sig_intquit_raised){
-			break; /* do the same as '/exit' */
-		}
+			
 		/* If a child process is dead, replace it */
 		if (sig_chld_raised){
 			printf("SIGCHLD raised\n");
 		
 			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
 
+			
 			sig_chld_raised = 0;
-			continue;
 		}
+		
 	}
-
-
-	free(line);
+	
 }
