@@ -39,7 +39,6 @@ void print_ht_viruses(dataStore *ds){
 }
 
 void destroy_structs(dataStore *ds){
-    /* Deallocate memory */
     HTDestroy(ds->countries);
     HTDestroy(ds->citizens);
     HTDestroy(ds->viruses);

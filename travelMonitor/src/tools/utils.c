@@ -303,7 +303,6 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 			free(virus_name);
 			break;
 		}
-		// fprintf(stderr, "GBF-%s", virus_name);
 
 		/* Check if virus is already in hash table of viruses of monitor */
 		/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
@@ -311,11 +310,9 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 			v = create_virus_bloom(virus_name, bloomSize);
 			add_virus(m, v);
 		}
-		// fprintf(stderr, " -AND- ");
-		// bloom_filter = receive_data(read_fd[i], bufferSize);
+
 		bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
 		update_BloomFilter(v, bloom_filter);
-		// print_bl(get_bloom(v));
 
 		free(bloom_filter);
 		free(virus_name);
@@ -333,8 +330,6 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 	}
 	
 	monitor m = NULL;
-	virus_bloom v = NULL;
-	char *virus_name = NULL, *bloom_filter = NULL;
     int counter = 0;
 
 	/* For each of the active monitors, get the incoming bloom filters */
@@ -352,35 +347,12 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 			if (!(FD_ISSET(read_fd[i], &ready)))
 				continue;
-			fprintf(stderr, "\n-----------------------i=%d------------------------\n", i);
+
 			/* Get the monitor with specified PID */
 			m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
 
 			/* Read the bloom filters from the pipe */
 			read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
-			// while (true){
-			// 	virus_name = receive_data(read_fd[i], bufferSize);
-			// 	if (!strcmp(virus_name, "ready")){
-			// 		free(virus_name);
-			// 		break;
-			// 	}
-			// 	// fprintf(stderr, "GBF-%s", virus_name);
-
-			// 	/* Check if virus is already in hash table of viruses of monitor */
-			// 	/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-			// 	if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
-			// 		v = create_virus_bloom(virus_name, bloomSize);
-			// 		add_virus(m, v);
-			// 	}
-			// 	// fprintf(stderr, " -AND- ");
-			// 	// bloom_filter = receive_data(read_fd[i], bufferSize);
-			// 	bloom_filter = receive_BloomFilter(read_fd[i], bufferSize);
-			// 	update_BloomFilter(v, bloom_filter);
-			// 	// print_bl(get_bloom(v));
-
-			// 	free(bloom_filter);
-			// 	free(virus_name);
-			// }
 
             counter++;
 			FD_CLR(read_fd[i], &active);
@@ -391,7 +363,6 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
-	printf("\nINSIDE REBORN - ");
 	pid_t dead, reborn;
 	monitor m = NULL;
 	char *name1, *name2;
@@ -399,7 +370,7 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 	
 	/* Loop all the children, to see if they have died */
 	while ((dead = waitpid(-1, NULL, WNOHANG)) > 0) {
-		printf("dead pid: %d\n", dead);
+
 		/* Get the position (fd index) of dead child */
 		for (i = 0; i < numActiveMonitors; i++){
 			if (dead == monitors_pids[i])
@@ -435,12 +406,13 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 			perror("Error storing file desc in writing array");
 			exit(EXIT_FAILURE);
 		}
+		free(name1); free(name2);	
 		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
-		free(name1);
-		free(name2);
+
 
 		/* Get dead monitor from Hash Table and reborn it */
-		m = HTSearch(*monitors, &dead, compare_monitor);		
+		m = HTSearch(*monitors, &dead, compare_monitor);
+
 		HTDelete(*monitors, get_monitor_pid(m), compare_monitor, false); /* superficial delete of dead monitor from Hash Table */
 		change_pid(m, reborn);
 		HTInsert(monitors, m, get_monitor_pid);
@@ -455,5 +427,4 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 	}
 
 	read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
-	printf("OUTSIDE REBORN\n");
 }

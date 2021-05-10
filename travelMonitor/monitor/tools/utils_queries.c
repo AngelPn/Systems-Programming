@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <string.h>
 #include <signal.h>
 #include <sys/select.h>
 
@@ -23,7 +22,6 @@
 #define GRN   "\033[1;32m"
 #define YEL   "\033[1;33m"
 #define RESET "\033[0m"
-
 
 void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse);
 
@@ -41,7 +39,6 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 				char *country_name = get_country_name(list_node_item(head, node));
 				char subdirPath[strlen(input_dir) + strlen(country_name) + 2];
 				snprintf(subdirPath, sizeof(subdirPath), "%s/%s", input_dir, country_name);
-				// printf("country_name: %s, subdirPath: %s ->\n", country_name, subdirPath);
 
 				/* Open the country subdir */
 				DIR *countryDir;
@@ -64,7 +61,6 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 						free(filename);
 						continue;
 					}
-					// printf("%s: parse\n", filename);
 					list_insert_next(ds->parsed_files, NULL, filename);
 
 					/* Create the path of file */
@@ -83,16 +79,13 @@ void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
 					size_t len = 0;
 					
 					while (getline(&line, &len, frecords) != -1){
-
 						char *args[8];
-
 						args[0] = strtok(line, " ");
-						for (int i = 1; i < 8; ++i)
+						for (int i = 1; i < 8; i++)
 							args[i] = strtok(NULL, " \n");
 
 						insertCitizen(args, bytes, ds, true);   
 					}
-
 					free(line);
 					fclose(frecords);
 				}
@@ -114,7 +107,6 @@ char *concat_int_to_str(const char str[], int i){
 
 void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize){
 
-	printf("INSIDE SEND BLOOM - ");
 	virus v = NULL;
 
 	/* For each of monitor's virus, send virus name and bloom filter of virus */
@@ -133,7 +125,6 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 	}
 	/* Inform the parent that monitor is ready to run queries */
 	send_data(write_fd, bufferSize, "ready", 0);
-	printf("OUTSIDE\n");
 }
 
 
@@ -149,10 +140,8 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 	char *check_vaccinated = args[6];
 	char *str_date = args[7];
 	
-	if (strcmp(check_vaccinated, "NO") == 0 && str_date != NULL){
-		// printf(RED "ERROR IN RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
+	if (strcmp(check_vaccinated, "NO") == 0 && str_date != NULL)
 		return;
-	}
 	else{
 		country c = NULL;
 		citizenRecord citizen = NULL;
@@ -170,21 +159,15 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
 		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
-			if ((citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age))) == NULL){
-				// printf(RED "ERROR: Given citizen's age is not between 0 and 120\n" RESET);
+			if ((citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age))) == NULL)
 				return;
-			}
 			else
 				HTInsert(&(ds->citizens), citizen, get_citizenID);
 		}
 		/* If citizen is already in hash tbale of citizens, cross-check given data */
 		else{
-			if (!cross_check(citizen, firstname, lastname, c, atoi(age))){
-				// printf(RED "ERROR: Given citizen's data do not match with data in database\n" RESET
-				// 		"Data in database:\n");
-				// print_citizen(citizen);
+			if (!cross_check(citizen, firstname, lastname, c, atoi(age)))
 				return;
-			}
 		}
 
 		/* Check if virus is already in hash table of viruses */
@@ -198,19 +181,14 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		if (strcmp(check_vaccinated, "YES") == 0 || strcmp(check_vaccinated, "/vaccinateNow") == 0){
 
 			/* Make sure vaccinated citizen is not already in skip list */
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
-				// printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
-				// print_vaccinated_date(vaccinated_citizen);
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL)
 				return;
-			}
 			else{
 				/* Search first if citizen is in not_vaccinated_persons to remove it or dismiss insertion */
 				if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
 					/* If process is file parsing, then this record is considered inconsistent, so dismiss insertion */
-					if (fileparse){
-						// printf(RED "ERROR: INCONSISTENT RECORD %s %s %s %s %s %s %s %s\n" RESET, id, firstname, lastname, country_name, age, virusName, check_vaccinated, str_date);
+					if (fileparse)
 						return;
-					}
 					/* If process is queries, then remove citizen from not_vaccinated persons skip list */
 					else
 						SLRemove(get_not_vaccinated_persons(v), &citizenID, compare_citizen);
@@ -221,10 +199,8 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 				/* If user gave date, create date from given input */
 				/* Else, vaccinated date is current date */
 				if (str_date != NULL){
-					if ( (dateVaccinated = create_date(str_date)) == NULL){
-						// printf(RED "ERROR: DATE IS NOT IN RIGHT FORMAT\n" RESET);
-						return;
-					}					
+					if ( (dateVaccinated = create_date(str_date)) == NULL)
+						return;					
 				}
 				else
 					dateVaccinated = current_date();
@@ -238,11 +214,8 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		/* If citizen is not vaccinated, insert citizen to not_vaccinated_persons skip list*/
 		else{
 			/* Make sure citizen is not already in vaccinated_persons skip list */
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){
-				// printf(RED "ERROR: CITIZEN %d ALREADY VACCINATED ON " RESET, citizenID);
-				// print_vaccinated_date(vaccinated_citizen);
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL)
 				return;
-			}
 			else
 				SLInsert(get_not_vaccinated_persons(v), citizen, get_citizenID, compare_citizen);
 		}	
@@ -268,13 +241,11 @@ void send_vaccineStatus(dataStore *ds, int citizenID, int write_fd, int bufferSi
 					char vaccineStatus[strlen(virusName) + strlen(dateVaccinated) + 17];
 					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s VACCINATED ON %s\n", virusName, dateVaccinated);
 					free(dateVaccinated);
-					// printf("send: %s\n", vaccineStatus);
 					send_data(write_fd, bufferSize, vaccineStatus, 0);
 				}
 				else if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
 					char vaccineStatus[strlen(virusName) + 21];
 					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s NOT YET VACCINATED\n", virusName);
-					// printf("send: %s\n", vaccineStatus);
 					send_data(write_fd, bufferSize, vaccineStatus, 0);
 				}
 			}
@@ -294,7 +265,6 @@ static volatile sig_atomic_t sig_usr1_raised;
 /* Functions to handle signals */
 void handle_intquit(int signo) { sig_intquit_raised = signo; }
 void handle_usr1(int signo) { sig_usr1_raised = signo; }
-
 
 
 void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize){
@@ -318,13 +288,10 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
-	// country c = NULL;
 
 	while(true){
-		printf("in while loop\n");
 
 		char *line = receive_data(read_fd, bufferSize);
-		// printf("line: %s\n", line);
 
 		if (sig_intquit_raised){
 			printf("SIGΙΝΤ caught in monitor with PID = %d and PPID = %d\n", getpid(), getppid());
@@ -362,18 +329,15 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 		if (sig_usr1_raised) {
 			printf("SIGUSR1 caught in monitor with PID = %d and PPID = %d\n", getpid(), getppid());
 
-			/* Parse the added files */
 			fileParse_and_buildStructs(input_dir, bloomSize, ds);
-			// printf("PARSE DONE\n");
 			send_bloomFilters(ds, write_fd, bufferSize, bloomSize);
-			// printf("SENT BLOOM\n");
 			
 			sig_usr1_raised = 0; /* reset value */
 			continue;
 		}
 
 		char *query = strtok(line, " \n");
-		printf("NOT blocking, query: %s, line: %s\n", query, line);
+
 		if (strcmp(query, "/travelRequest") == 0){
 
 			char *id = strtok(NULL, " \n");
@@ -383,18 +347,13 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 				printf("Something went wrong\n");
 				exit(1);
 			}
-			// printf("\n--------------MONITOR----------\n");
-    		// print_bl(get_filter(v));
-			// if (!(BloomSearch(get_filter(v), id))){
-			// 	printf("NOT IN BLOOM FILTER");
-			// }
+
 			/* If citizen is in vaccinated_persons skip list */
 			int citizenID = atoi(id);
 			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){			
 				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
 				char response[strlen(str_date) + 5];
 				snprintf(response, sizeof(response), "%s%s", "YES ", str_date);
-				// printf("response: %s\n", response);
 				send_data(write_fd, bufferSize, response, 0);
 
 				free(str_date);
@@ -423,9 +382,8 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			citizenRecord c = NULL;
 			if ((c = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL)
 				continue;
-			// printf("found citizen: "); print_citizen(c);
+
 			char *citizen_info = get_citizen_info(c);
-			// printf("(utils_monitor)citizen_info: %s\n", citizen_info);
 			send_data(write_fd, bufferSize, citizen_info, 0);
 			send_vaccineStatus(ds, citizenID, write_fd, bufferSize);
 

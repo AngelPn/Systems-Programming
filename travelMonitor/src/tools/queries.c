@@ -261,10 +261,10 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 	
     int len = MAX_CMD_LEN;
 	char line[len];
-	printf("INSIDE execute_queries - ");
+	// printf("INSIDE execute_queries - ");
 
 	while (fgets(line, len, stdin) != NULL){
-		printf("query: %s\n", line);
+		// printf("query: %s\n", line);
 		char *query = strtok(line, " \n");
 
 		if (strcmp(query, "/travelRequest") == 0){
@@ -415,9 +415,8 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 		printf(GRN "\nEnter command:\n" RESET);
 
 	}
-	// free(line);
 
-	printf("OUTSIDE execut_queries\n");
+	// printf("OUTSIDE execute_queries\n");
 }
 
 /*  Shows whether a signal raised and awaits handling.
@@ -453,22 +452,15 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
     sigaction(SIGCHLD, &act_chld, NULL);
 
 	/* Read input from stdin */
-	// char *line = NULL;
-    // size_t len = 0;
 	bool broke = false;
 
 	printf(GRN "\nEnter command:\n" RESET);
 
 	while (true){
-		// char *line = NULL;
-		// size_t len = 0;
-		// bool broke = false;
-		// printf("!");
 
 		execute_queries(monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir, &broke);
 
 		if (sig_intquit_raised || broke){ /* do the same as '/exit' */
-			// free(line);
 			break;
 		}
 			
@@ -477,7 +469,6 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 			printf("SIGCHLD raised\n");
 		
 			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
-
 			
 			sig_chld_raised = 0;
 		}
