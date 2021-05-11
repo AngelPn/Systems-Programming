@@ -77,8 +77,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 	v2 = HTSearch(get_monitor_viruses(m2), virusName, compare_virus_bloomName);
 
 	date dateTravel = create_date(str_date);
-	// printf("\n--------------PARENT----------\n");
-	// print_bl(get_bloom(v));
+
 	/* Search in bloom filter of monitor m1 */
 	if (!(BloomSearch(get_bloom(v1), id))){
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
@@ -95,7 +94,6 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
-		// printf("query: %s\n", query);
 		int fd_index = get_fd_index(m1);
 		send_data(write_fd[fd_index], bufferSize, query, 0);
 
@@ -115,9 +113,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 			char *str_dateVaccinated = response + 4;
 			date dateVaccinated = create_date(str_dateVaccinated);
 			date date_6_months_later = six_months_later(dateVaccinated);
-			// printf("dateVaccinated: "); print_date(dateVaccinated);
-			// printf("dateTravel: "); print_date(dateTravel);
-			// printf("date 6 months later: "); print_date(date_6_months_later);
+
 			if (date_between(dateTravel, dateVaccinated, date_6_months_later)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
 
@@ -200,7 +196,7 @@ void travelStats(char *args[4], HashTable *monitors){
 
 		/* Check if virus is in hash table of viruses of monitors */
 		if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) == NULL){
-			printf(RED "\nERROR: Given virusName not in database\n" RESET);
+			printf(RED "\nERROR: Monitor does not handle this virus\n" RESET);
 			return;		
 		}
 		accepted += accepted_requests(v, date1, date2);
@@ -245,7 +241,6 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 					free(msg);
 					break;
 				}
-				// fprintf(stderr, "GBF-%s", virus_name);
 				printf("%s", msg);
 				free(msg);
 			}
@@ -261,14 +256,12 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 	
     int len = MAX_CMD_LEN;
 	char line[len];
-	// printf("INSIDE execute_queries - ");
 
 	while (fgets(line, len, stdin) != NULL){
-		// printf("query: %s\n", line);
+
 		char *query = strtok(line, " \n");
 
 		if (strcmp(query, "/travelRequest") == 0){
-			
 			char *args[5];
 			for (int i = 0; i < 5; i++){
 				args[i] = strtok(NULL, " \n");
@@ -289,7 +282,6 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
 		}
 		else if (strcmp(query, "/travelStats") == 0){
-			
 			char *args[4];
 			for (int i = 0; i < 3; i++){
 				args[i] = strtok(NULL, " \n");
@@ -311,7 +303,6 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			travelStats(args, monitors);
 		}
 		else if (strcmp(query, "/addVaccinationRecords") == 0){
-
 			char *country = strtok(NULL, " \n");
 			if (country == NULL){
 				printf( RED "\nERROR: Invalid input\n" RESET
@@ -340,15 +331,10 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 				printf(RED "\nERROR: Given country not in database\n" RESET);
 				return;
 			}
-			printf("send SIGUSR1\n");
 
 			int fd_index = get_fd_index(m);
 			pid_t monitor_pid = *((pid_t *)get_monitor_pid(m));
 			kill(monitor_pid, SIGUSR1);
-
-			/* Wait for the signal that informs that the monitor has written in its fd */
-			// while (!sig_usr_raised){ }
-			// sig_usr_raised = 0; /* reset value */
 
 			/* Read the bloom filters from the pipe */
 			while (true){
@@ -357,7 +343,6 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 					free(virus_name);
 					break;
 				}
-				// fprintf(stderr, "GBF-%s", virus_name);
 
 				/* Check if virus is already in hash table of viruses of monitor */
 				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
@@ -365,17 +350,12 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 					v = create_virus_bloom(virus_name, bloomSize);
 					add_virus(m, v);
 				}
-				// fprintf(stderr, " -AND- ");
-				// bloom_filter = receive_data(read_fd[i], bufferSize);
 				char *bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
 				update_BloomFilter(v, bloom_filter);
-				// print_bl(get_bloom(v));
 
 				free(bloom_filter);
 				free(virus_name);
 			}
-			
-
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 			char *id = strtok(NULL, " \n");
@@ -393,9 +373,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			for (int i = 0; i < numActiveMonitors; i++){
 				send_data(write_fd[i], bufferSize, searchQuery, 0);
 			}
-
 			get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, read_fd);
-
 		}
 		/* Kill the children and create Log file at the caller function (aggregator) */
 		else if (strcmp(query, "/exit") == 0){
@@ -411,12 +389,8 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 				"/searchVaccinationStatus citizenID\n"
 				"/exit\n");
 
-
 		printf(GRN "\nEnter command:\n" RESET);
-
 	}
-
-	// printf("OUTSIDE execute_queries\n");
 }
 
 /*  Shows whether a signal raised and awaits handling.
@@ -428,7 +402,6 @@ static volatile sig_atomic_t sig_chld_raised;
 /* Functions to handle signals */
 void handle_intquit(int signo) { sig_intquit_raised = signo; }
 void handle_chld(int signo) { sig_chld_raised = signo; }
-
 
 void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
@@ -460,19 +433,14 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 
 		execute_queries(monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir, &broke);
 
-		if (sig_intquit_raised || broke){ /* do the same as '/exit' */
+		/* If SIGINT/SIGQUIT is raised or execution of queries broke, exit app*/
+		if (sig_intquit_raised || broke)
 			break;
-		}
 			
-		/* If a child process is dead, replace it */
+		/* If a child process is dead, replace it and continue execution of queries */
 		if (sig_chld_raised){
-			printf("SIGCHLD raised\n");
-		
 			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
-			
 			sig_chld_raised = 0;
 		}
-		
 	}
-	
 }

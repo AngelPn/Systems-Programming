@@ -140,19 +140,15 @@ void HTInsert(HashTable *pht, void *item, GetKey key){
 	}
 }
 
-void HTDelete(HashTable ht, void *key, CompareFunc compare, bool default_destroy){
+void HTDelete(HashTable ht, void *key, CompareFunc compare, DestroyFunc destroy_item){
 
 	int h = Hash(ht, ht->keytype, key); /*Find the index of key*/
 	List head = ht->chains[h]; /*head is the linked list of the key we are searching for*/
 
 	if (head != NULL){
-		if (default_destroy)
-			list_remove(head, list_find(head, key, compare));
-		else{
-			list_set_destroy_item(head, NULL);
-			list_remove(head, list_find(head, key, compare));
-			list_set_destroy_item(head, ht->destroy_item);
-		}	
+		list_set_destroy_item(head, destroy_item);
+		list_remove(head, list_find_node(head, key, compare));
+		list_set_destroy_item(head, ht->destroy_item);
 		
 		if (list_length(head) == 0){
 			list_destroy(head);

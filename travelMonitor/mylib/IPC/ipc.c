@@ -1,18 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <dirent.h> 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/select.h>
-#include <stdint.h>
 
 #include "ipc.h"
 
@@ -20,12 +11,9 @@ char *receive_data(int fd, int bufferSize){
 
 	/* Read the dataSize */
 	int dataSize;
-	// printf("IPC blocking\n");
 	/* If read fails due to an interupt, return NULL */
 	if ((read(fd, &dataSize, sizeof(int)) == -1) && (errno == EINTR)) 
 		return NULL;
-	// printf("IPC NOT blocking\n");
-	// fprintf(stderr, "dataSize=%d: ", dataSize);
 
 	char *data = (char *)malloc(sizeof(char)*(dataSize + 1));
 	char buffer[bufferSize];
@@ -45,19 +33,15 @@ char *receive_data(int fd, int bufferSize){
 		total_read_bytes += read_bytes;
 		bytes = total_read_bytes;
 	}
-
 	data[dataSize] = '\0';
-	// printf("data: %s, read dataSize: %d, total_read: %d\n", data, dataSize, total_read_bytes);
 	return data;
 }
 
 void send_data(int fd, int bufferSize, char *data, int dataSize){
 
 	/* Write the dataSize in front of the message */
-	if (dataSize == 0){
+	if (dataSize == 0)
 		dataSize = strlen(data);
-		
-	}
 	write(fd, &dataSize, sizeof(int));
 
 	char buffer[bufferSize];
@@ -76,8 +60,8 @@ void send_data(int fd, int bufferSize, char *data, int dataSize){
 		}
 		total_written_bytes += written_bytes;
 	}
-	// printf("data: %s, write dataSize: %d, total_written: %d\n", data, dataSize, total_written_bytes);
 }
+
 
 void receive_init(int fd, int *bufferSize, int *bloomSize, char **input_dir){
 	read(fd, bufferSize, sizeof(int));
@@ -91,13 +75,13 @@ void send_init(int fd, int bufferSize, int bloomSize, char *input_dir){
 	send_data(fd, bufferSize, input_dir, 0);
 }
 
+
 char *receive_BloomFilter(int fd, int bufferSize){
 
 	/* Read the dataSize */
 	int dataSize;
 	if ((read(fd, &dataSize, sizeof(int)) == -1) && (errno == EINTR)) 
 		return NULL;
-	// fprintf(stderr, "dataSize=%d: ", dataSize);
 
 	char *data = (char *)malloc(sizeof(char)*(dataSize));
 	char buffer[bufferSize];

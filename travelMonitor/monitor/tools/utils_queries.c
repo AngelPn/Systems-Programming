@@ -118,8 +118,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 				v = list_node_item(head, node);
 				char *virusName =  (char *)get_virusName(v);
 				send_data(write_fd, bufferSize, virusName, 0);
-				// send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
-				send_bloom_filter(get_filter(v), write_fd, bufferSize);
+				send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
 			}
 		}
 	}
@@ -256,7 +255,6 @@ void send_vaccineStatus(dataStore *ds, int citizenID, int write_fd, int bufferSi
 }
 
 
-
 /*  Shows whether a signal raised and awaits handling.
     0 if no signal is pending, else 1. */
 static volatile sig_atomic_t sig_intquit_raised;
@@ -265,7 +263,6 @@ static volatile sig_atomic_t sig_usr1_raised;
 /* Functions to handle signals */
 void handle_intquit(int signo) { sig_intquit_raised = signo; }
 void handle_usr1(int signo) { sig_usr1_raised = signo; }
-
 
 void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize){
 
@@ -294,7 +291,6 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 		char *line = receive_data(read_fd, bufferSize);
 
 		if (sig_intquit_raised){
-			printf("SIGΙΝΤ caught in monitor with PID = %d and PPID = %d\n", getpid(), getppid());
 
 			/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
     		mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
@@ -327,8 +323,6 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			continue;
 		}		
 		if (sig_usr1_raised) {
-			printf("SIGUSR1 caught in monitor with PID = %d and PPID = %d\n", getpid(), getppid());
-
 			fileParse_and_buildStructs(input_dir, bloomSize, ds);
 			send_bloomFilters(ds, write_fd, bufferSize, bloomSize);
 			
@@ -362,17 +356,6 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			else{
 				send_data(write_fd, bufferSize, "NO", 0);
 			}
-				
-
-		}
-		else if (strcmp(query, "/request") == 0){
-
-			char *response = strtok(NULL, " \n");
-			if (strcmp(response, "accepted"))
-				(ds->accepted_requests)++;
-			else
-				(ds->rejected_requests)++;
-
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 
@@ -388,15 +371,14 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			send_vaccineStatus(ds, citizenID, write_fd, bufferSize);
 
 			free(citizen_info);
-
 		}
-		else if (strcmp(query, "/exit") == 0){
-
+		else{
+			char *response = strtok(NULL, " \n");
+			if (strcmp(response, "accepted"))
+				(ds->accepted_requests)++;
+			else
+				(ds->rejected_requests)++;			
 		}
-		else if (query == NULL){/* Check for a possible signal */
-			printf("here\n");
-		}
-
 		free(line);
 	}
 }

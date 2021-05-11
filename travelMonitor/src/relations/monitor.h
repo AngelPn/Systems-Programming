@@ -14,6 +14,9 @@ typedef struct monitor_struct *monitor;
 /* Creates monitor_struct */
 monitor create_monitor(pid_t pid, int fd_index);
 
+/* Copy constructor of monitor cm */
+monitor create_copy_monitor(pid_t pid, monitor cm);
+
 /* Returns pointer to pid of monitor_struct */
 void *get_monitor_pid(void *m);
 
@@ -33,9 +36,6 @@ HashTable get_monitor_viruses(void *m);
 int get_total_accepted(monitor m);
 int get_total_rejected(monitor m);
 
-/* Changes the pid of monitor, in case of reborn */
-void change_pid(monitor m, pid_t new_pid);
-
 /* Adds country in list of countries in monitor */
 void add_country(monitor m, char *country);
 
@@ -54,5 +54,8 @@ int compare_monitor(void *key, void *m);
 
 /* Deallocates memory of monitor_struct */
 void destroy_monitor(void *m);
+
+/* Destroys copy constructor */
+void destroy_copy_monitor(void *m);
 
 #endif

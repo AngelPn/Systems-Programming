@@ -31,9 +31,8 @@ void *HTSearch(HashTable ht, void *key, CompareFunc compare);
 /* Inserts item in Hash Table with key specified by GetKey */
 void HTInsert(HashTable *pht, void *item, GetKey key);
 
-/* Deletes item in Hash Table specified by key 
-   If default is false, the destroy func is set to NULL */
-void HTDelete(HashTable ht, void *key, CompareFunc compare, bool default_destroy);
+/* Deletes item in Hash Table specified by key with DestroyFunc */
+void HTDelete(HashTable ht, void *key, CompareFunc compare, DestroyFunc destroy_item);
 
 /* Visits every node of Hash Table and calls visit function passed with arg key */
 void HTVisit(HashTable ht, VisitFunc visit, int key);

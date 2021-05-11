@@ -27,6 +27,19 @@ monitor create_monitor(pid_t pid, int fd_index){
     return m;
 }
 
+monitor create_copy_monitor(pid_t pid, monitor cm){
+    monitor m = (monitor)malloc(sizeof(struct monitor_struct));
+
+    m->pid = pid;
+    m->fd_index = cm->fd_index;
+    m->countries = cm->countries;
+    m->viruses = cm->viruses;
+    m->total_accepted = cm->total_accepted;
+    m->total_rejected = cm->total_rejected;
+
+    return m;   
+}
+
 void *get_monitor_pid(void *m){
     monitor nm = m;
     return &(nm->pid);
@@ -62,10 +75,6 @@ int get_total_accepted(monitor m){
 
 int get_total_rejected(monitor m){
     return m->total_rejected;
-}
-
-void change_pid(monitor m, pid_t new_pid){
-    m->pid = new_pid;
 }
 
 void add_country(monitor m, char *country){
@@ -109,5 +118,10 @@ void destroy_monitor(void *m){
     monitor nm = m;
     list_destroy(nm->countries);
     HTDestroy(nm->viruses);
+    free(nm);
+}
+
+void destroy_copy_monitor(void *m){
+    monitor nm = m;
     free(nm);
 }

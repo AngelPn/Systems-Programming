@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <string.h>
 #include <signal.h>
 #include <sys/select.h>
 
@@ -292,6 +291,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	HTDestroy(monitors);	
 }
 
+/* Gets bloom filters from specified file descriptor (fd_index) */
 void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, int *read_fd){
 
 	virus_bloom v = NULL;
@@ -364,7 +364,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 
 	pid_t dead, reborn;
-	monitor m = NULL;
+	monitor m = NULL, reborn_m = NULL;
 	char *name1, *name2;
 	int i = 0;
 	
@@ -409,22 +409,19 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 		free(name1); free(name2);	
 		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
 
-
 		/* Get dead monitor from Hash Table and reborn it */
 		m = HTSearch(*monitors, &dead, compare_monitor);
-
-		HTDelete(*monitors, get_monitor_pid(m), compare_monitor, false); /* superficial delete of dead monitor from Hash Table */
-		change_pid(m, reborn);
-		HTInsert(monitors, m, get_monitor_pid);
-
+		reborn_m = create_copy_monitor(reborn, m);
+		HTInsert(monitors, reborn_m, get_monitor_pid);
+		HTDelete(*monitors, get_monitor_pid(m), compare_monitor, destroy_copy_monitor);
+		
 		/* Send the names of countries that new child will handle through pipe */
-		List m_countries = get_monitor_countries(m);
+		List m_countries = get_monitor_countries(reborn_m);
 		for (ListNode node = list_first(m_countries); node != NULL; node = list_next(m_countries, node)){
 			send_data(write_fd[i], bufferSize, (char *)list_node_item(m_countries, node), 0);
 		}
 		send_data(write_fd[i], bufferSize, "end", 0);
-
 	}
-
-	read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
+	/* Read the bloom filters the reborn child has sent */
+	read_bloom_filters(i, reborn_m, bufferSize, bloomSize, read_fd);
 }

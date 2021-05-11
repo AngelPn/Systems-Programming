@@ -41,16 +41,6 @@ char *get_array(BloomFilter bf){
     return bf->array;
 }
 
-void print_bl(BloomFilter bf){
-    printf("bloomSize: %d\n",(int)bf->size);
-    for (int i = 0; i < (int)bf->size; i++)
-        printf("%d", (int)bf->array[i]);
-}
-
-void send_bloom_filter(BloomFilter bf, int fd, int bufferSize){
-    send_data(fd, bufferSize, bf->array, bf->size);
-}
-
 unsigned long hash_i(unsigned char *str, unsigned int i);
 
 void BloomInsert(BloomFilter bf, void *item){
