@@ -27,7 +27,7 @@
 #define YEL   "\033[1;33m"
 #define RESET "\033[0m"
 
-void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read_fd, int *write_fd){
+void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int bufferSize, int *read_fd, int *write_fd){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
@@ -68,13 +68,16 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		return;
 	}
 
-	/* Check if virus is in hash table of viruses of monitors */
+	/* Check if virus is in hash table of viruses of monitors.
+	   If not, create the virus and insert it. */
 	if ((v1 = HTSearch(get_monitor_viruses(m1), virusName, compare_virus_bloomName)) == NULL){
-		printf(RED "\nERROR: Given virusName not in database\n" RESET);
-		return;		
+		v1 = create_virus_bloom(virusName, bloomSize);
+		add_virus(m1, v1);
 	}
-	/* If v2 == NULL, the monitor m2 does not check vaccinations for the virus */
-	v2 = HTSearch(get_monitor_viruses(m2), virusName, compare_virus_bloomName);
+	if ((v2 = HTSearch(get_monitor_viruses(m2), virusName, compare_virus_bloomName)) == NULL){
+		v2 = create_virus_bloom(virusName, bloomSize);
+		add_virus(m2, v2);	
+	}
 
 	date dateTravel = create_date(str_date);
 
@@ -82,12 +85,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 	if (!(BloomSearch(get_bloom(v1), id))){
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-		if (v2 != NULL){
-			list_insert_next(get_rejected(v2), NULL, dateTravel); /* save dateTravel as rejected request*/
-			increase_rejected_requests(m2); /* increase counter of rejected requests*/
-            /* Inform monitor that handles countryTo (m2) that the request was rejected*/
-            send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
-		}	
+		list_insert_next(get_rejected(v2), NULL, dateTravel); /* save dateTravel as rejected request*/
+		increase_rejected_requests(m2); /* increase counter of rejected requests*/
+		/* Inform monitor that handles countryTo (m2) that the request was rejected*/
+		send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
 	}
 	else{
 		/* Create the query and write it to pipe */
@@ -102,12 +103,10 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 		if (!strcmp(response, "NO")){
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-			if (v2 != NULL){
-				list_insert_next(get_rejected(v2), NULL, dateTravel);
-				increase_rejected_requests(m2);
-                /* Inform monitor that handles countryTo (m2) that the request was rejected*/
-                send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
-			}
+			list_insert_next(get_rejected(v2), NULL, dateTravel);
+			increase_rejected_requests(m2);
+			/* Inform monitor that handles countryTo (m2) that the request was rejected*/
+			send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
 		}
 		else{
 			char *str_dateVaccinated = response + 4;
@@ -117,22 +116,18 @@ void travelRequest(char *args[5], HashTable *monitors, int bufferSize, int *read
 			if (date_between(dateTravel, dateVaccinated, date_6_months_later)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
 
-				if (v2 != NULL){
-					list_insert_next(get_accepted(v2), NULL, dateTravel);
-					increase_accepted_requests(m2);
-                    /* Inform monitor that handles countryTo (m2) that the request was accepted*/
-                    send_data(write_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
-				}
+				list_insert_next(get_accepted(v2), NULL, dateTravel);
+				increase_accepted_requests(m2);
+				/* Inform monitor that handles countryTo (m2) that the request was accepted*/
+				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
 			}
 			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
 
-				if (v2 != NULL){
-					list_insert_next(get_rejected(v2), NULL, dateTravel);
-					increase_rejected_requests(m2);
-                    /* Inform monitor that handles countryTo (m2) that the request was rejected*/
-                    send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
-				}
+				list_insert_next(get_rejected(v2), NULL, dateTravel);
+				increase_rejected_requests(m2);
+				/* Inform monitor that handles countryTo (m2) that the request was rejected*/
+				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
 			}
 			free(dateVaccinated); free(date_6_months_later);		
 		}
@@ -279,7 +274,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 				*broke = false;
 				continue;
 			}
-			travelRequest(args, monitors, bufferSize, read_fd, write_fd);	
+			travelRequest(args, monitors, bloomSize, bufferSize, read_fd, write_fd);	
 		}
 		else if (strcmp(query, "/travelStats") == 0){
 			char *args[4];
@@ -427,7 +422,7 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 	/* Read input from stdin */
 	bool broke = false;
 
-	printf(GRN "\nEnter command:\n" RESET);
+	printf(GRN "Enter command:\n" RESET);
 
 	while (true){
 
