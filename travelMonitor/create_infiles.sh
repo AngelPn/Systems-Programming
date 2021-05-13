@@ -30,8 +30,12 @@ else
     exit 1
 fi
 
+# Declare an associative array to keep track of the last written file in country subdir
+declare -A assArray
+
 # Go through each line of inputFile
 while IFS= read -r line; do
+
     # Split line string to get the country
     IFS=' ' read -ra words <<< "$line"
     country=${words[3]}
@@ -40,40 +44,19 @@ while IFS= read -r line; do
     cd ${input_dir}
     if [ ! -e ${country} ]; then
         mkdir ${country}
+        assArray[${country}]=1
     fi
 
     # Go to country dir and store all records of this country to country-file
     cd ${country}
-    echo $line >> "$country-file"
+    echo $line >> "$country-${assArray[${country}]}.txt"
+
+    # Distribute round-robin the lines in files
+    i=$(( ${assArray[${country}]} + 1 ))
+    if [ ${i} -gt ${numFilesPerDirectory} ]; then
+        i=1
+    fi
+    assArray[${country}]=${i}
 
     cd ../..
 done < "$inputFile"
-
-# Go to input dir
-cd ${input_dir}
-# Loop through country directories in input dir
-for country in * ; do
-    # Go to country dir
-    cd ${country}
-    # Get the number of records in country file
-    num_recs=${#country[@]}
-
-    # For each of the records in country file,
-    # distribute round-robin the lines in files 
-    i=1
-    while IFS= read -r line; do
-        echo $line >> "$country-$i.txt"
-
-        i=$(( $i + 1 ))
-        if [ ${i} -gt ${numFilesPerDirectory} ]; then
-            i=1
-        fi
-    done < "$country-file"
-
-    # Remove country-file
-    rm -f "$country-file"
-    
-    cd ..
-done
-
-cd ..
