@@ -85,8 +85,8 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 	if (!(BloomSearch(get_bloom(v1), id))){
 		printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-		list_insert_next(get_rejected(v2), NULL, dateTravel); /* save dateTravel as rejected request*/
-		increase_rejected_requests(m2); /* increase counter of rejected requests*/
+		/* Increase counter of rejected requests and save dateTravel */
+		increase_rejected_requests(m2, v2, dateTravel, countryTo);
 		/* Inform monitor that handles countryTo (m2) that the request was rejected*/
 		send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
 	}
@@ -103,8 +103,8 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 		if (!strcmp(response, "NO")){
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
-			list_insert_next(get_rejected(v2), NULL, dateTravel);
-			increase_rejected_requests(m2);
+			/* Increase counter of rejected requests and save dateTravel */
+			increase_rejected_requests(m2, v2, dateTravel, countryTo);
 			/* Inform monitor that handles countryTo (m2) that the request was rejected*/
 			send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
 		}
@@ -116,16 +116,16 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 			if (date_between(dateTravel, dateVaccinated, date_6_months_later)){
 				printf("REQUEST ACCEPTED - HAPPY TRAVELS\n");
 
-				list_insert_next(get_accepted(v2), NULL, dateTravel);
-				increase_accepted_requests(m2);
+				/* Increase counter of accepted requests and save dateTravel */
+				increase_accepted_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was accepted*/
 				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
 			}
 			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
 
-				list_insert_next(get_rejected(v2), NULL, dateTravel);
-				increase_rejected_requests(m2);
+				/* Increase counter of rejected requests and save dateTravel */
+				increase_rejected_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was rejected*/
 				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
 			}
@@ -162,8 +162,8 @@ void travelStats(char *args[4], HashTable *monitors){
 				for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 					m = list_node_item(head, node);
 					if ((v = HTSearch(get_monitor_viruses(m), virusName, compare_virus_bloomName)) != NULL){
-						accepted += accepted_requests(v, date1, date2);
-						rejected += rejected_requests(v, date1, date2);
+						accepted += total_accepted_requests(v, date1, date2);
+						rejected += total_rejected_requests(v, date1, date2);
 					}
 				}
 			}
@@ -194,8 +194,8 @@ void travelStats(char *args[4], HashTable *monitors){
 			printf(RED "\nERROR: Monitor does not handle this virus\n" RESET);
 			return;		
 		}
-		accepted += accepted_requests(v, date1, date2);
-		rejected += rejected_requests(v, date1, date2);
+		accepted += total_accepted_requests_for_country(v, date1, date2, country);
+		rejected += total_rejected_requests_for_country(v, date1, date2, country);
 	}
 	printf("TRAVEL REQUESTS %d\n"
 			"ACCEPTED %d\n"

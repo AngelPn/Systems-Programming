@@ -374,7 +374,7 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 		}
 		else{
 			char *response = strtok(NULL, " \n");
-			if (strcmp(response, "accepted"))
+			if (strcmp(response, "accepted") == 0)
 				(ds->accepted_requests)++;
 			else
 				(ds->rejected_requests)++;	

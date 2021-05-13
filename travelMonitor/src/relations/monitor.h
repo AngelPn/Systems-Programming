@@ -7,6 +7,7 @@
 #include "List.h"
 #include "HashTable.h"
 #include "virus_bloom.h"
+#include "date.h"
 
 /* "struct monitor_struct" is incomplete struct */
 typedef struct monitor_struct *monitor;
@@ -42,14 +43,14 @@ void add_country(monitor m, char *country);
 /* Adds virus in hash table of viruses in monitor */
 void add_virus(monitor m, virus_bloom v);
 
-/* Increases accepted/rejected counter of monitor */
-void increase_accepted_requests(monitor m);
-void increase_rejected_requests(monitor m);
+/* Increases accepted/rejected counter of monitor and saves dateTravel */
+void increase_accepted_requests(monitor m, virus_bloom v, date dateTravel, char *countryTo);
+void increase_rejected_requests(monitor m, virus_bloom v, date dateTravel, char *countryTo);
 
 /*Prints the fields of monitor */
 void print_monitor(void *m);
 
-/* Compares key with pied of monitor v */
+/* Compares key with key (pid) of monitor m */
 int compare_monitor(void *key, void *m);
 
 /* Deallocates memory of monitor_struct */

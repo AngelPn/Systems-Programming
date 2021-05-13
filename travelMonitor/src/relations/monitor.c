@@ -86,12 +86,14 @@ void add_virus(monitor m, virus_bloom v){
     HTInsert(&(m->viruses), v, get_virus_bloomName);
 }
 
-void increase_accepted_requests(monitor m){
+void increase_accepted_requests(monitor m, virus_bloom v, date dateTravel, char *countryTo){
     (m->total_accepted)++;
+    insert_date_accepted_requests(v, dateTravel, countryTo);
 }
 
-void increase_rejected_requests(monitor m){
+void increase_rejected_requests(monitor m, virus_bloom v, date dateTravel, char *countryTo){
     (m->total_rejected)++;
+    insert_date_rejected_requests(v, dateTravel, countryTo);
 }
 
 void print_monitor(void *m){
