@@ -52,7 +52,7 @@ char *get_citizen_info(citizenRecord rec){
     char *age = concat_int_to_str("", rec->age);
     char *countryName = get_country_name(rec->cntry);
 
-    size_t len = strlen(id) + strlen(rec->firstname) + strlen(rec->firstname) + strlen(countryName) + strlen(age) + 10;
+    size_t len = strlen(id) + strlen(rec->firstname) + strlen(rec->lastname) + strlen(countryName) + strlen(age) + 10;
     char *info = (char *)malloc(sizeof(char)*len);
     snprintf(info, len, "%s %s %s %s\nAGE %s\n", id, rec->firstname, rec->lastname, countryName, age);
 

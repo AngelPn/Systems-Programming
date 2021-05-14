@@ -17,8 +17,8 @@ country_requests create_country_requests(char *countryName){
     c->countryName = (char *)malloc(sizeof(char)*(strlen(countryName)+1));
     strcpy(c->countryName, countryName);
 
-    c->accepted_requests = list_create(free);
-    c->rejected_requests = list_create(free);
+    c->accepted_requests = list_create(NULL);
+    c->rejected_requests = list_create(NULL);
 
     return c;
 }

@@ -15,7 +15,6 @@
 #include "utils.h"
 #include "HashTable.h"
 #include "BloomFilter.h"
-#include "monitor.h"
 #include "ipc.h"
 #include "virus_bloom.h"
 #include "date.h"

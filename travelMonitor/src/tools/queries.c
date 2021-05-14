@@ -249,6 +249,8 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir, bool *broke){
 	
+	printf(GRN "Enter command:\n" RESET);
+
     int len = MAX_CMD_LEN;
 	char line[len];
 
@@ -308,7 +310,6 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			}
 			/* Find the monitor that handles country (m) */
 			monitor m = NULL;
-			virus_bloom v = NULL;
 			List head = NULL;
 			for (int i = 0; i < HTSize(*monitors); i++){
 				if ((head = get_HTchain(*monitors, i)) != NULL){
@@ -320,7 +321,10 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 						}
 					}
 				}
-				if (*broke) break;
+				if (*broke){
+					*broke = false;
+					break;
+				}
 			}
 			if (m == NULL){
 				printf(RED "\nERROR: Given country not in database\n" RESET);
@@ -332,25 +336,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			kill(monitor_pid, SIGUSR1);
 
 			/* Read the bloom filters from the pipe */
-			while (true){
-				char *virus_name = receive_data(read_fd[fd_index], bufferSize);
-				if (!strcmp(virus_name, "ready")){
-					free(virus_name);
-					break;
-				}
-
-				/* Check if virus is already in hash table of viruses of monitor */
-				/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
-				if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
-					v = create_virus_bloom(virus_name, bloomSize);
-					add_virus(m, v);
-				}
-				char *bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
-				update_BloomFilter(v, bloom_filter);
-
-				free(bloom_filter);
-				free(virus_name);
-			}
+			read_bloom_filters(fd_index, m, bufferSize, bloomSize, read_fd);
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 			char *id = strtok(NULL, " \n");
@@ -422,8 +408,6 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 	/* Read input from stdin */
 	bool broke = false;
 
-	printf(GRN "Enter command:\n" RESET);
-
 	while (true){
 
 		execute_queries(monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir, &broke);
@@ -434,6 +418,7 @@ void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *moni
 			
 		/* If a child process is dead, replace it and continue execution of queries */
 		if (sig_chld_raised){
+			printf(YEL "A child process terminated. Wait for the replacement...\n\n" RESET);
 			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
 			sig_chld_raised = 0;
 		}
