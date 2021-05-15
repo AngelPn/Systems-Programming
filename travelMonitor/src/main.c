@@ -10,7 +10,7 @@ int main(int argc, char **argv){
     if(!argumentHandling(argc, argv, &numMonitors, &bufferSize, &bloomSize, &input_dir))
         exit(EXIT_FAILURE);
 
-    aggregator(numMonitors, bufferSize, bloomSize, input_dir);
+    aggregation(numMonitors, bufferSize, bloomSize, input_dir);
 
 	return 0;
 }

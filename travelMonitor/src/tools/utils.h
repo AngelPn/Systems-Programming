@@ -8,8 +8,8 @@
     numMonitors, buffersize, bloomsize, input_dir */
 int argumentHandling(int argc, char **argv, int *numMonitors, int *buffersize, int *bloomsize, char **input_dir);
 
-/* Creates monitors, named pipes and executes queries */
-void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir);
+/* Creates monitors, named pipes, executes queries and exits */
+void aggregation(int numMonitors, int bufferSize, int bloomSize, char *input_dir);
 
 /* Gets bloom filters from named pipe with specified fd */
 void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, int *read_fd);

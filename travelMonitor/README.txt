@@ -20,7 +20,7 @@
     > relations
     > tools
     - main.c
-> inputDir
+> input_dir
 - create_infiles.sh
 - inputFile
 - Makefile
@@ -95,7 +95,7 @@ file descriptors των διεργασιών για read και write, μια λ
 > src > tools > utils.h/.c 
 Οι κύριες συναρτήσεις:
 
-    -aggregator:
+  -aggregation:
     Αποτελεί τον κύριο κορμό της εφαρμογής. Δημιουργεί τις διεργασίες - παιδιά - monitors.
     Δημιουργεί τα named pipes τα οποία έχει επιλεγεί να είναι δύο για κάθε διεργασία - παιδί:
     Το ένα θα είναι για να γράφει ο πατέρας και να διαβάζει το παιδί και το άλλο θα είναι για να γράφει το παιδί
@@ -107,16 +107,16 @@ file descriptors των διεργασιών για read και write, μια λ
     σήμα SIGINT/SIGQUIT στη διεργασία - γονέα, ο γονέας κάνει SIGKILL τα παιδιά του, περιμένει να τερματίσουν
     και δημιουργεί τα log files. Αναλυτικά σχόλια στον κώδικα.
 
-    -get_bloom_filters:
+  -get_bloom_filters:
     Η διαδικασία που η διεργασία - γονέα λαμβάνει τα bloom filters που στείλανε οι διεργασίες - παιδιά του.
     Αναλυτικά σχόλια στον κώδικα.
 
-    -reborn_child:
+  -reborn_child:
     Η διαδικασία αναγέννησης και αντικατάστασης μιας διεργασίας - παιδί που έχει τερματίσει.
     Αναλυτικά σχόλια στον κώδικα.
 
 > src > tools > queries.h/.c
-    -run_queries:
+  -run_queries:
     Εκτελεί τα ερωτήματα και καλεί βοηθητικές συναρτήσεις που έχουν υλοποιηθεί στο queries.c .
     Εκεί γίνεται και η διαχείριση των σημάτων SIGINT/SIGQUIT και SIGCHLD.
     Αναλυτικά σχόλια στον κώδικα.   
@@ -131,14 +131,14 @@ file descriptors των διεργασιών για read και write, μια λ
 > monitor > tools > utils_queries.h/.c
 Οι κύριες συναρτήσεις:
 
-    -fileParse_and_buildStructs: 
+  -fileParse_and_buildStructs: 
     Κάνει το file parsing και ταυτόχρονα "χτίζει" όλες τις δομές. Καλεί την συνάρτηση insertCitizen.
     Αναλυτικά σχόλια στον κώδικα.
 
-    -send_bloomFilters
+  -send_bloomFilters
     Στέλνει τα bloom filters μέσω named pipe πίσω στην διεργασία πατέρα.
 
-    -queries
+  -queries
     Εκτελεί τα ερωτήματα και καλεί βοηθητικές συναρτήσεις που έχουν υλοποιηθεί στο utils_queries.c .
     Εκεί γίνεται και η διαχείριση των σημάτων SIGINT/SIGQUIT και SIGUSR.
     Αναλυτικά σχόλια στον κώδικα.
@@ -147,8 +147,7 @@ file descriptors των διεργασιών για read και write, μια λ
   Επισημάνσεις - Παραδοχές
 ****************************
 
-1) Ο φάκελος inputDir είναι ένας έτοιμος που έχει δημιουργηθεί από το create_infiles.sh 
-  με το αρχείο inputFile.
+1) Παρέχεται ένα αρχείο inputFile στον κεντρικό φάκελο για διευκόλυνση.
 
 2) Για διευκόλυνσή μας, ειπώθηκε στο piazza (https://piazza.com/class/kkx2o2gvper2nj?cid=137_f1) 
   ότι μπορούμε να κάνουμε την εξής παραδοχή: 

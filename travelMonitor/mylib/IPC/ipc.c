@@ -37,6 +37,7 @@ char *receive_data(int fd, int bufferSize){
 	return data;
 }
 
+
 void send_data(int fd, int bufferSize, char *data, int dataSize){
 
 	/* Write the dataSize in front of the message */

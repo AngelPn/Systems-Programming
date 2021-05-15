@@ -98,23 +98,21 @@ int cmpstr(const void* p1, const void* p2){
 	return strcmp(*(char* const*) p1, *(char* const*) p2);
 }
 
-void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
-
-void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
+void aggregation(int numMonitors, int bufferSize, int bloomSize, char *input_dir){
 
     pid_t pid;
 	pid_t monitors_pids[numMonitors]; /* stores the PIDs of the childs */
-    int read_fd[numMonitors], write_fd[numMonitors]; /* stores the file descs for reading and writing */
 	char *names1[numMonitors], *names2[numMonitors]; /* stores the names of named pipes */
+    int read_fd[numMonitors], write_fd[numMonitors]; /* stores the file descs for reading to and writing from the named pipes */
 
 	/* Create a temporary dir with read/write/search permissions for owner, group and others */
     mkdir("./tmp", S_IRWXU | S_IRWXG | S_IRWXO);
 
 	/* Create numMonitors child processes with fork and named pipes */
-    for (int i = 0; i < numMonitors; i++) {
+    for (int i = 0; i < numMonitors; i++){
         pid = fork();
 
-        /* Store the name of the 2 named pipes */
+        /* Store the name of the 2 named pipes: one for reading and one for writing */
 		names1[i] = concat_int_to_string("./tmp/myfifo1_", i);
 		names2[i] = concat_int_to_string("./tmp/myfifo2_", i);
 
@@ -156,18 +154,18 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
         free(name2);
     }
 
-    struct dirent *subdir; /* pointer to subdirs*/
+    struct dirent *subdir = NULL; /* pointer to subdirs*/
 
     /* Open the input dir */
-    DIR *indir;
-    if ((indir = opendir(input_dir)) == NULL) {
+    DIR *indir = NULL;
+    if ((indir = opendir(input_dir)) == NULL){
         perror("Error opening input directory");
         exit(EXIT_FAILURE);
     }
 
 	/* Get the number of subdirs in input dir */
     int numSubdirs = 0;
-    while ((subdir = readdir(indir)) != NULL) {
+    while ((subdir = readdir(indir)) != NULL){
         numSubdirs++;
     }
     rewinddir(indir); /* reset the position of the directory stream */
@@ -189,13 +187,15 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 
     /* Create a hash table to store countries RR alphabetically per monitor */
 	HashTable monitors = HTCreate(Integer, destroy_monitor);
+	monitor m = NULL;
+	pid_t monitor_pid;
 	int monitor_idx = 0, numActiveMonitors = 0;
-	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){
-		monitor m = NULL;
-		pid_t monitor_pid = monitors_pids[monitor_idx];
+
+	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){ /* For each of the countries in input_dir */
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
+		monitor_pid = monitors_pids[monitor_idx];
 		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
 			m = create_monitor(monitor_pid, monitor_idx);
 			HTInsert(&(monitors), m, get_monitor_pid);
@@ -227,23 +227,17 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
 	/* Run queries */
 	run_queries(&monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
 
-    /* Send a SIGKILL to the monitors to end them */
-    for (int i = 0; i < numMonitors; i++) {
-        kill(monitors_pids[i], SIGKILL);
-    }
-    /* Delete named pipes and remove tmp dir */
-    for (int i = 0; i < numMonitors; i++) {
-        unlink(names1[i]);
-        unlink(names2[i]);
-     
-        free(names1[i]);
-        free(names2[i]);
+    /* Kill monitors, delete named pipes and remove tmp dir */
+    for (int i = 0; i < numMonitors; i++){
+		kill(monitors_pids[i], SIGKILL);
+        unlink(names1[i]); unlink(names2[i]);
+        free(names1[i]); free(names2[i]);
     }
 	rmdir("./tmp");
 	free(input_dir);
 	
     /* Wait until all the children are dead */
-    for (int i = 0; i < numMonitors; i++) {
+    for (int i = 0; i < numMonitors; i++){
         wait(&monitors_pids[i]);
     }
 
@@ -251,7 +245,7 @@ void aggregator(int numMonitors, int bufferSize, int bloomSize, char *input_dir)
     mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
 
 	int accepted = 0, rejected = 0;
-	monitor m = NULL;
+	m = NULL;
 	List head = NULL, m_countries = NULL;
 
 	/* Traverse Hash Table of monitors */
@@ -420,7 +414,8 @@ void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int
 			send_data(write_fd[i], bufferSize, (char *)list_node_item(m_countries, node), 0);
 		}
 		send_data(write_fd[i], bufferSize, "end", 0);
+
+		/* Read the bloom filters the reborn child has sent */
+		read_bloom_filters(i, reborn_m, bufferSize, bloomSize, read_fd);		
 	}
-	/* Read the bloom filters the reborn child has sent */
-	read_bloom_filters(i, reborn_m, bufferSize, bloomSize, read_fd);
 }
