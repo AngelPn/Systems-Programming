@@ -1,0 +1,10 @@
+3523 qgre xuva Slovenia 63 ROTAVIRUS NO
+4961 rkvoloe oaud Slovenia 44 DENGUE NO 02-04-2018
+4961 rkvoloe oaud Slovenia 44 HIV NO 02-03-2020
+4911 auhj trgna Slovenia 74 CIRCOVIRUS NO
+4911 auhj trgna Slovenia 74 RUBELLA YES 19-07-2020
+1827 dzahfvfut vbknxw Slovenia 7 MERS-COV NO
+1827 dzahfvfut vbknxw Slovenia 7 HIV NO
+1416 vdascyjpvfyjzw zurdsblugvfmio Slovenia 60 YELLOWFEVER NO
+1484 siespcivctnwjs cru Slovenia 113 YELLOWFEVER YES 29-12-2020
+8244 ojxsmzthq cikiuqne Slovenia 56 ENCEPHALITIS YES 13-11-2019

@@ -1,0 +1,9 @@
+683 hcpxgxrdr ancjc Estonia 68 POLIO YES 02-05-2020
+683 hcpxgxrdr ancjc Estonia 68 ESCHERICHIA NO 19-04-2018
+8530 ddjq amdyvzoskwx Estonia 5 HIV NO 03-12-2019
+9795 kljtijic cwpvjioisk Estonia 59 BK NO
+9795 kljtijic cwpvjioisk Estonia 59 H3N2 NO
+6027 vaciwvwb ulcjdofvgox Estonia 73 DENGUE YES 12-11-2018
+6027 vaciwvwb ulcjdofvgox Estonia 73 LASSAFEVER NO 29-12-2018
+7788 ubjuuxtdq sklqwcqglnoc Estonia 20 LASSAFEVER NO
+99 vtbjhsls juu Estonia 45 YELLOWFEVER NO

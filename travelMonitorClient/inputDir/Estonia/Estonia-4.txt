@@ -1,0 +1,9 @@
+683 hcpxgxrdr ancjc Estonia 68 ENCEPHALITIS NO 01-09-2018
+683 hcpxgxrdr ancjc Estonia 68 VACCINIA YES 25-01-2018
+8530 ddjq amdyvzoskwx Estonia 5 BK NO 01-09-2019
+9795 kljtijic cwpvjioisk Estonia 59 ENCEPHALITIS NO 27-01-2019
+9795 kljtijic cwpvjioisk Estonia 59 RUBELLA NO
+6027 vaciwvwb ulcjdofvgox Estonia 73 HIV NO 31-12-2018
+5709 cgnxfzeuuavnco vuuiffnpptjz Estonia 103 MARBURG YES 05-09-2018
+99 vtbjhsls juu Estonia 45 H5N1 YES 20-02-2020
+99 vtbjhsls juu Estonia 45 HANTAVIRUS NO 20-11-2019

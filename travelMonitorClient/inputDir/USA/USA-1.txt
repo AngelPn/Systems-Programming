@@ -1,0 +1,4 @@
+9541 qwkbxgdredas neeuyehbxjmfdq USA 31 ROTAVIRUS NO
+9541 qwkbxgdredas neeuyehbxjmfdq USA 31 H5N1 NO 01-06-2020
+6789 gdxisgxbhdxx vkttwfuavbqvw USA 43 COVID-19 YES 08-11-2018
+6789 gdxisgxbhdxx vkttwfuavbqvw USA 43 HANTAVIRUS YES 19-07-2019
