@@ -175,7 +175,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
 		/* Check if monitor with PID is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
-		monitor_pid = monitors_pids[monitor_idx];
+		monitor_pid = monitor_idx;
 		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
 			m = create_monitor(monitor_pid, monitor_idx);
 			HTInsert(&(monitors), m, get_monitor_pid);
@@ -184,9 +184,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 		/* Assign the country subdir to monitor */
 		char *countryName = countries[country_idx];
 		add_country(m, countryName); /* add country in monitor to handle */
-		
-        // send_data(write_fd[monitor_idx], socketBufferSize, countryName, 0); /* inform the child process through the pipe */
-		
+				
 		if ((++monitor_idx) == numMonitors){
 			monitor_idx = 0; /* reset monitor_idx */
 			numActiveMonitors = 1; /* set numActiveMonitors to declare that all monitors are active */
@@ -196,13 +194,13 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	/* Update numActiveMonitors to declare the number of active monitors */
 	numActiveMonitors = (numActiveMonitors == 0) ? monitor_idx : numMonitors;
 
-	/* Create numMonitors child processes with fork and sockets */
+	/* Create numActiveMonitors child processes with fork and sockets */
 	char *arg1 = "-p", *arg2 = "-t", *arg3 = "-b", *arg4 = "-c", *arg5 = "-s";
+	int port = 9000;
 	char *numThreads_str = concat_int_to_string("", numThreads);
 	char *socketBufferSize_str = concat_int_to_string("", socketBufferSize);
 	char *cyclicBufferSize_str = concat_int_to_string("", cyclicBufferSize);
 	char *bloomSize_str = concat_int_to_string("", bloomSize);
-	int port = 9000;
 
     for (int i = 0; i < numActiveMonitors; i++){
         pid = fork();
@@ -219,26 +217,35 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 		else{ /* child process */
 			char *port_str = concat_int_to_string("", port);
 
-			monitor_pid = monitors_pids[i];
+			monitor_pid = i;
 			m = HTSearch(monitors, &monitor_pid, compare_monitor);
 
 			List head = get_monitor_countries(m);
+
+			int args_len = 12 + list_length(head);
+			char *args[args_len];
+			args[0] = "monitorServer";
+			args[1] = arg1; args[2] = port_str;
+			args[3] = arg2; args[4] = numThreads_str;
+			args[5] = arg3; args[6] = socketBufferSize_str;
+			args[7] = arg4; args[8] = cyclicBufferSize_str;
+			args[9] = arg5; args[10] = bloomSize_str;
+
+			int j = 11;
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
 				/* Get the country name and create the path of subdir */
-				char *country_name = get_country_name(list_node_item(head, node));
+				char *country_name = list_node_item(head, node);
 				char subdirPath[strlen(input_dir) + strlen(country_name) + 2];
 				snprintf(subdirPath, sizeof(subdirPath), "%s/%s", input_dir, country_name);
-			}			
 
-            if (execl("monitorServer", "monitorServer", 
-						arg1, port_str, 
-						arg2, numThreads_str,
-						arg3, socketBufferSize_str,
-						arg4, cyclicBufferSize_str,
-						arg5, bloomSize_str,
-						NULL) == -1){
-				perror("Error in execl");
+				args[j] = strdup(subdirPath);
+				j++;
+			}
+			args[j] = NULL;		
+
+            if (execv("monitorServer", args) == -1){
+				perror("Error in execv");
 				exit(EXIT_FAILURE);				
 			}
 			free(port_str);
@@ -258,86 +265,86 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
      * socket name.
      */
 
-	struct sockaddr_in server;
-	struct sockaddr* server_ptr = (struct sockaddr*)&server;
+	// struct sockaddr_in server;
+	// struct sockaddr* server_ptr = (struct sockaddr*)&server;
 
-	/* Find server address */
-	struct hostent* host;
-	if ((host = gethostbyname("localhost")) == NULL) {
-		herror("Error in gethostbyname");
-		exit(EXIT_FAILURE);
-	}
+	// /* Find server address */
+	// struct hostent* host;
+	// if ((host = gethostbyname("localhost")) == NULL) {
+	// 	herror("Error in gethostbyname");
+	// 	exit(EXIT_FAILURE);
+	// }
 	
-	server.sin_family = AF_INET; /* Internet domain */
-	memcpy(&server.sin_addr, host->h_addr, host->h_length);
+	// server.sin_family = AF_INET; /* Internet domain */
+	// memcpy(&server.sin_addr, host->h_addr, host->h_length);
 
-	port = 9000;
-    for (int i = 0; i < numActiveMonitors; i++) {
-		server.sin_port = htons(port++);
-		if (connect(read_fd[i], server_ptr, sizeof(server)) < 0) {
-			perror("Error in socket connect");
-			exit(EXIT_FAILURE);
-		}
-    }
+	// port = 9000;
+    // for (int i = 0; i < numActiveMonitors; i++) {
+	// 	server.sin_port = htons(port++);
+	// 	if (connect(read_fd[i], server_ptr, sizeof(server)) < 0) {
+	// 		perror("Error in socket connect");
+	// 		exit(EXIT_FAILURE);
+	// 	}
+    // }
 
-    /* Get bloom filters from monitors */
-	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
+    // /* Get bloom filters from monitors */
+	// get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
 
-	/* Run queries */
-	run_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
+	// /* Run queries */
+	// run_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
 
-    /* Kill monitors, delete named pipes and remove tmp dir */
-    for (int i = 0; i < numMonitors; i++){
-		kill(monitors_pids[i], SIGKILL);
-        unlink(names1[i]); unlink(names2[i]);
-        free(names1[i]); free(names2[i]);
-    }
-	rmdir("./tmp");
-	free(input_dir);
+    // /* Kill monitors, delete named pipes and remove tmp dir */
+    // for (int i = 0; i < numMonitors; i++){
+	// 	kill(monitors_pids[i], SIGKILL);
+    //     unlink(names1[i]); unlink(names2[i]);
+    //     free(names1[i]); free(names2[i]);
+    // }
+	// rmdir("./tmp");
+	// free(input_dir);
 	
-    /* Wait until all the children are dead */
-    for (int i = 0; i < numMonitors; i++){
-        wait(&monitors_pids[i]);
-    }
+    // /* Wait until all the children are dead */
+    // for (int i = 0; i < numMonitors; i++){
+    //     wait(&monitors_pids[i]);
+    // }
 
-	/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
-    mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
+	// /* Create the LogFiles dir with read/write/search permissions for owner, group and others */
+    // mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
 
-	int accepted = 0, rejected = 0;
-	m = NULL;
-	List head = NULL, m_countries = NULL;
+	// int accepted = 0, rejected = 0;
+	// m = NULL;
+	// List head = NULL, m_countries = NULL;
 
-	/* Traverse Hash Table of monitors */
-	for (int i = 0; i < HTSize(monitors); i++){
-		if ((head = get_HTchain(monitors, i)) != NULL){
-			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+	// /* Traverse Hash Table of monitors */
+	// for (int i = 0; i < HTSize(monitors); i++){
+	// 	if ((head = get_HTchain(monitors, i)) != NULL){
+	// 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 
-				/* Create the log_file.xxx for monitor with PID xxx and open it */
-				m = list_node_item(head, node);
-				char *filepath = concat_int_to_string("./LogFiles/log_file.", *((int *)get_monitor_pid(m)));
-				FILE *logfile = NULL;
-				if ((logfile = fopen(filepath, "w")) == NULL){
-					perror(RED "Error opening Log file"  RESET);
-					exit(EXIT_FAILURE);
-				}
+	// 			/* Create the log_file.xxx for monitor with PID xxx and open it */
+	// 			m = list_node_item(head, node);
+	// 			char *filepath = concat_int_to_string("./LogFiles/log_file.", *((int *)get_monitor_pid(m)));
+	// 			FILE *logfile = NULL;
+	// 			if ((logfile = fopen(filepath, "w")) == NULL){
+	// 				perror(RED "Error opening Log file"  RESET);
+	// 				exit(EXIT_FAILURE);
+	// 			}
 
-				/* Write to log_file.xxx the countries that monitor handles */
-				m_countries = get_monitor_countries(m);
-				for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
-					fprintf(logfile, "%s\n", (char *)list_node_item(m_countries, n));
-				}
+	// 			/* Write to log_file.xxx the countries that monitor handles */
+	// 			m_countries = get_monitor_countries(m);
+	// 			for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
+	// 				fprintf(logfile, "%s\n", (char *)list_node_item(m_countries, n));
+	// 			}
 
-				/* Write to log_file.xxx the total number of requests */
-				accepted = get_total_accepted(m);
-				rejected = get_total_rejected(m);
-				fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+	// 			/* Write to log_file.xxx the total number of requests */
+	// 			accepted = get_total_accepted(m);
+	// 			rejected = get_total_rejected(m);
+	// 			fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
 				
-				fclose(logfile);
-				free(filepath);
-				accepted = rejected = 0;
-			}
-		}
-	}
+	// 			fclose(logfile);
+	// 			free(filepath);
+	// 			accepted = rejected = 0;
+	// 		}
+	// 	}
+	// }
 
 	/* Deallocate memory */
 	HTDestroy(monitors);	

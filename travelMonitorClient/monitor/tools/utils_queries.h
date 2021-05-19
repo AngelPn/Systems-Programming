@@ -3,6 +3,10 @@
 
 #include "dataStore.h"
 
+/*  Does proper argument handling and stores variables from command prompt to vars 
+    numThreads, socketBufferSize, cyclicBufferSize, bloomsize, paths */
+void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socketBufferSize, int *cyclicBufferSize, int *bloomsize, char ***paths, int *paths_len);
+
 /* Does file parsing and builds structs in dataStore */
 void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds);
 

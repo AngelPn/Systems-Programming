@@ -12,8 +12,8 @@ MRDIR = $(MNTR)/relations
 CC = gcc
 
 #executable's name
-EXEC = travelMonitor
-EXEC_MONITOR = Monitor
+EXEC = travelMonitorClient
+EXEC_MONITOR = monitorServer
 
 #compile options
 CFLAGS = -Wall -g -I$(MODULES)/LinkedList -I$(MODULES)/SkipList -I$(MODULES)/HashTable -I$(MODULES)/IPC
@@ -47,4 +47,3 @@ clean:
 	rm -f $(EXEC)
 	rm -f $(EXEC_MONITOR)
 	rm -rf $(ODIR)
-	rm -rf tmp
