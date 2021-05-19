@@ -1,15 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #include "dataStore.h"
 #include "ipc.h"
 #include "country.h"
 #include "utils_queries.h"
+#include "CyclicBuffer.h"
+
+/* global variables for our buffer mutexes and condition variables */
+pthread_mutex_t mtx;
+pthread_cond_t cond_nonempty, cond_nonfull;
 
 int main(int argc, char **argv){
     fprintf(stderr, "child %d\n", getpid());
@@ -25,6 +38,25 @@ int main(int argc, char **argv){
 		printf("%s\n", paths[i]);
 	}
     
+	/* Create a cyclic buffer to store the paths */
+	CyclicBuffer buffer = BuffCreate(cyclicBufferSize, paths, paths_len);
+
+	/* Allocate space to store the thread ids */
+	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
+	if (thread_ids == NULL){
+		perror("Error in allocating thread_ids");
+		exit(EXIT_FAILURE);
+	}
+
+	// first things first: create n threads in order to serve simulatneously
+	int res;
+	for (int i = 0; i < numThreads; i++) {
+		if ((res = pthread_create(&thread_ids[i], NULL, slave_thread_operate, buffer))) {
+			perror("pthread_create");
+			exit(EXIT_FAILURE);
+		}
+	}
+
     // /* Structures needed for queries */
     // dataStore ds;
     // create_structs(&ds);
@@ -59,8 +91,9 @@ int main(int argc, char **argv){
 	// queries(&ds, input_dir, read_fd, write_fd, socketBufferSize, bloomSize);
 
 
-    // /* Deallocate memory */
+    /* Deallocate memory */
     // destroy_structs(&ds);
+	BuffDestroy(buffer);
 
 	return 0;
 }

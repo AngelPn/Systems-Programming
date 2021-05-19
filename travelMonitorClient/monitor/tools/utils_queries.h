@@ -8,7 +8,7 @@
 void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socketBufferSize, int *cyclicBufferSize, int *bloomsize, char ***paths, int *paths_len);
 
 /* Does file parsing and builds structs in dataStore */
-void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds);
+void *fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds);
 
 /* Sends bloom filter for each of the viruses via named pipe */
 void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize);
