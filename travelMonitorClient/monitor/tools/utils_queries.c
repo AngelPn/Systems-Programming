@@ -121,14 +121,18 @@ void *fileParse_and_buildStructs(void *buff){
 
 		pthread_mutex_lock(&mtx); /* shared data area */
 
-		/* If buffer is empty, wait cond nonempty */
-		while (BuffEmpty(buffer)) {
+		/* If buffer is empty, wait for signal nonempty */
+		while (BuffEmpty(buffer)){
 			pthread_cond_wait(&nonempty, &mtx);
 		}
 
+		/* Get data from buffer */
 		char *filePath = BuffGet(buffer);
 
 		pthread_mutex_unlock(&mtx);
+
+		/* The buffer is not full anymore */
+		pthread_cond_signal(&nonfull);
 
 		/* Open the file given from filePath and read it */
 		FILE *frecords;
@@ -153,7 +157,6 @@ void *fileParse_and_buildStructs(void *buff){
 		}
 		free(line);
 		fclose(frecords);
-
 	}
 }
 

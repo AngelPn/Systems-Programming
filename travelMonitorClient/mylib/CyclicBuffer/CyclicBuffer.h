@@ -12,8 +12,14 @@ CyclicBuffer BuffCreate(int cyclicBufferSize, char **data, int dataSize);
 /* If buff is empty, return true. Else, false */
 bool BuffEmpty(CyclicBuffer buff);
 
-// /* Inserts data to cyclic buffer */
-// void BuffInsert(CyclicBuffer buff, char *data);
+/* If buff is full, return true. Else, false */
+bool BuffFull(CyclicBuffer buff);
+
+/* If there is an empty space in buffer, return true. Else false */
+bool empty_space_in_buff(CyclicBuffer buff);
+
+/* Moves the position of end pointer to buffer */
+void BuffAdd(CyclicBuffer buff);
 
 /* Gets data from cyclic buffer */
 char *BuffGet(CyclicBuffer buff);

@@ -6,12 +6,12 @@
 
 struct buffer
 {
-    int cyclicBufferSize;
-    char **data;
-    int dataSize;
-    int start;
-    int end;
-    int count;
+    char **data;            /* array of data */
+    int dataSize;           /* size of array of data*/
+    int cyclicBufferSize;   /* size of cyclic buffer */
+    int start;              /* start position of cyclic buffer */
+    int end;                /* end position of cyclic buffer */
+    int count;              /* counter of items in buffer: determines if buffer is empty or full */
 };
 
 CyclicBuffer BuffCreate(int cyclicBufferSize, char **data, int dataSize){
@@ -38,8 +38,32 @@ bool BuffEmpty(CyclicBuffer buff){
     else return true;
 }
 
+bool BuffFull(CyclicBuffer buff){
+    if (buff->count >= buff->cyclicBufferSize)
+        return true;
+    else return false;
+}
+
+bool empty_space_in_buff(CyclicBuffer buff){
+    if (buff->data[buff->dataSize - 1] != NULL)
+        return true;
+    else return false;
+}
+
+void BuffAdd(CyclicBuffer buff){
+    /* Update the end pos in the buffer */
+    int removed = buff->cyclicBufferSize - buff->count;
+
+    while(((buff->end + 1) < (buff->dataSize - 1)) && (removed > 0)){
+        (buff->end)++;
+        (buff->count)++; /* added item, increase count */
+        removed--;
+    }
+}
+
 char *BuffGet(CyclicBuffer buff){
     char *data = buff->data[buff->start];
+    buff->data[buff->start] = NULL;
     buff->start = (buff->start + 1) % (buff->dataSize); /* update start pos */
     (buff->count)--; /* removed an item, decrease count */
     return data;

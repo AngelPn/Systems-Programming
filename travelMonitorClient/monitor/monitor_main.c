@@ -55,7 +55,7 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
-	// first things first: create n threads in order to serve simulatneously
+	/* Create threads */
 	int res;
 	for (int i = 0; i < numThreads; i++) {
 		if ((res = pthread_create(&thread_ids[i], NULL, fileParse_and_buildStructs, buffer))) {
@@ -63,30 +63,24 @@ int main(int argc, char **argv){
 			exit(EXIT_FAILURE);
 		}
 	}
-    
 
-	// /* Read the dirs from the pipe */
-    // country c;
-	// char *country_name;	
-	// while (true) {
-	// 	country_name = receive_data(read_fd, socketBufferSize);
-	// 	if (!strcmp(country_name, "end")){
-	// 		free(country_name);
-	// 		break;
-	// 	}
+	/* While there is an empty space in buffer
+	   and at least one path exists that it has not been read */
+	while(empty_space_in_buff(buffer)){
+		pthread_mutex_lock(&mtx); /* shared data area */
 
-	// 	/* Check if country is already in hash table of countries */
-	// 	/* If not, insert country (c) in hash table of countries */
-	// 	if ((c = HTSearch(ds.countries, country_name, compare_countries)) == NULL ){
-	// 		c = create_country(country_name);
-	// 		HTInsert(&(ds.countries), c, get_country_name);
-	// 	}
-	// 	free(country_name);
-	// }
+		/* If buffer is full, wait for signal nonfull */
+		while (BuffFull(buffer)) {
+			pthread_cond_wait(&nonfull, &mtx);
+		}
 
+		BuffAdd(buffer);
 
-	// /* Parse the files and build the structs */
-	// fileParse_and_buildStructs(input_dir, bloomSize, &ds);
+		pthread_mutex_unlock(&mtx);
+
+		/* The buffer is not empty anymore (if it was) */
+		pthread_cond_signal(&nonempty);		
+	}
 
 	// /* Send bloom filters to parent process */
 	// send_bloomFilters(&ds, write_fd, socketBufferSize, bloomSize);
@@ -96,7 +90,7 @@ int main(int argc, char **argv){
 
 
     /* Deallocate memory */
-    // destroy_structs(&ds);
+    destroy_structs(&ds);
 	BuffDestroy(buffer);
 
 	return 0;
