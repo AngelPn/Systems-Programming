@@ -8,6 +8,7 @@
 
 typedef struct  data_store
 {
+    int bloomSize;
     HashTable citizens;
     HashTable countries;
     HashTable viruses;
@@ -17,7 +18,7 @@ typedef struct  data_store
 
 } dataStore;
 
-void create_structs(dataStore *ds);
+void create_structs(dataStore *ds, int bloomSize);
 
 bool is_parsed(dataStore *ds, char *filename);
 

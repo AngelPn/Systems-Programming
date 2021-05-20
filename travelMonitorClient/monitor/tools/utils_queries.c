@@ -11,17 +11,27 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/select.h>
+#include <pthread.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #include "utils_queries.h"
 #include "virus.h"
 #include "country.h"
 #include "ipc.h"
 #include "BloomFilter.h"
+#include "CyclicBuffer.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
 #define YEL   "\033[1;33m"
 #define RESET "\033[0m"
+
+extern pthread_mutex_t mtx;
+extern pthread_cond_t nonempty;
+extern pthread_cond_t nonfull;
+extern dataStore ds;
 
 void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socketBufferSize, int *cyclicBufferSize, int *bloomsize, char ***paths, int *paths_len){
 
@@ -103,72 +113,47 @@ void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socket
 void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse);
 
 /* Does file parsing and builds structs in dataStore */
-void fileParse_and_buildStructs(char *input_dir, int bytes, dataStore *ds){
+void *fileParse_and_buildStructs(void *buff){
 
-	/* For each of monitor's assigned country subdirectory */
-	List head = NULL;
-	for (int i = 0; i < HTSize(ds->countries); i++){
-		head = get_HTchain(ds->countries, i);
-		if(head != NULL){
-			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+	CyclicBuffer buffer = buff;
 
-				/* Get the country name and create the path of subdir */
-				char *country_name = get_country_name(list_node_item(head, node));
-				char subdirPath[strlen(input_dir) + strlen(country_name) + 2];
-				snprintf(subdirPath, sizeof(subdirPath), "%s/%s", input_dir, country_name);
+	while (true){
 
-				/* Open the country subdir */
-				DIR *countryDir;
-				if ((countryDir = opendir(subdirPath)) == NULL) {
-					perror(RED "Error opening country's subdirectory" RESET);
-					exit(EXIT_FAILURE);
-				}
+		pthread_mutex_lock(&mtx); /* shared data area */
 
-				/* Traverse all the files in the country subdir */
-				struct dirent *file;
-				while ((file = readdir(countryDir)) != NULL) {
-					
-					/* Ignore the . and .. files */
-					if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
-						continue;
+		/* If buffer is empty, wait cond nonempty */
+		while (BuffEmpty(buffer)) {
+			pthread_cond_wait(&nonempty, &mtx);
+		}
 
-					/* Add the filename to parsed files, if it is not already parsed */
-					char *filename = strdup(file->d_name);
-					if (is_parsed(ds, filename)){
-						free(filename);
-						continue;
-					}
-					list_insert_next(ds->parsed_files, NULL, filename);
+		char *filePath = BuffGet(buffer);
 
-					/* Create the path of file */
-					char filePath[strlen(subdirPath) + strlen(filename) + 2];
-					snprintf(filePath, sizeof(filePath), "%s/%s", subdirPath, filename);
+		pthread_mutex_unlock(&mtx);
 
-					/* Open the file given from filePath and read it */
-					FILE *frecords;
-					if ((frecords = fopen(filePath, "r")) == NULL){
-						perror(RED "Error opening country's file"  RESET);
-						exit(EXIT_FAILURE);
-					}
+		/* Open the file given from filePath and read it */
+		FILE *frecords;
+		if ((frecords = fopen(filePath, "r")) == NULL){
+			perror(RED "Error opening country's file"  RESET);
+			exit(EXIT_FAILURE);
+		}
 
-					/* Parse the file and build the structs */
-					char *line = NULL;
-					size_t len = 0;
-					
-					while (getline(&line, &len, frecords) != -1){
-						char *args[8];
-						args[0] = strtok(line, " ");
-						for (int i = 1; i < 8; i++)
-							args[i] = strtok(NULL, " \n");
+		/* Parse the file and build the structs */
+		char *line = NULL;
+		size_t len = 0;
+		
+		while (getline(&line, &len, frecords) != -1){
+			char *args[8];
+			args[0] = strtok(line, " ");
+			for (int i = 1; i < 8; i++)
+				args[i] = strtok(NULL, " \n");
 
-						insertCitizen(args, bytes, ds, true);   
-					}
-					free(line);
-					fclose(frecords);
-				}
-				closedir(countryDir);
-			}
-		}		
+			pthread_mutex_lock(&mtx); /* shared data area */
+			insertCitizen(args, ds.bloomSize, &ds, true);
+			pthread_mutex_unlock(&mtx); 
+		}
+		free(line);
+		fclose(frecords);
+
 	}
 }
 
@@ -400,7 +385,7 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			continue;
 		}		
 		if (sig_usr1_raised) {
-			fileParse_and_buildStructs(input_dir, bloomSize, ds);
+			// fileParse_and_buildStructs(input_dir, bloomSize, ds);
 			send_bloomFilters(ds, write_fd, bufferSize, bloomSize);
 			
 			sig_usr1_raised = 0; /* reset value */

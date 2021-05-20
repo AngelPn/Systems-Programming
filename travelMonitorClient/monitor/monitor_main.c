@@ -20,9 +20,13 @@
 #include "utils_queries.h"
 #include "CyclicBuffer.h"
 
-/* global variables for our buffer mutexes and condition variables */
-pthread_mutex_t mtx;
-pthread_cond_t cond_nonempty, cond_nonfull;
+/* Global variables for our buffer mutexes and condition variables */
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t nonempty = PTHREAD_COND_INITIALIZER;
+pthread_cond_t nonfull = PTHREAD_COND_INITIALIZER;
+
+/* Shared variable that keeps the structures needed for queries from client */
+dataStore ds;
 
 int main(int argc, char **argv){
     fprintf(stderr, "child %d\n", getpid());
@@ -41,6 +45,9 @@ int main(int argc, char **argv){
 	/* Create a cyclic buffer to store the paths */
 	CyclicBuffer buffer = BuffCreate(cyclicBufferSize, paths, paths_len);
 
+	/* Create the structs needed for queries */
+	create_structs(&ds, bloomSize);
+
 	/* Allocate space to store the thread ids */
 	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
 	if (thread_ids == NULL){
@@ -51,15 +58,12 @@ int main(int argc, char **argv){
 	// first things first: create n threads in order to serve simulatneously
 	int res;
 	for (int i = 0; i < numThreads; i++) {
-		if ((res = pthread_create(&thread_ids[i], NULL, slave_thread_operate, buffer))) {
+		if ((res = pthread_create(&thread_ids[i], NULL, fileParse_and_buildStructs, buffer))) {
 			perror("pthread_create");
 			exit(EXIT_FAILURE);
 		}
 	}
-
-    // /* Structures needed for queries */
-    // dataStore ds;
-    // create_structs(&ds);
+    
 
 	// /* Read the dirs from the pipe */
     // country c;

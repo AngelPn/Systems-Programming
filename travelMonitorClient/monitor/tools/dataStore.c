@@ -7,7 +7,8 @@
 #include "country.h"
 #include "citizenRecord.h"
 
-void create_structs(dataStore *ds){
+void create_structs(dataStore *ds, int bloomSize){
+    ds->bloomSize = bloomSize;
     ds->citizens = HTCreate(Integer, destroy_citizen);
     ds->viruses = HTCreate(String, destroy_virus);
     ds->countries = HTCreate(String, destroy_country);
