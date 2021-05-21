@@ -143,9 +143,9 @@ int main(int argc, char **argv){
 	// send_data(conn_fd, socketBufferSize, "Hello World", 0);
 
 	/* Send bloom filters to parent process */
-	printf("ABOUT TO SEND BLOOM FILTERS\n");
+	// printf("ABOUT TO SEND BLOOM FILTERS\n");
 	send_bloomFilters(conn_fd, socketBufferSize, bloomSize);
-	printf("BLOOM FILTERS SENT\n");
+	// printf("BLOOM FILTERS SENT\n");
 	while (true) { }
 	// /* Execute queries*/
 	// queries(&ds, input_dir, read_fd, write_fd, socketBufferSize, bloomSize);

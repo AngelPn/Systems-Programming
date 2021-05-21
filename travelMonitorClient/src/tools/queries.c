@@ -88,7 +88,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 		/* Increase counter of rejected requests and save dateTravel */
 		increase_rejected_requests(m2, v2, dateTravel, countryTo);
 		/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-		send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
+		send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
 	}
 	else{
 		/* Create the query and write it to pipe */
@@ -96,7 +96,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
 		int fd_index = get_fd_index(m1);
-		send_data(write_fd[fd_index], bufferSize, query, 0);
+		send_data(read_fd[fd_index], bufferSize, query, 0);
 
 		/* Read from pipe the response */
 		char *response = receive_data(read_fd[fd_index], bufferSize);
@@ -106,7 +106,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 			/* Increase counter of rejected requests and save dateTravel */
 			increase_rejected_requests(m2, v2, dateTravel, countryTo);
 			/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-			send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
+			send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
 		}
 		else{
 			char *str_dateVaccinated = response + 4;
@@ -119,7 +119,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 				/* Increase counter of accepted requests and save dateTravel */
 				increase_accepted_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was accepted*/
-				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
+				send_data(read_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
 			}
 			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
@@ -127,7 +127,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 				/* Increase counter of rejected requests and save dateTravel */
 				increase_rejected_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-				send_data(write_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
+				send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
 			}
 			free(dateVaccinated); free(date_6_months_later);		
 		}
@@ -247,14 +247,15 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 }
 
 
-void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir, bool *broke){
+void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
 	
 	printf(GRN "Enter command:\n" RESET);
 
-    int len = MAX_CMD_LEN;
-	char line[len];
+	char *line = NULL;
+	size_t len = 0;
+	bool broke = false;
 
-	while (fgets(line, len, stdin) != NULL){
+	while (getline(&line, &len, stdin) != NULL){
 
 		char *query = strtok(line, " \n");
 
@@ -268,12 +269,12 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 							YEL "Input format for this command: " RESET
 							"/travelRequest citizenID date countryFrom countryTo virusName\n"
 							GRN "\nEnter command:\n" RESET);
-					*broke = true;
+					broke = true;
 					break;
 				}
 			}
-			if (*broke){
-				*broke = false;
+			if (broke){
+				broke = false;
 				continue;
 			}
 			travelRequest(args, monitors, bloomSize, bufferSize, read_fd, write_fd);	
@@ -288,12 +289,12 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 							YEL "Input format for this command: " RESET
 							"/travelStats virusName date1 date2 [country]\n"
 							GRN "\nEnter command:\n" RESET);
-					*broke = true;
+					broke = true;
 					break;
 				}		
 			}
-			if (*broke){
-				*broke = false;
+			if (broke){
+				broke = false;
 				continue;
 			}
 			args[3] = strtok(NULL, " \n");
@@ -316,13 +317,13 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 						m = list_node_item(head, node);
 						if (handles_country(m, country)){
-							*broke = true;
+							broke = true;
 							break;
 						}
 					}
 				}
-				if (*broke){
-					*broke = false;
+				if (broke){
+					broke = false;
 					break;
 				}
 			}
@@ -358,7 +359,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 		}
 		/* Kill the children and create Log file at the caller function (aggregator) */
 		else if (strcmp(query, "/exit") == 0){
-			*broke = true;
+			broke = true;
 			break;
 		}
 		else
@@ -372,55 +373,5 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 
 		printf(GRN "\nEnter command:\n" RESET);
 	}
-}
-
-/*  Shows whether a signal raised and awaits handling.
-    0 if no signal is pending, else 1. */
-static volatile sig_atomic_t sig_intquit_raised;
-static volatile sig_atomic_t sig_usr_raised;
-static volatile sig_atomic_t sig_chld_raised;
-
-/* Functions to handle signals */
-void handle_intquit(int signo) { sig_intquit_raised = signo; }
-void handle_chld(int signo) { sig_chld_raised = signo; }
-
-void run_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
-
-	/* Signal sets to handle SIGINT/SIGQUIT and SIGCHLD respectively */
-	struct sigaction act_intquit, act_chld;
-	memset(&act_intquit, 0, sizeof(act_intquit));
-	memset(&act_chld, 0, sizeof(act_chld));
-
-    /* Identify the action to be taken when the signal signo is received */
-    act_intquit.sa_handler = handle_intquit;
-    act_chld.sa_handler = handle_chld;
-
-    /* Create a full mask: the signals specified here will be
-       blocked during the execution of the sa_handler. */
-    sigfillset(&(act_intquit.sa_mask));
-    sigfillset(&(act_chld.sa_mask));
-    
-    /* Control specified signals */
-	sigaction(SIGINT, &act_intquit, NULL);
-    sigaction(SIGQUIT, &act_intquit, NULL);    
-    sigaction(SIGCHLD, &act_chld, NULL);
-
-	/* Read input from stdin */
-	bool broke = false;
-
-	while (true){
-
-		execute_queries(monitors, bufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir, &broke);
-
-		/* If SIGINT/SIGQUIT is raised or execution of queries broke, exit app*/
-		if (sig_intquit_raised || broke)
-			break;
-			
-		/* If a child process is dead, replace it and continue execution of queries */
-		if (sig_chld_raised){
-			printf(YEL "A child process terminated. Wait for the replacement...\n\n" RESET);
-			reborn_child(monitors, monitors_pids, bufferSize, bloomSize, read_fd, write_fd, numActiveMonitors, input_dir);
-			sig_chld_raised = 0;
-		}
-	}
+	free(line);
 }
