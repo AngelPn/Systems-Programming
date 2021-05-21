@@ -265,27 +265,35 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
      * socket name.
      */
 
-	// struct sockaddr_in server;
-	// struct sockaddr* server_ptr = (struct sockaddr*)&server;
+	struct sockaddr_in server;
+	struct sockaddr* server_ptr = (struct sockaddr*)&server;
 
-	// /* Find server address */
-	// struct hostent* host;
-	// if ((host = gethostbyname("localhost")) == NULL) {
-	// 	herror("Error in gethostbyname");
-	// 	exit(EXIT_FAILURE);
-	// }
+	/* Find server address */
+	struct hostent* host;
+	if ((host = gethostbyname("localhost")) == NULL) {
+		herror("Error in gethostbyname");
+		exit(EXIT_FAILURE);
+	}
 	
-	// server.sin_family = AF_INET; /* Internet domain */
-	// memcpy(&server.sin_addr, host->h_addr, host->h_length);
+	server.sin_family = AF_INET; /* Internet domain */
+	memcpy(&server.sin_addr, host->h_addr, host->h_length);
 
-	// port = 9000;
-    // for (int i = 0; i < numActiveMonitors; i++) {
-	// 	server.sin_port = htons(port++);
-	// 	if (connect(read_fd[i], server_ptr, sizeof(server)) < 0) {
-	// 		perror("Error in socket connect");
-	// 		exit(EXIT_FAILURE);
-	// 	}
-    // }
+	port = 9000;
+    for (int i = 0; i < numActiveMonitors; i++) {
+		server.sin_port = htons(port++);
+		if (connect(read_fd[i], server_ptr, sizeof(server)) < 0) {
+			perror("Error in socket connect");
+			exit(EXIT_FAILURE);
+		}
+    }
+
+    for (int i = 0; i < numActiveMonitors; i++) {
+		char *msg = receive_data(read_fd[i], socketBufferSize);
+		printf("msg: %s\n", msg);
+    }
+	
+
+	while (true) {}
 
     // /* Get bloom filters from monitors */
 	// get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
