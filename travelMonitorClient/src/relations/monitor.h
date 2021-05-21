@@ -37,6 +37,9 @@ HashTable get_monitor_viruses(void *m);
 int get_total_accepted(monitor m);
 int get_total_rejected(monitor m);
 
+/* Sets PID of monitor */
+void set_pid(monitor m, pid_t pid);
+
 /* Adds country in list of countries in monitor */
 void add_country(monitor m, char *country);
 

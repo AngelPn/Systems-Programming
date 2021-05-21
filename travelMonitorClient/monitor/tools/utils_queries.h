@@ -11,7 +11,7 @@ void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socket
 void *fileParse_and_buildStructs(void *buff);
 
 /* Sends bloom filter for each of the viruses via named pipe */
-void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize);
+void send_bloomFilters(int write_fd, int bufferSize, int bloomSize);
 
 /* Executes queries */
 void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize);

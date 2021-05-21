@@ -77,6 +77,10 @@ int get_total_rejected(monitor m){
     return m->total_rejected;
 }
 
+void set_pid(monitor m, pid_t pid){
+    m->pid = pid;
+}
+
 void add_country(monitor m, char *country){
     List head = m->countries;
     list_insert_next(head, list_last(head), country);

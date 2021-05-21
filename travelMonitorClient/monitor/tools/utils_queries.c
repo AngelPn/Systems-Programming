@@ -110,12 +110,13 @@ void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socket
 	}
 }
 
-void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse);
+void insertCitizen(char *args[8], int bytes, bool fileparse);
 
 /* Does file parsing and builds structs in dataStore */
 void *fileParse_and_buildStructs(void *buff){
 
 	CyclicBuffer buffer = buff;
+	// printf("fileParse thread: ds.bloomSize = %d\n", ds.bloomSize);
 
 	while (true){
 
@@ -127,36 +128,66 @@ void *fileParse_and_buildStructs(void *buff){
 		}
 
 		/* Get data from buffer */
-		char *filePath = BuffGet(buffer);
+		char *subdirPath = BuffGet(buffer);
+		// printf("%s\n", subdirPath);
 
 		pthread_mutex_unlock(&mtx);
 
 		/* The buffer is not full anymore */
 		pthread_cond_signal(&nonfull);
 
-		/* Open the file given from filePath and read it */
-		FILE *frecords;
-		if ((frecords = fopen(filePath, "r")) == NULL){
-			perror(RED "Error opening country's file"  RESET);
+		/* Open the country subdir */
+		DIR *countryDir;
+		if ((countryDir = opendir(subdirPath)) == NULL) {
+			perror(RED "Error opening country's subdirectory" RESET);
 			exit(EXIT_FAILURE);
 		}
 
-		/* Parse the file and build the structs */
-		char *line = NULL;
-		size_t len = 0;
-		
-		while (getline(&line, &len, frecords) != -1){
-			char *args[8];
-			args[0] = strtok(line, " ");
-			for (int i = 1; i < 8; i++)
-				args[i] = strtok(NULL, " \n");
+		/* Traverse all the files in the country subdir */
+		struct dirent *file;
+		while ((file = readdir(countryDir)) != NULL) {
+			
+			/* Ignore the . and .. files */
+			if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
+				continue;
 
-			pthread_mutex_lock(&mtx); /* shared data area */
-			insertCitizen(args, ds.bloomSize, &ds, true);
-			pthread_mutex_unlock(&mtx); 
+			/* Add the filename to parsed files, if it is not already parsed */
+			char *filename = strdup(file->d_name);
+			if (is_parsed(&ds, filename)){
+				free(filename);
+				continue;
+			}
+			list_insert_next(ds.parsed_files, NULL, filename);
+
+			/* Create the path of file */
+			char filePath[strlen(subdirPath) + strlen(filename) + 2];
+			snprintf(filePath, sizeof(filePath), "%s/%s", subdirPath, filename);
+
+			/* Open the file given from filePath and read it */
+			FILE *frecords;
+			if ((frecords = fopen(filePath, "r")) == NULL){
+				perror(RED "Error opening country's file"  RESET);
+				exit(EXIT_FAILURE);
+			}
+
+			/* Parse the file and build the structs */
+			char *line = NULL;
+			size_t len = 0;
+			
+			while (getline(&line, &len, frecords) != -1){
+				char *args[8];
+				args[0] = strtok(line, " ");
+				for (int i = 1; i < 8; i++)
+					args[i] = strtok(NULL, " \n");
+
+				pthread_mutex_lock(&mtx); /* shared data area */
+				insertCitizen(args, ds.bloomSize, true);
+				pthread_mutex_unlock(&mtx);   
+			}
+			free(line);
+			fclose(frecords);
 		}
-		free(line);
-		fclose(frecords);
+		closedir(countryDir);
 	}
 }
 
@@ -170,14 +201,14 @@ char *concat_int_to_str(const char str[], int i){
 }
 
 
-void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSize){
+void send_bloomFilters(int write_fd, int bufferSize, int bloomSize){
 
 	virus v = NULL;
 
 	/* For each of monitor's virus, send virus name and bloom filter of virus */
 	List head = NULL;
-	for (int i = 0; i < HTSize(ds->viruses); i++){
-		head = get_HTchain(ds->viruses, i);
+	for (int i = 0; i < HTSize(ds.viruses); i++){
+		head = get_HTchain(ds.viruses, i);
 		if(head != NULL){
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 				v = list_node_item(head, node);
@@ -192,7 +223,7 @@ void send_bloomFilters(dataStore *ds, int write_fd, int bufferSize, int bloomSiz
 }
 
 
-void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
+void insertCitizen(char *args[8], int bytes, bool fileparse){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
@@ -214,19 +245,19 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 		
 		/* Check if country is already in hash table of countries */
 		/* If not, insert country (c) in hash table of countries */
-		if ((c = HTSearch(ds->countries, country_name, compare_countries)) == NULL ){
+		if ((c = HTSearch(ds.countries, country_name, compare_countries)) == NULL ){
 			c = create_country(country_name);
-			HTInsert(&(ds->countries), c, get_country_name);
+			HTInsert(&(ds.countries), c, get_country_name);
 		}
 
 		/* Check if citizen is already in hash table of citizens */
 		/* If not, insert citizen in hash table of citizens */
 		int citizenID = atoi(id);
-		if ((citizen = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL){
+		if ((citizen = HTSearch(ds.citizens, &citizenID, compare_citizen)) == NULL){
 			if ((citizen = create_citizen(citizenID, firstname, lastname, c, atoi(age))) == NULL)
 				return;
 			else
-				HTInsert(&(ds->citizens), citizen, get_citizenID);
+				HTInsert(&(ds.citizens), citizen, get_citizenID);
 		}
 		/* If citizen is already in hash tbale of citizens, cross-check given data */
 		else{
@@ -236,9 +267,9 @@ void insertCitizen(char *args[8], int bytes, dataStore *ds, bool fileparse){
 
 		/* Check if virus is already in hash table of viruses */
 		/* If not, insert virus (v) in hash table of viruses */
-		if ((v = HTSearch(ds->viruses, virusName, compare_virusName)) == NULL){
+		if ((v = HTSearch(ds.viruses, virusName, compare_virusName)) == NULL){
 			v = create_virus(virusName, bytes);
-			HTInsert(&(ds->viruses), v, get_virusName);
+			HTInsert(&(ds.viruses), v, get_virusName);
 		}
 
 		/* If citizen is vaccinated, insert citizen to vaccinated_persons skip list and bloom filter */
@@ -389,7 +420,7 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 		}		
 		if (sig_usr1_raised) {
 			// fileParse_and_buildStructs(input_dir, bloomSize, ds);
-			send_bloomFilters(ds, write_fd, bufferSize, bloomSize);
+			send_bloomFilters(write_fd, bufferSize, bloomSize);
 			
 			sig_usr1_raised = 0; /* reset value */
 			continue;

@@ -279,25 +279,31 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	memcpy(&server.sin_addr, host->h_addr, host->h_length);
 
 	port = 9000;
+	int connectStatus = -1;
     for (int i = 0; i < numActiveMonitors; i++) {
+
+		monitor_pid = i;
+		m = HTSearch(monitors, &monitor_pid, compare_monitor);
+		set_pid(m, monitors_pids[i]);
+
 		server.sin_port = htons(port++);
-		if (connect(read_fd[i], server_ptr, sizeof(server)) < 0) {
-			perror("Error in socket connect");
-			exit(EXIT_FAILURE);
+		while (connectStatus < 0){
+			connectStatus = connect(read_fd[i], server_ptr, sizeof(server));
 		}
+		connectStatus = -1;
     }
 
-    for (int i = 0; i < numActiveMonitors; i++) {
-		char *msg = receive_data(read_fd[i], socketBufferSize);
-		printf("msg: %s\n", msg);
-    }
+    // for (int i = 0; i < numActiveMonitors; i++) {
+	// 	char *msg = receive_data(read_fd[i], socketBufferSize);
+	// 	printf("msg: %s\n", msg);
+    // }
 	
+    /* Get bloom filters from monitors */
+	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
+
+	printf("Got bloom filters\n");
 
 	while (true) {}
-
-    // /* Get bloom filters from monitors */
-	// get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
-
 	// /* Run queries */
 	// run_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
 
@@ -370,7 +376,7 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 			free(virus_name);
 			break;
 		}
-
+		// printf("virus_name: %s\n", virus_name);
 		/* Check if virus is already in hash table of viruses of monitor */
 		/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
 		if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
@@ -417,6 +423,11 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
 			/* Get the monitor with specified PID */
 			m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
+			// printf("monitor with PID: %d\n", *(int *)get_monitor_pid(m));
+			// HashTable m_v = get_monitor_viruses(m);
+			// if (m_v == NULL){
+			// 	printf("NULL\n");
+			// }
 
 			/* Read the bloom filters from the pipe */
 			read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);

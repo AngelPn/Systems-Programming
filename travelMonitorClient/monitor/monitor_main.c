@@ -50,40 +50,41 @@ int main(int argc, char **argv){
 	/* Create the structs needed for queries */
 	create_structs(&ds, bloomSize);
 
-	// /* Allocate space to store the thread ids */
-	// pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
-	// if (thread_ids == NULL){
-	// 	perror("Error in allocating thread_ids");
-	// 	exit(EXIT_FAILURE);
-	// }
+	/* Allocate space to store the thread ids */
+	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
+	if (thread_ids == NULL){
+		perror("Error in allocating thread_ids");
+		exit(EXIT_FAILURE);
+	}
 
-	// /* Create threads */
-	// int res;
-	// for (int i = 0; i < numThreads; i++) {
-	// 	if ((res = pthread_create(&thread_ids[i], NULL, fileParse_and_buildStructs, buffer))) {
-	// 		perror("pthread_create");
-	// 		exit(EXIT_FAILURE);
-	// 	}
-	// }
+	/* Create threads */
+	int res;
+	for (int i = 0; i < numThreads; i++) {
+		if ((res = pthread_create(&thread_ids[i], NULL, fileParse_and_buildStructs, buffer))) {
+			perror("pthread_create");
+			exit(EXIT_FAILURE);
+		}
+	}
 
-	// /* While there is an empty space in buffer
-	//    and at least one path exists that it has not been read */
-	// while(empty_space_in_buff(buffer)){
-	// 	pthread_mutex_lock(&mtx); /* shared data area */
+	/* While there is an empty space in buffer
+	   and at least one path exists that it has not been read */
+	while(empty_space_in_buff(buffer)){
+		// printf("here\n");
+		pthread_mutex_lock(&mtx); /* shared data area */
 
-	// 	/* If buffer is full, wait for signal nonfull */
-	// 	while (BuffFull(buffer)) {
-	// 		pthread_cond_wait(&nonfull, &mtx);
-	// 	}
+		/* If buffer is full, wait for signal nonfull */
+		while (BuffFull(buffer)) {
+			pthread_cond_wait(&nonfull, &mtx);
+		}
 
-	// 	BuffAdd(buffer);
+		BuffAdd(buffer);
 
-	// 	pthread_mutex_unlock(&mtx);
+		pthread_mutex_unlock(&mtx);
 
-	// 	/* The buffer is not empty anymore (if it was) */
-	// 	pthread_cond_signal(&nonempty);		
-	// }
-	print_ht_citizens(&ds);
+		/* The buffer is not empty anymore (if it was) */
+		pthread_cond_signal(&nonempty);		
+	}
+	// print_ht_citizens(&ds);
 	/* Initialize our service */
 	struct sockaddr_in server, client, ip;
 	socklen_t server_len = sizeof(struct sockaddr_in);
@@ -125,7 +126,7 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
-	printf("I am PID %d waiting for request at port %d\n ",(int)getpid(), port);
+	// printf("I am PID %d waiting for request at port %d\n",(int)getpid(), port);
 
 	/* Accept the connection */
 	int conn_fd;
@@ -139,18 +140,20 @@ int main(int argc, char **argv){
 
 	printf("Accepted connection\n");
 
-	send_data(conn_fd, socketBufferSize, "Hello World", 0);
+	// send_data(conn_fd, socketBufferSize, "Hello World", 0);
 
-	// /* Send bloom filters to parent process */
-	// send_bloomFilters(&ds, write_fd, socketBufferSize, bloomSize);
-
+	/* Send bloom filters to parent process */
+	printf("ABOUT TO SEND BLOOM FILTERS\n");
+	send_bloomFilters(conn_fd, socketBufferSize, bloomSize);
+	printf("BLOOM FILTERS SENT\n");
+	while (true) { }
 	// /* Execute queries*/
 	// queries(&ds, input_dir, read_fd, write_fd, socketBufferSize, bloomSize);
 
-	print_ht_citizens(&ds);
+	// print_ht_citizens(&ds);
 	close(conn_fd);
 	close(sock_fd);
-	// while (true) {}
+	
 
     /* Deallocate memory */
     destroy_structs(&ds);
