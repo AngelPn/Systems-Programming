@@ -27,7 +27,7 @@
 #define YEL   "\033[1;33m"
 #define RESET "\033[0m"
 
-void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int bufferSize, int *read_fd, int *write_fd){
+void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int bufferSize, int *socket_fd){
 
 	/* Get data from arguments with right order */
 	char *id = args[0];
@@ -88,25 +88,25 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 		/* Increase counter of rejected requests and save dateTravel */
 		increase_rejected_requests(m2, v2, dateTravel, countryTo);
 		/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-		send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
+		send_data(socket_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);
 	}
 	else{
-		/* Create the query and write it to pipe */
+		/* Create the query and write it to socket */
 		char *travelRequest = "/travelRequest";
 		char query[strlen(travelRequest) + strlen(id) + strlen(virusName) + 3];
 		snprintf(query, sizeof(query), "%s %s %s", travelRequest, id, virusName);
 		int fd_index = get_fd_index(m1);
-		send_data(read_fd[fd_index], bufferSize, query, 0);
+		send_data(socket_fd[fd_index], bufferSize, query, 0);
 
-		/* Read from pipe the response */
-		char *response = receive_data(read_fd[fd_index], bufferSize);
+		/* Read from socket the response */
+		char *response = receive_data(socket_fd[fd_index], bufferSize);
 		if (!strcmp(response, "NO")){
 			printf("REQUEST REJECTED - YOU ARE NOT VACCINATED\n");
 
 			/* Increase counter of rejected requests and save dateTravel */
 			increase_rejected_requests(m2, v2, dateTravel, countryTo);
 			/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-			send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
+			send_data(socket_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);                		
 		}
 		else{
 			char *str_dateVaccinated = response + 4;
@@ -119,7 +119,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 				/* Increase counter of accepted requests and save dateTravel */
 				increase_accepted_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was accepted*/
-				send_data(read_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
+				send_data(socket_fd[get_fd_index(m2)], bufferSize, "/request accepted", 0);
 			}
 			else{
 				printf("REQUEST REJECTED - YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
@@ -127,7 +127,7 @@ void travelRequest(char *args[5], HashTable *monitors, int bloomSize, int buffer
 				/* Increase counter of rejected requests and save dateTravel */
 				increase_rejected_requests(m2, v2, dateTravel, countryTo);
 				/* Inform monitor that handles countryTo (m2) that the request was rejected*/
-				send_data(read_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
+				send_data(socket_fd[get_fd_index(m2)], bufferSize, "/request rejected", 0);				
 			}
 			free(dateVaccinated); free(date_6_months_later);		
 		}
@@ -204,14 +204,14 @@ void travelStats(char *args[4], HashTable *monitors){
 	free(date1); free(date2);
 }
 
-void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int *read_fd){
+void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int *socket_fd){
 
     fd_set active, ready; /* represents file descriptor sets for the select function */
     FD_ZERO(&active); /* initializes the file descriptor set 'active' to be the empty set */
 
-	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
+	/* Add file descriptors in socket_fd array to the file descriptor set 'active' */
     for (int i = 0; i < numActiveMonitors; i++){
-		FD_SET(read_fd[i], &active);
+		FD_SET(socket_fd[i], &active);
 	}
 
 	/* Find out the monitor that responded */
@@ -225,13 +225,13 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 
         for (int i = 0; i < numActiveMonitors; i++){
 
-			if (!(FD_ISSET(read_fd[i], &ready)))
+			if (!(FD_ISSET(socket_fd[i], &ready)))
 				continue;
 
-			/* Read from the pipe */
+			/* Read from the socket */
 			char *msg = NULL;
 			while (true){
-				msg = receive_data(read_fd[i], bufferSize);
+				msg = receive_data(socket_fd[i], bufferSize);
 				if (!strcmp(msg, "end-vaccineStatus")){
 					free(msg);
 					break;
@@ -247,7 +247,7 @@ void get_vaccineStatus(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 }
 
 
-void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
+void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *monitors_pids, int *socket_fd, int numActiveMonitors, char *input_dir){
 	
 	printf(GRN "Enter command:\n" RESET);
 
@@ -277,7 +277,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 				broke = false;
 				continue;
 			}
-			travelRequest(args, monitors, bloomSize, bufferSize, read_fd, write_fd);	
+			travelRequest(args, monitors, bloomSize, bufferSize, socket_fd);	
 		}
 		else if (strcmp(query, "/travelStats") == 0){
 			char *args[4];
@@ -332,12 +332,14 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 				return;
 			}
 
+			/* Create the query and write it to socket */
+			char send_query[strlen(query) + strlen(input_dir) + strlen(country) + 3];
+			snprintf(send_query, sizeof(send_query), "%s %s/%s", query, input_dir, country);
 			int fd_index = get_fd_index(m);
-			pid_t monitor_pid = *((pid_t *)get_monitor_pid(m));
-			kill(monitor_pid, SIGUSR1);
+			send_data(socket_fd[fd_index], bufferSize, send_query, 0);
 
-			/* Read the bloom filters from the pipe */
-			read_bloom_filters(fd_index, m, bufferSize, bloomSize, read_fd);
+			/* Read the bloom filters from the socket */
+			read_bloom_filters(fd_index, m, bufferSize, bloomSize, socket_fd);
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){
 			char *id = strtok(NULL, " \n");
@@ -353,12 +355,15 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 			char searchQuery[strlen(query) + strlen(id) + 2];
 			snprintf(searchQuery, sizeof(searchQuery), "%s %s", query, id);
 			for (int i = 0; i < numActiveMonitors; i++){
-				send_data(write_fd[i], bufferSize, searchQuery, 0);
+				send_data(socket_fd[i], bufferSize, searchQuery, 0);
 			}
-			get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, read_fd);
+			get_vaccineStatus(monitors, monitors_pids, numActiveMonitors, bufferSize, socket_fd);
 		}
 		/* Kill the children and create Log file at the caller function (aggregator) */
 		else if (strcmp(query, "/exit") == 0){
+			for (int i = 0; i < numActiveMonitors; i++){
+				send_data(socket_fd[i], bufferSize, query, 0);
+			}
 			broke = true;
 			break;
 		}

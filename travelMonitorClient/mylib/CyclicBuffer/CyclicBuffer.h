@@ -7,7 +7,7 @@
 typedef struct buffer *CyclicBuffer;
 
 /* Creates a cyclic buffer of given size */
-CyclicBuffer BuffCreate(int cyclicBufferSize, char **data, int dataSize);
+CyclicBuffer BuffCreate(int cyclicBufferSize);
 
 /* If buff is empty, return true. Else, false */
 bool BuffEmpty(CyclicBuffer buff);
@@ -18,8 +18,8 @@ bool BuffFull(CyclicBuffer buff);
 /* If there is an empty space in buffer, return true. Else false */
 bool empty_space_in_buff(CyclicBuffer buff);
 
-/* Moves the position of end pointer to buffer */
-void BuffAdd(CyclicBuffer buff);
+/* Inserts an item to buffer */
+void BuffInsert(CyclicBuffer buff, char *data);
 
 /* Gets data from cyclic buffer */
 char *BuffGet(CyclicBuffer buff);

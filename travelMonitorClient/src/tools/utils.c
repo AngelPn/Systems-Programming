@@ -131,8 +131,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
     pid_t pid;
 	pid_t monitors_pids[numMonitors]; /* stores the PIDs of the childs */
-	char *names1[numMonitors], *names2[numMonitors]; /* stores the names of named pipes */
-    int read_fd[numMonitors], write_fd[numMonitors]; /* stores the file descs for reading to and writing from the named pipes */
+    int socket_fd[numMonitors]; /* stores the file descs for reading to and writing from the sockets */
 
     struct dirent *subdir = NULL; /* pointer to subdirs*/
 
@@ -209,7 +208,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
             monitors_pids[i] = pid; /* save child's pid */
 
 			/* Create a socket */
-			if ((read_fd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+			if ((socket_fd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 				perror("Error in creating socket");
 				exit(EXIT_FAILURE);
 			}
@@ -288,89 +287,80 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
 		server.sin_port = htons(port++);
 		while (connectStatus < 0){
-			connectStatus = connect(read_fd[i], server_ptr, sizeof(server));
+			connectStatus = connect(socket_fd[i], server_ptr, sizeof(server));
 		}
 		connectStatus = -1;
     }
-
-    // for (int i = 0; i < numActiveMonitors; i++) {
-	// 	char *msg = receive_data(read_fd[i], socketBufferSize);
-	// 	printf("msg: %s\n", msg);
-    // }
 	
     /* Get bloom filters from monitors */
-	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, read_fd);
+	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, socket_fd);
 
-	printf("Got bloom filters\n");
+	// printf("Got bloom filters\n");
 
 	/* Execute queries */
-	execute_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, read_fd, write_fd, numActiveMonitors, input_dir);
+	execute_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, socket_fd, numActiveMonitors, input_dir);
 
-    // /* Kill monitors, delete named pipes and remove tmp dir */
-    // for (int i = 0; i < numMonitors; i++){
-	// 	kill(monitors_pids[i], SIGKILL);
-    //     unlink(names1[i]); unlink(names2[i]);
-    //     free(names1[i]); free(names2[i]);
-    // }
-	// rmdir("./tmp");
-	// free(input_dir);
+	/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
+    mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
+
+	/* Create the log_file.xxx and open it */
+	char *filepath = concat_int_to_string("./LogFiles/log_file.", (int)getpid());
+	FILE *logfile = NULL;
+	if ((logfile = fopen(filepath, "w")) == NULL){
+		perror(RED "Error opening Log file"  RESET);
+		exit(EXIT_FAILURE);
+	}
+
+	int accepted = 0, rejected = 0;
+	m = NULL;
+	List head = NULL, m_countries = NULL;
+
+	/* Traverse Hash Table of monitors */
+	for (int i = 0; i < HTSize(monitors); i++){
+		if ((head = get_HTchain(monitors, i)) != NULL){
+			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
+
+				m = list_node_item(head, node);
+
+				/* Write to log_file.xxx the countries that monitor handles */
+				m_countries = get_monitor_countries(m);
+				for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
+					fprintf(logfile, "%s\n", (char *)list_node_item(m_countries, n));
+				}
+				accepted += get_total_accepted(m);
+				rejected += get_total_rejected(m);
+			}
+		}
+	}
+	fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+
+	fclose(logfile);
+
+    /* Kill monitors and close sockets */
+    for (int i = 0; i < numMonitors; i++){
+		kill(monitors_pids[i], SIGKILL);
+		close(socket_fd[i]);
+    }
+	free(input_dir);
 	
-    // /* Wait until all the children are dead */
-    // for (int i = 0; i < numMonitors; i++){
-    //     wait(&monitors_pids[i]);
-    // }
-
-	// /* Create the LogFiles dir with read/write/search permissions for owner, group and others */
-    // mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
-
-	// int accepted = 0, rejected = 0;
-	// m = NULL;
-	// List head = NULL, m_countries = NULL;
-
-	// /* Traverse Hash Table of monitors */
-	// for (int i = 0; i < HTSize(monitors); i++){
-	// 	if ((head = get_HTchain(monitors, i)) != NULL){
-	// 		for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
-
-	// 			/* Create the log_file.xxx for monitor with PID xxx and open it */
-	// 			m = list_node_item(head, node);
-	// 			char *filepath = concat_int_to_string("./LogFiles/log_file.", *((int *)get_monitor_pid(m)));
-	// 			FILE *logfile = NULL;
-	// 			if ((logfile = fopen(filepath, "w")) == NULL){
-	// 				perror(RED "Error opening Log file"  RESET);
-	// 				exit(EXIT_FAILURE);
-	// 			}
-
-	// 			/* Write to log_file.xxx the countries that monitor handles */
-	// 			m_countries = get_monitor_countries(m);
-	// 			for (ListNode n = list_first(m_countries); n != NULL; n = list_next(m_countries, n)){
-	// 				fprintf(logfile, "%s\n", (char *)list_node_item(m_countries, n));
-	// 			}
-
-	// 			/* Write to log_file.xxx the total number of requests */
-	// 			accepted = get_total_accepted(m);
-	// 			rejected = get_total_rejected(m);
-	// 			fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
-				
-	// 			fclose(logfile);
-	// 			free(filepath);
-	// 			accepted = rejected = 0;
-	// 		}
-	// 	}
-	// }
+    /* Wait until all the children are dead */
+    for (int i = 0; i < numMonitors; i++){
+        wait(&monitors_pids[i]);
+    }
 
 	/* Deallocate memory */
+	free(filepath);
 	HTDestroy(monitors);	
 }
 
 /* Gets bloom filters from specified file descriptor (fd_index) */
-void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, int *read_fd){
+void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, int *socket_fd){
 
 	virus_bloom v = NULL;
 	char *virus_name = NULL, *bloom_filter = NULL;
 
 	while (true){
-		virus_name = receive_data(read_fd[fd_index], bufferSize);
+		virus_name = receive_data(socket_fd[fd_index], bufferSize);
 		if (!strcmp(virus_name, "ready")){
 			free(virus_name);
 			break;
@@ -384,7 +374,7 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 			add_virus(m, v);
 		}
 
-		bloom_filter = receive_BloomFilter(read_fd[fd_index], bufferSize);
+		bloom_filter = receive_BloomFilter(socket_fd[fd_index], bufferSize);
 		update_BloomFilter(v, bloom_filter);
 
 		free(bloom_filter);
@@ -392,14 +382,14 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 	}
 }
 
-void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd){
+void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *socket_fd){
 
     fd_set active, ready; /* represents file descriptor sets for the select function */
     FD_ZERO(&active); /* initializes the file descriptor set 'active' to be the empty set */
 
-	/* Add file descriptors in read_fd array to the file descriptor set 'active' */
+	/* Add file descriptors in socket_fd array to the file descriptor set 'active' */
     for (int i = 0; i < numActiveMonitors; i++){
-		FD_SET(read_fd[i], &active);
+		FD_SET(socket_fd[i], &active);
 	}
 	
 	monitor m = NULL;
@@ -418,7 +408,7 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
         /* For all the monitors that have already sent bloom filters */
         for (int i = 0; i < numActiveMonitors; i++){
 
-			if (!(FD_ISSET(read_fd[i], &ready)))
+			if (!(FD_ISSET(socket_fd[i], &ready)))
 				continue;
 
 			/* Get the monitor with specified PID */
@@ -432,77 +422,10 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 			// }
 
 			/* Read the bloom filters from the pipe */
-			read_bloom_filters(i, m, bufferSize, bloomSize, read_fd);
+			read_bloom_filters(i, m, bufferSize, bloomSize, socket_fd);
 
             counter++;
-			FD_CLR(read_fd[i], &active);
+			FD_CLR(socket_fd[i], &active);
         }
     }
-}
-
-
-void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir){
-
-	pid_t dead, reborn;
-	monitor m = NULL, reborn_m = NULL;
-	char *name1, *name2;
-	int i = 0;
-	
-	/* Loop all the children, to see if they have died */
-	while ((dead = waitpid(-1, NULL, WNOHANG)) > 0) {
-
-		/* Get the position (fd index) of dead child */
-		for (i = 0; i < numActiveMonitors; i++){
-			if (dead == monitors_pids[i])
-				break;
-		}
-
-		reborn = fork();
-
-        /* Store the name of the 2 named pipes */
-		name1 = concat_int_to_string("./tmp/myfifo1_", i);
-		name2 = concat_int_to_string("./tmp/myfifo2_", i);
-
-        if (reborn > 0) { /* parent process */
-            monitors_pids[i] = reborn; /* save child's pid */
-        }
-		else{ /* child process */
-            if (execl("Monitor", "Monitor", name1, name2, NULL) == -1){
-				perror("Error in execl");
-				exit(EXIT_FAILURE);				
-			}
-        }
-
-		/* Child has gone to another executable, close the old file descriptors */
-		close(read_fd[i]);
-		close(write_fd[i]);
-
-		/* Οpen the named pipes, store the file descs and send init data */
-		if ((read_fd[i] = open(name1, O_RDONLY, 0666)) == -1) {
-			perror("Error storing file desc in reading array");
-			exit(EXIT_FAILURE);
-		}
-		if ((write_fd[i] = open(name2, O_WRONLY, 0666)) == -1) {
-			perror("Error storing file desc in writing array");
-			exit(EXIT_FAILURE);
-		}
-		free(name1); free(name2);	
-		send_init(write_fd[i], bufferSize, bloomSize, input_dir);
-
-		/* Get dead monitor from Hash Table and reborn it */
-		m = HTSearch(*monitors, &dead, compare_monitor);
-		reborn_m = create_copy_monitor(reborn, m);
-		HTInsert(monitors, reborn_m, get_monitor_pid);
-		HTDelete(*monitors, get_monitor_pid(m), compare_monitor, destroy_copy_monitor);
-		
-		/* Send the names of countries that new child will handle through pipe */
-		List m_countries = get_monitor_countries(reborn_m);
-		for (ListNode node = list_first(m_countries); node != NULL; node = list_next(m_countries, node)){
-			send_data(write_fd[i], bufferSize, (char *)list_node_item(m_countries, node), 0);
-		}
-		send_data(write_fd[i], bufferSize, "end", 0);
-
-		/* Read the bloom filters the reborn child has sent */
-		read_bloom_filters(i, reborn_m, bufferSize, bloomSize, read_fd);		
-	}
 }

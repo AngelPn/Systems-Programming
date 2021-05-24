@@ -17,7 +17,4 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 /* Gets sent bloom filters from monitors to parent process */
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *read_fd);
 
-/* Reborns a dead child process */
-void reborn_child(HashTable *monitors, pid_t *monitors_pids, int bufferSize, int bloomSize, int *read_fd, int *write_fd, int numActiveMonitors, char *input_dir);
-
 #endif

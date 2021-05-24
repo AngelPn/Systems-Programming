@@ -110,39 +110,19 @@ void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socket
 	}
 }
 
-void insertCitizen(char *args[8], int bytes, bool fileparse);
+List get_filepaths(char **subdirPaths, int subdirPaths_len){
 
-/* Does file parsing and builds structs in dataStore */
-void *fileParse_and_buildStructs(void *buff){
+	List filepaths = list_create(NULL);
 
-	CyclicBuffer buffer = buff;
-	// printf("fileParse thread: ds.bloomSize = %d\n", ds.bloomSize);
-
-	while (true){
-
-		pthread_mutex_lock(&mtx); /* shared data area */
-
-		/* If buffer is empty, wait for signal nonempty */
-		while (BuffEmpty(buffer)){
-			pthread_cond_wait(&nonempty, &mtx);
-		}
-
-		/* Get data from buffer */
-		char *subdirPath = BuffGet(buffer);
-		// printf("%s\n", subdirPath);
-
-		pthread_mutex_unlock(&mtx);
-
-		/* The buffer is not full anymore */
-		pthread_cond_signal(&nonfull);
+	for (int i = 0; i < subdirPaths_len; i++){
 
 		/* Open the country subdir */
 		DIR *countryDir;
-		if ((countryDir = opendir(subdirPath)) == NULL) {
+		if ((countryDir = opendir(subdirPaths[i])) == NULL) {
 			perror(RED "Error opening country's subdirectory" RESET);
 			exit(EXIT_FAILURE);
 		}
-
+		// printf("subdirpath: %s\n", subdirPaths[i]);
 		/* Traverse all the files in the country subdir */
 		struct dirent *file;
 		while ((file = readdir(countryDir)) != NULL) {
@@ -160,34 +140,72 @@ void *fileParse_and_buildStructs(void *buff){
 			list_insert_next(ds.parsed_files, NULL, filename);
 
 			/* Create the path of file */
-			char filePath[strlen(subdirPath) + strlen(filename) + 2];
-			snprintf(filePath, sizeof(filePath), "%s/%s", subdirPath, filename);
-
-			/* Open the file given from filePath and read it */
-			FILE *frecords;
-			if ((frecords = fopen(filePath, "r")) == NULL){
-				perror(RED "Error opening country's file"  RESET);
-				exit(EXIT_FAILURE);
-			}
-
-			/* Parse the file and build the structs */
-			char *line = NULL;
-			size_t len = 0;
+			char filePath[strlen(subdirPaths[i]) + strlen(filename) + 2];
+			snprintf(filePath, sizeof(filePath), "%s/%s", subdirPaths[i], filename);
 			
-			while (getline(&line, &len, frecords) != -1){
-				char *args[8];
-				args[0] = strtok(line, " ");
-				for (int i = 1; i < 8; i++)
-					args[i] = strtok(NULL, " \n");
 
-				pthread_mutex_lock(&mtx); /* shared data area */
-				insertCitizen(args, ds.bloomSize, true);
-				pthread_mutex_unlock(&mtx);   
-			}
-			free(line);
-			fclose(frecords);
-		}
+			list_insert_next(filepaths, NULL, strdup(filePath));
+		}		
+
+		/* Close the country subdir*/
 		closedir(countryDir);
+
+		free(subdirPaths[i]);
+	}
+
+	return filepaths;
+}
+
+void insertCitizen(char *args[8], int bytes, bool fileparse);
+
+/* Does file parsing and builds structs in dataStore */
+void *fileParse_and_buildStructs(void *buff){
+
+	CyclicBuffer buffer = buff;
+
+	while (true){
+
+		pthread_mutex_lock(&mtx); /* shared data area */
+
+		/* If buffer is empty, wait for signal nonempty */
+		while (BuffEmpty(buffer)){
+			pthread_cond_wait(&nonempty, &mtx);
+		}
+
+		/* Get filepath from buffer */
+		char *filePath = BuffGet(buffer);
+		// printf("BuffGet: %s\n", filePath);
+
+		pthread_mutex_unlock(&mtx);
+
+		/* The buffer is not full anymore */
+		pthread_cond_signal(&nonfull);
+
+		/* Open the file given from filePath and read it */
+		FILE *frecords;
+		if ((frecords = fopen(filePath, "r")) == NULL){
+			perror(RED "Error opening country's file"  RESET);
+			exit(EXIT_FAILURE);
+		}
+
+		/* Parse the file and build the structs */
+		char *line = NULL;
+		size_t len = 0;
+		
+		while (getline(&line, &len, frecords) != -1){
+			char *args[8];
+			args[0] = strtok(line, " ");
+			for (int i = 1; i < 8; i++)
+				args[i] = strtok(NULL, " \n");
+
+			pthread_mutex_lock(&mtx); /* shared data area */
+			insertCitizen(args, ds.bloomSize, true);
+			pthread_mutex_unlock(&mtx);   
+		}
+
+		free(line);
+		free(filePath);
+		fclose(frecords);
 	}
 }
 
@@ -201,7 +219,7 @@ char *concat_int_to_str(const char str[], int i){
 }
 
 
-void send_bloomFilters(int write_fd, int bufferSize, int bloomSize){
+void send_bloomFilters(int conn_fd, int bufferSize, int bloomSize){
 
 	virus v = NULL;
 
@@ -213,13 +231,13 @@ void send_bloomFilters(int write_fd, int bufferSize, int bloomSize){
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 				v = list_node_item(head, node);
 				char *virusName =  (char *)get_virusName(v);
-				send_data(write_fd, bufferSize, virusName, 0);
-				send_data(write_fd, bufferSize, get_array(get_filter(v)), bloomSize);
+				send_data(conn_fd, bufferSize, virusName, 0);
+				send_data(conn_fd, bufferSize, get_array(get_filter(v)), bloomSize);
 			}
 		}
 	}
 	/* Inform the parent that monitor is ready to run queries */
-	send_data(write_fd, bufferSize, "ready", 0);
+	send_data(conn_fd, bufferSize, "ready", 0);
 }
 
 
@@ -317,15 +335,15 @@ void insertCitizen(char *args[8], int bytes, bool fileparse){
 	}
 }
 
-void send_vaccineStatus(dataStore *ds, int citizenID, int write_fd, int bufferSize){
+void send_vaccineStatus(int citizenID, int conn_fd, int bufferSize){
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
 
 	/* For each of monitor's virus, send vaccineStatus */
 	List head = NULL;
-	for (int i = 0; i < HTSize(ds->viruses); i++){
-		head = get_HTchain(ds->viruses, i);
+	for (int i = 0; i < HTSize(ds.viruses); i++){
+		head = get_HTchain(ds.viruses, i);
 		if(head != NULL){
 			for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 				v = list_node_item(head, node);
@@ -336,58 +354,126 @@ void send_vaccineStatus(dataStore *ds, int citizenID, int write_fd, int bufferSi
 					char vaccineStatus[strlen(virusName) + strlen(dateVaccinated) + 17];
 					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s VACCINATED ON %s\n", virusName, dateVaccinated);
 					free(dateVaccinated);
-					send_data(write_fd, bufferSize, vaccineStatus, 0);
+					send_data(conn_fd, bufferSize, vaccineStatus, 0);
 				}
 				else if (SLSearch(get_not_vaccinated_persons(v), &citizenID, compare_citizen) != NULL){
 					char vaccineStatus[strlen(virusName) + 21];
 					snprintf(vaccineStatus, sizeof(vaccineStatus), "%s NOT YET VACCINATED\n", virusName);
-					send_data(write_fd, bufferSize, vaccineStatus, 0);
+					send_data(conn_fd, bufferSize, vaccineStatus, 0);
 				}
 			}
 		}
 	}
 	/* Inform the parent that monitor is ready to run queries */
-	send_data(write_fd, bufferSize, "end-vaccineStatus", 0);
+	send_data(conn_fd, bufferSize, "end-vaccineStatus", 0);
 }
 
 
-/*  Shows whether a signal raised and awaits handling.
-    0 if no signal is pending, else 1. */
-static volatile sig_atomic_t sig_intquit_raised;
-static volatile sig_atomic_t sig_usr1_raised;
-
-/* Functions to handle signals */
-void handle_intquit(int signo) { sig_intquit_raised = signo; }
-void handle_usr1(int signo) { sig_usr1_raised = signo; }
-
-void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int bufferSize, int bloomSize){
-
-	/* Signal sets to handle SIGINT/SIGQUIT and SIGUSR1 respectively */
-	struct sigaction act_intquit = {0}, act_usr1 = {0};
-
-    /* Identify the action to be taken when the signal signo is received */
-    act_intquit.sa_handler = handle_intquit;
-    act_usr1.sa_handler = handle_usr1;
-
-    /* Create a full mask: the signals specified here will be
-       blocked during the execution of the sa_handler. */
-    sigfillset(&(act_intquit.sa_mask));
-    sigfillset(&(act_usr1.sa_mask));
-
-    /* Control specified signals */
-    sigaction(SIGINT, &act_intquit, NULL);
-    sigaction(SIGQUIT, &act_intquit, NULL);
-    sigaction(SIGUSR1, &act_usr1, NULL);
+void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize){
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
 
 	while(true){
 
-		char *line = receive_data(read_fd, bufferSize);
+		char *line = receive_data(conn_fd, bufferSize);	
 
-		if (sig_intquit_raised){
+		char *query = strtok(line, " \n");
 
+		if (strcmp(query, "/travelRequest") == 0){
+
+			char *id = strtok(NULL, " \n");
+			char *virusName = strtok(NULL, " \n");
+			
+			if ((v = HTSearch(ds.viruses, virusName, compare_virusName)) == NULL){ /* get virus */
+				printf("Something went wrong\n");
+				exit(1);
+			}
+
+			/* If citizen is in vaccinated_persons skip list */
+			int citizenID = atoi(id);
+			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){			
+				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
+				char response[strlen(str_date) + 5];
+				snprintf(response, sizeof(response), "%s%s", "YES ", str_date);
+				send_data(conn_fd, bufferSize, response, 0);
+
+				free(str_date);
+				continue;
+			}
+			else{
+				send_data(conn_fd, bufferSize, "NO", 0);
+			}
+		}
+		else if (strcmp(query, "/addVaccinationRecords") == 0){
+			
+			char *subdirPath = strtok(NULL, " \n");
+
+			/* Open the country subdir */
+			DIR *countryDir;
+			if ((countryDir = opendir(subdirPath)) == NULL) {
+				perror(RED "Error opening country's subdirectory" RESET);
+				exit(EXIT_FAILURE);
+			}
+			// printf("subdirpath: %s\n", subdirPaths[i]);
+
+			/* Traverse all the files in the country subdir */
+			struct dirent *file;
+			while ((file = readdir(countryDir)) != NULL) {
+				
+				/* Ignore the . and .. files */
+				if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
+					continue;
+
+				/* Add the filename to parsed files, if it is not already parsed */
+				char *filename = strdup(file->d_name);
+				if (is_parsed(&ds, filename)){
+					free(filename);
+					continue;
+				}
+				list_insert_next(ds.parsed_files, NULL, filename);
+
+				/* Create the path of file */
+				char filePath[strlen(subdirPath) + strlen(filename) + 2];
+				snprintf(filePath, sizeof(filePath), "%s/%s", subdirPath, filename);
+
+				pthread_mutex_lock(&mtx); /* shared data area */
+
+				/* If buffer is full, wait for signal nonfull */
+				while (BuffFull(buffer)) {
+					pthread_cond_wait(&nonfull, &mtx);
+				}
+				BuffInsert(buffer, strdup(filePath));
+
+				pthread_mutex_unlock(&mtx);
+
+				/* The buffer is not empty anymore (if it was) */
+				pthread_cond_signal(&nonempty);
+			}		
+
+			/* Close the country subdir*/
+			closedir(countryDir);
+
+			/* Wait for buffer to empty, so all the files are parsed */
+			while (!BuffEmpty(buffer)) { }
+			send_bloomFilters(conn_fd, bufferSize, bloomSize);
+		}
+		else if (strcmp(query, "/searchVaccinationStatus") == 0){
+
+			int citizenID = atoi(strtok(NULL, " \n"));
+
+			/* Get citizen */
+			citizenRecord c = NULL;
+			if ((c = HTSearch(ds.citizens, &citizenID, compare_citizen)) == NULL)
+				continue;
+
+			char *citizen_info = get_citizen_info(c);
+			send_data(conn_fd, bufferSize, citizen_info, 0);
+			send_vaccineStatus(citizenID, conn_fd, bufferSize);
+
+			free(citizen_info);
+		}
+		else if (strcmp(query, "/exit") == 0){
 			/* Create the LogFiles dir with read/write/search permissions for owner, group and others */
     		mkdir("./LogFiles", S_IRWXU | S_IRWXG | S_IRWXO);
 
@@ -401,8 +487,8 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 
 			/* Write to log_file.xxx the countries that monitor handles */
 			List head = NULL;
-			for (int i = 0; i < HTSize(ds->countries); i++){
-				if((head = get_HTchain(ds->countries, i)) != NULL){
+			for (int i = 0; i < HTSize(ds.countries); i++){
+				if((head = get_HTchain(ds.countries, i)) != NULL){
 					for (ListNode node = list_first(head); node != NULL; node = list_next(head, node)){
 						fprintf(logfile, "%s\n", (char *)get_country_name(list_node_item(head, node)));
 					}
@@ -410,70 +496,20 @@ void queries(dataStore *ds, char *input_dir, int read_fd, int write_fd, int buff
 			}
 
 			/* Write to log_file.xxx the total number of requests */
-			int accepted = ds->accepted_requests;
-			int rejected = ds->rejected_requests;
+			int accepted = ds.accepted_requests;
+			int rejected = ds.rejected_requests;
 			fprintf(logfile, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
 
 			fclose(logfile);
-			sig_intquit_raised = 0; /* reset value */
-			continue;
-		}		
-		if (sig_usr1_raised) {
-			// fileParse_and_buildStructs(input_dir, bloomSize, ds);
-			send_bloomFilters(write_fd, bufferSize, bloomSize);
-			
-			sig_usr1_raised = 0; /* reset value */
-			continue;
-		}
-
-		char *query = strtok(line, " \n");
-
-		if (strcmp(query, "/travelRequest") == 0){
-
-			char *id = strtok(NULL, " \n");
-			char *virusName = strtok(NULL, " \n");
-			
-			if ((v = HTSearch(ds->viruses, virusName, compare_virusName)) == NULL){ /* get virus */
-				printf("Something went wrong\n");
-				exit(1);
-			}
-
-			/* If citizen is in vaccinated_persons skip list */
-			int citizenID = atoi(id);
-			if ((vaccinated_citizen = SLSearch(get_vaccinated_persons(v), &citizenID, compare_vaccinated)) != NULL){			
-				char *str_date = get_date_as_str(get_vaccinated_date(vaccinated_citizen));
-				char response[strlen(str_date) + 5];
-				snprintf(response, sizeof(response), "%s%s", "YES ", str_date);
-				send_data(write_fd, bufferSize, response, 0);
-
-				free(str_date);
-				continue;
-			}
-			else{
-				send_data(write_fd, bufferSize, "NO", 0);
-			}
-		}
-		else if (strcmp(query, "/searchVaccinationStatus") == 0){
-
-			int citizenID = atoi(strtok(NULL, " \n"));
-
-			/* Get citizen */
-			citizenRecord c = NULL;
-			if ((c = HTSearch(ds->citizens, &citizenID, compare_citizen)) == NULL)
-				continue;
-
-			char *citizen_info = get_citizen_info(c);
-			send_data(write_fd, bufferSize, citizen_info, 0);
-			send_vaccineStatus(ds, citizenID, write_fd, bufferSize);
-
-			free(citizen_info);
+			free(line);
+			break;
 		}
 		else{
 			char *response = strtok(NULL, " \n");
 			if (strcmp(response, "accepted") == 0)
-				(ds->accepted_requests)++;
+				(ds.accepted_requests)++;
 			else
-				(ds->rejected_requests)++;	
+				(ds.rejected_requests)++;	
 		}
 		free(line);
 	}

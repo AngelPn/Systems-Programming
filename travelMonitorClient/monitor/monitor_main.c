@@ -21,6 +21,7 @@
 #include "country.h"
 #include "utils_queries.h"
 #include "CyclicBuffer.h"
+#include "List.h"
 
 /* Global variables for our buffer mutexes and condition variables */
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
@@ -30,25 +31,32 @@ pthread_cond_t nonfull = PTHREAD_COND_INITIALIZER;
 /* Shared variable that keeps the structures needed for queries from client */
 dataStore ds;
 
+void print_filepath(void *filepath){
+	printf("%s", (char *)filepath);
+}
+
 int main(int argc, char **argv){
-    // fprintf(stderr, "child %d\n", getpid());
+    fprintf(stderr, "child %d\n", getpid());
 
     /* Get arguments */
-    int port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize, paths_len;
-	char **paths;
-    argsHandling(argc, argv, &port, &numThreads, &socketBufferSize, &cyclicBufferSize, &bloomSize, &paths, &paths_len);
+    int port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize, subdirPaths_len;
+	char **subdirPaths;
+    argsHandling(argc, argv, &port, &numThreads, &socketBufferSize, &cyclicBufferSize, &bloomSize, &subdirPaths, &subdirPaths_len);
         
 
 	// printf("port: %d, numThreads: %d, socketBufferSize: %d, cyclicBufferSize: %d, bloomSize: %d\n", port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize);
 	// for (int i = 0; i < paths_len; i++){
 	// 	printf("%s\n", paths[i]);
 	// }
-    
-	/* Create a cyclic buffer to store the paths */
-	CyclicBuffer buffer = BuffCreate(cyclicBufferSize, paths, paths_len);
 
 	/* Create the structs needed for queries */
-	create_structs(&ds, bloomSize);
+	create_structs(&ds, bloomSize);	
+
+	List filePaths = get_filepaths(subdirPaths, subdirPaths_len);
+	// list_print(filePaths, print_filepath); printf("\n\n");
+    
+	/* Create a cyclic buffer to store the paths */
+	CyclicBuffer buffer = BuffCreate(cyclicBufferSize);
 
 	/* Allocate space to store the thread ids */
 	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
@@ -68,7 +76,7 @@ int main(int argc, char **argv){
 
 	/* While there is an empty space in buffer
 	   and at least one path exists that it has not been read */
-	while(empty_space_in_buff(buffer)){
+	while(empty_space_in_buff(buffer) && list_length(filePaths)){
 		// printf("here\n");
 		pthread_mutex_lock(&mtx); /* shared data area */
 
@@ -77,12 +85,14 @@ int main(int argc, char **argv){
 			pthread_cond_wait(&nonfull, &mtx);
 		}
 
-		BuffAdd(buffer);
+		ListNode node = list_first(filePaths);
+		BuffInsert(buffer, list_node_item(filePaths, node));
+		list_remove(filePaths, node);
 
 		pthread_mutex_unlock(&mtx);
 
 		/* The buffer is not empty anymore (if it was) */
-		pthread_cond_signal(&nonempty);		
+		pthread_cond_signal(&nonempty);
 	}
 	// print_ht_citizens(&ds);
 	/* Initialize our service */
@@ -146,9 +156,9 @@ int main(int argc, char **argv){
 	// printf("ABOUT TO SEND BLOOM FILTERS\n");
 	send_bloomFilters(conn_fd, socketBufferSize, bloomSize);
 	// printf("BLOOM FILTERS SENT\n");
-	while (true) { }
-	// /* Execute queries*/
-	// queries(&ds, input_dir, read_fd, write_fd, socketBufferSize, bloomSize);
+
+	/* Execute queries*/
+	queries(conn_fd, buffer, socketBufferSize, bloomSize);
 
 	// print_ht_citizens(&ds);
 	close(conn_fd);
@@ -156,6 +166,8 @@ int main(int argc, char **argv){
 	
 
     /* Deallocate memory */
+	free(subdirPaths);
+	list_destroy(filePaths);
     destroy_structs(&ds);
 	BuffDestroy(buffer);
 
