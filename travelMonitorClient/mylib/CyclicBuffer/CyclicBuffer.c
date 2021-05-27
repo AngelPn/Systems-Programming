@@ -11,6 +11,7 @@ struct buffer
     int start;              /* start position of cyclic buffer */
     int end;                /* end position of cyclic buffer */
     int count;              /* counter of items in buffer: determines if buffer is empty or full */
+    int total;              /* counter of items that have inserted into buffer */
 };
 
 CyclicBuffer BuffCreate(int cyclicBufferSize){
@@ -26,14 +27,15 @@ CyclicBuffer BuffCreate(int cyclicBufferSize){
     buff->start = 0;
     buff->end = -1;
     buff->count = 0;
+    buff->total = 0;
 
     return buff;
 }
 
 bool BuffEmpty(CyclicBuffer buff){
-    if (buff->count > 0)
-        return false;
-    else return true;
+    if (buff->count <= 0)
+        return true;
+    else return false;
 }
 
 bool BuffFull(CyclicBuffer buff){
@@ -48,18 +50,41 @@ bool empty_space_in_buff(CyclicBuffer buff){
     else return false;
 }
 
+bool BuffTotal(CyclicBuffer buff, int expected){
+    if (buff->total == expected)
+        return true;
+    else return false;
+}
+
 void BuffInsert(CyclicBuffer buff, char *data){
 	buff->end = (buff->end + 1) % (buff->cyclicBufferSize); /* update end pos */
+    printf("BuffInsert pos = %d: %s\n", buff->end, data);
 	buff->data[buff->end] = data;
 	(buff->count)++; /* added an item, increase count */
+    // (buff->total)++;
 }
 
 char *BuffGet(CyclicBuffer buff){
     char *data = buff->data[buff->start];
+    printf("BuffGet pos = %d: %s\n", buff->start, data);
     buff->data[buff->start] = NULL;
     buff->start = (buff->start + 1) % (buff->cyclicBufferSize); /* update start pos */
     (buff->count)--; /* removed an item, decrease count */
     return data;
+}
+
+void BuffRemoved(CyclicBuffer buff){
+    (buff->total)++; /* removed an item, decrease count */
+    printf("Buff->total = %d\n", buff->total);
+}
+
+void BuffNull(CyclicBuffer buff, char *method){
+    printf("%s : ", method);
+    for (int i = 0; i < buff->cyclicBufferSize; i++){
+        if (buff->data[i] == NULL)
+            printf("%d ", i);
+    }
+    printf("\n");
 }
 
 void BuffDestroy(CyclicBuffer buff){

@@ -1,9 +1,0 @@
-683 hcpxgxrdr ancjc Estonia 68 MERS-COV NO
-683 hcpxgxrdr ancjc Estonia 68 COXSACKIE YES 13-09-2019
-8530 ddjq amdyvzoskwx Estonia 5 SMALLPOX NO
-8530 ddjq amdyvzoskwx Estonia 5 MERS-COV NO
-9795 kljtijic cwpvjioisk Estonia 59 NIPAH YES 13-08-2018
-6027 vaciwvwb ulcjdofvgox Estonia 73 MERS-COV NO 25-06-2018
-6027 vaciwvwb ulcjdofvgox Estonia 73 HEPATITIS NO 04-06-2019
-7788 ubjuuxtdq sklqwcqglnoc Estonia 20 HENDRA YES 04-11-2019
-99 vtbjhsls juu Estonia 45 HIV NO 15-08-2020

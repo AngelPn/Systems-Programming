@@ -37,7 +37,7 @@ void print_filepath(void *filepath){
 }
 
 int main(int argc, char **argv){
-    fprintf(stderr, "child %d\n", getpid());
+    // fprintf(stderr, "child %d\n", getpid());
 
     /* Get arguments */
     int port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize, subdirPaths_len;
@@ -54,7 +54,7 @@ int main(int argc, char **argv){
 	create_structs(&ds, bloomSize);	
 
 	List filePaths = get_filepaths(subdirPaths, subdirPaths_len);
-	list_print(filePaths, print_filepath); printf("\n\n");
+	// list_print(filePaths, print_filepath); printf("\n\n");
     
 	/* Create a cyclic buffer to store the paths */
 	CyclicBuffer buffer = BuffCreate(cyclicBufferSize);
@@ -81,9 +81,10 @@ int main(int argc, char **argv){
 		}
 	}
 
-	/* While there is an empty space in buffer
-	   and at least one path exists that it has not been read */
-	while(empty_space_in_buff(buffer) && list_length(filePaths)){
+	/* While filepath exists that it has not been read */
+	int expected = list_length(filePaths);
+	printf("EXPECTED %d\n", expected);
+	while(list_length(filePaths)){
 		// printf("here\n");
 		pthread_mutex_lock(&mtx); /* shared data area */
 
@@ -93,7 +94,10 @@ int main(int argc, char **argv){
 		}
 
 		ListNode node = list_first(filePaths);
+		char *filePath = list_node_item(filePaths, node);
 		BuffInsert(buffer, list_node_item(filePaths, node));
+		// printf("BuffInsert: %s\n", filePath);
+		BuffNull(buffer, "BuffInsert");
 		list_remove(filePaths, node);
 
 		pthread_mutex_unlock(&mtx);
@@ -101,7 +105,13 @@ int main(int argc, char **argv){
 		/* The buffer is not empty anymore (if it was) */
 		pthread_cond_signal(&nonempty);
 	}
-	// print_ht_citizens(&ds);
+
+	/* Wait all the filepaths to get parsed */
+	while (!BuffTotal(buffer, expected)) { }
+
+	// fprintf(stderr, "COUNTRIES OF child %d\n", getpid());
+	// print_ht_countries(&ds);
+
 	/* Initialize our service */
 	struct sockaddr_in server, client, ip;
 	// socklen_t server_len = sizeof(struct sockaddr_in);

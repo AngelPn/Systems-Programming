@@ -1,9 +1,0 @@
-402 kbas ymovm Cyprus 88 YELLOWFEVER YES 21-02-2020
-2214 ujdhjn dnqtzy Cyprus 117 DENGUE YES 24-08-2018
-2214 ujdhjn dnqtzy Cyprus 117 COVID-19 NO 07-02-2019
-4052 ivyz smsbfznphqj Cyprus 89 MARBURG NO 03-12-2020
-7133 fdnzqeai hlz Cyprus 91 VACCINIA YES 12-03-2020
-3407 ivrdyfx ajifenmsnczg Cyprus 69 SMALLPOX YES 21-07-2019
-3407 ivrdyfx ajifenmsnczg Cyprus 69 H5N8 NO
-8809 ndaldfjcbhclx jlxmtiqfpoegw Cyprus 96 HANTAVIRUS YES 23-06-2020
-8809 ndaldfjcbhclx jlxmtiqfpoegw Cyprus 96 YELLOWFEVER YES 13-05-2020

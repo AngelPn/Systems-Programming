@@ -181,6 +181,7 @@ void *fileParse_and_buildStructs(void *buff){
 	CyclicBuffer buffer = buff;
 
 	while (!needQuit()){
+	// while (true){
 
 		pthread_mutex_lock(&mtx); /* shared data area */
 
@@ -192,6 +193,7 @@ void *fileParse_and_buildStructs(void *buff){
 		/* Get filepath from buffer */
 		char *filePath = BuffGet(buffer);
 		// printf("BuffGet: %s\n", filePath);
+		BuffNull(buffer, "BuffGet");
 
 		pthread_mutex_unlock(&mtx);
 
@@ -208,7 +210,8 @@ void *fileParse_and_buildStructs(void *buff){
 		/* Parse the file and build the structs */
 		char *line = NULL;
 		size_t len = 0;
-		
+
+		// printf("BuffGet: %s\n", filePath);
 		while (getline(&line, &len, frecords) != -1){
 			char *args[8];
 			args[0] = strtok(line, " ");
@@ -219,6 +222,12 @@ void *fileParse_and_buildStructs(void *buff){
 			insertCitizen(args, ds.bloomSize, true);
 			pthread_mutex_unlock(&mtx);   
 		}
+		pthread_mutex_lock(&mtx); /* shared data area */
+		BuffRemoved(buffer);
+		pthread_mutex_unlock(&mtx);  
+
+		// /* The buffer is not full anymore */
+		// pthread_cond_signal(&nonfull);
 
 		free(line);
 		free(filePath);

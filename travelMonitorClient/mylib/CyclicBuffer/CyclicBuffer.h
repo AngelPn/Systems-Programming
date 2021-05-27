@@ -18,11 +18,17 @@ bool BuffFull(CyclicBuffer buff);
 /* If there is an empty space in buffer, return true. Else false */
 bool empty_space_in_buff(CyclicBuffer buff);
 
+bool BuffTotal(CyclicBuffer buff, int expected);
+
 /* Inserts an item to buffer */
 void BuffInsert(CyclicBuffer buff, char *data);
 
 /* Gets data from cyclic buffer */
 char *BuffGet(CyclicBuffer buff);
+
+void BuffRemoved(CyclicBuffer buff);
+
+void BuffNull(CyclicBuffer buff, char *method);
 
 /* Destroys cyclic buffer */
 void BuffDestroy(CyclicBuffer buff);
