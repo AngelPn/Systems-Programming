@@ -3,6 +3,7 @@
 
 #include "dataStore.h"
 #include "List.h"
+#include "CyclicBuffer.h"
 
 /*  Does proper argument handling and stores variables from command prompt to vars 
     numThreads, socketBufferSize, cyclicBufferSize, bloomsize, paths */

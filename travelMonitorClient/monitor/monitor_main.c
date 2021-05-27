@@ -25,6 +25,7 @@
 
 /* Global variables for our buffer mutexes and condition variables */
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mxq; /* mutex used as quit flag */
 pthread_cond_t nonempty = PTHREAD_COND_INITIALIZER;
 pthread_cond_t nonfull = PTHREAD_COND_INITIALIZER;
 
@@ -32,7 +33,7 @@ pthread_cond_t nonfull = PTHREAD_COND_INITIALIZER;
 dataStore ds;
 
 void print_filepath(void *filepath){
-	printf("%s", (char *)filepath);
+	printf("%s ", (char *)filepath);
 }
 
 int main(int argc, char **argv){
@@ -53,10 +54,16 @@ int main(int argc, char **argv){
 	create_structs(&ds, bloomSize);	
 
 	List filePaths = get_filepaths(subdirPaths, subdirPaths_len);
-	// list_print(filePaths, print_filepath); printf("\n\n");
+	list_print(filePaths, print_filepath); printf("\n\n");
     
 	/* Create a cyclic buffer to store the paths */
 	CyclicBuffer buffer = BuffCreate(cyclicBufferSize);
+
+  /* init and lock the mutex before creating the thread.  As long as the
+     mutex stays locked, the thread should keep running.  A pointer to the
+     mutex is passed as the argument to the thread function. */
+	pthread_mutex_init(&mxq, NULL);
+	pthread_mutex_lock(&mxq);
 
 	/* Allocate space to store the thread ids */
 	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
@@ -97,7 +104,7 @@ int main(int argc, char **argv){
 	// print_ht_citizens(&ds);
 	/* Initialize our service */
 	struct sockaddr_in server, client, ip;
-	socklen_t server_len = sizeof(struct sockaddr_in);
+	// socklen_t server_len = sizeof(struct sockaddr_in);
 	socklen_t client_len = sizeof(struct sockaddr_in);
 	struct sockaddr* serverptr = (struct sockaddr*) &server;
 	struct sockaddr* clientptr = (struct sockaddr*) &client;
@@ -159,6 +166,14 @@ int main(int argc, char **argv){
 
 	/* Execute queries*/
 	queries(conn_fd, buffer, socketBufferSize, bloomSize);
+
+
+	/* unlock mxq to tell the thread to terminate, then join the thread */
+	pthread_mutex_unlock(&mxq);
+	for (int i = 0; i < numThreads; i++) {
+		pthread_join(thread_ids[i], NULL);
+	} 
+	
 
 	// print_ht_citizens(&ds);
 	close(conn_fd);

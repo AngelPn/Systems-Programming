@@ -255,7 +255,7 @@ void execute_queries(HashTable *monitors, int bufferSize, int bloomSize, pid_t *
 	size_t len = 0;
 	bool broke = false;
 
-	while (getline(&line, &len, stdin) != NULL){
+	while (getline(&line, &len, stdin) != -1){
 
 		char *query = strtok(line, " \n");
 

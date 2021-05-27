@@ -21,7 +21,6 @@
 #include "country.h"
 #include "ipc.h"
 #include "BloomFilter.h"
-#include "CyclicBuffer.h"
 
 #define RED   "\033[1;31m"
 #define GRN   "\033[1;32m"
@@ -29,6 +28,7 @@
 #define RESET "\033[0m"
 
 extern pthread_mutex_t mtx;
+extern pthread_mutex_t mxq;
 extern pthread_cond_t nonempty;
 extern pthread_cond_t nonfull;
 extern dataStore ds;
@@ -158,12 +158,29 @@ List get_filepaths(char **subdirPaths, int subdirPaths_len){
 
 void insertCitizen(char *args[8], int bytes, bool fileparse);
 
+/* Returns 1 (true) if the mutex is unlocked, which is the
+ * thread's signal to terminate. 
+ */
+int needQuit(){
+	int trylock = pthread_mutex_trylock(&mxq);
+	/* If the mutex was locked, return 0 (false) */
+	if (trylock == EBUSY)
+		return 0;
+	/* If we got the lock, unlock and return 1 (true) */
+	else if (trylock == 0){
+		pthread_mutex_unlock(&mxq);
+		return 1;		
+	}
+	else
+		return 1;
+}
+
 /* Does file parsing and builds structs in dataStore */
 void *fileParse_and_buildStructs(void *buff){
 
 	CyclicBuffer buffer = buff;
 
-	while (true){
+	while (!needQuit()){
 
 		pthread_mutex_lock(&mtx); /* shared data area */
 
@@ -207,6 +224,7 @@ void *fileParse_and_buildStructs(void *buff){
 		free(filePath);
 		fclose(frecords);
 	}
+	return NULL;
 }
 
 char *concat_int_to_str(const char str[], int i){
