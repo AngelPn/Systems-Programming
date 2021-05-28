@@ -338,10 +338,9 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
     /* Kill monitors and close sockets */
     for (int i = 0; i < numMonitors; i++){
-		kill(monitors_pids[i], SIGKILL);
+		// kill(monitors_pids[i], SIGKILL);
 		close(socket_fd[i]);
     }
-	free(input_dir);
 	
     /* Wait until all the children are dead */
     for (int i = 0; i < numMonitors; i++){
@@ -350,6 +349,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
 	/* Deallocate memory */
 	free(filepath);
+	free(input_dir);
 	HTDestroy(monitors);	
 }
 

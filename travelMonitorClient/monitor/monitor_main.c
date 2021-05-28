@@ -37,7 +37,7 @@ void print_filepath(void *filepath){
 }
 
 int main(int argc, char **argv){
-    // fprintf(stderr, "child %d\n", getpid());
+    fprintf(stderr, "child %d\n", getpid());
 
     /* Get arguments */
     int port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize, subdirPaths_len;
@@ -60,8 +60,7 @@ int main(int argc, char **argv){
 	CyclicBuffer buffer = BuffCreate(cyclicBufferSize);
 
   /* init and lock the mutex before creating the thread.  As long as the
-     mutex stays locked, the thread should keep running.  A pointer to the
-     mutex is passed as the argument to the thread function. */
+     mutex stays locked, the thread should keep running. */
 	pthread_mutex_init(&mxq, NULL);
 	pthread_mutex_lock(&mxq);
 
@@ -82,14 +81,16 @@ int main(int argc, char **argv){
 	}
 
 	/* While filepath exists that it has not been read */
-	int expected = list_length(filePaths);
-	printf("EXPECTED %d\n", expected);
+	int total_filepaths = list_length(filePaths);
+	// printf("total: %d\n", total_filepaths);
+
 	while(list_length(filePaths)){
 		// printf("here\n");
 		pthread_mutex_lock(&mtx); /* shared data area */
 
 		/* If buffer is full, wait for signal nonfull */
 		while (BuffFull(buffer)) {
+			// printf("buffFull waiting...");
 			pthread_cond_wait(&nonfull, &mtx);
 		}
 
@@ -97,7 +98,7 @@ int main(int argc, char **argv){
 		char *filePath = list_node_item(filePaths, node);
 		BuffInsert(buffer, list_node_item(filePaths, node));
 		// printf("BuffInsert: %s\n", filePath);
-		BuffNull(buffer, "BuffInsert");
+		// BuffNull(buffer, "BuffInsert");
 		list_remove(filePaths, node);
 
 		pthread_mutex_unlock(&mtx);
@@ -106,8 +107,8 @@ int main(int argc, char **argv){
 		pthread_cond_signal(&nonempty);
 	}
 
-	/* Wait all the filepaths to get parsed */
-	while (!BuffTotal(buffer, expected)) { }
+	/* Wait for all the filepaths to get parsed */
+	while (!BuffTotal(buffer, total_filepaths)) { }
 
 	// fprintf(stderr, "COUNTRIES OF child %d\n", getpid());
 	// print_ht_countries(&ds);
@@ -165,7 +166,7 @@ int main(int argc, char **argv){
 	socklen_t len = sizeof(ip);
 	getpeername(conn_fd, (struct sockaddr *) &ip, &len);
 
-	printf("Accepted connection\n");
+	// printf("Accepted connection\n");
 
 	// send_data(conn_fd, socketBufferSize, "Hello World", 0);
 
@@ -175,7 +176,7 @@ int main(int argc, char **argv){
 	// printf("BLOOM FILTERS SENT\n");
 
 	/* Execute queries*/
-	queries(conn_fd, buffer, socketBufferSize, bloomSize);
+	queries(conn_fd, buffer, socketBufferSize, bloomSize, total_filepaths);
 
 
 	/* unlock mxq to tell the thread to terminate, then join the thread */

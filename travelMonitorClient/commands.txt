@@ -1,0 +1,23 @@
+/travelRequest 7848 10-10-2021 Argentina France HKU1
+/travelRequest 7848 10-10-2021 Argentina China HKU1
+/travelRequest 7660 24-02-2021 Argentina France COVID-19
+/travelRequest 7660 24-12-2021 Argentina France COVID-19
+/travelRequest 9784 16-12-2020 Austria France VISNA
+/travelRequest 9784 16-12-2021 Austria Romania VISNA
+/travelRequest 4754 10-10-2021 Greece France EBOLA
+
+/travelStats COVID-19 10-10-2017 10-10-2022
+/travelStats HKU1 10-10-2017 10-10-2022
+/travelStats COVID-19 10-10-2017 10-10-2018
+/travelStats COVID-19 24-03-2021 24-12-2022
+/travelStats COVID-19 10-10-2017 10-10-2022 France
+/travelStats VISNA 10-10-2017 10-10-2022 France
+/travelStats VISNA 10-10-2017 10-10-2022 Romania
+/travelStats VISNA 10-10-2017 10-10-2022
+
+/searchVaccinationStatus 7848
+/searchVaccinationStatus 7660
+/searchVaccinationStatus 9784
+/searchVaccinationStatus 8108
+
+/travelRequest 8108 10-10-2021 Argentina France virus1

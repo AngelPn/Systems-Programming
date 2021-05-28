@@ -44,12 +44,6 @@ bool BuffFull(CyclicBuffer buff){
     else return false;
 }
 
-bool empty_space_in_buff(CyclicBuffer buff){
-    if (buff->data[buff->cyclicBufferSize - 1] == NULL)
-        return true;
-    else return false;
-}
-
 bool BuffTotal(CyclicBuffer buff, int expected){
     if (buff->total == expected)
         return true;
@@ -58,15 +52,14 @@ bool BuffTotal(CyclicBuffer buff, int expected){
 
 void BuffInsert(CyclicBuffer buff, char *data){
 	buff->end = (buff->end + 1) % (buff->cyclicBufferSize); /* update end pos */
-    printf("BuffInsert pos = %d: %s\n", buff->end, data);
+    // printf("BuffInsert pos = %d: %s\n", buff->end, data);
 	buff->data[buff->end] = data;
 	(buff->count)++; /* added an item, increase count */
-    // (buff->total)++;
 }
 
 char *BuffGet(CyclicBuffer buff){
     char *data = buff->data[buff->start];
-    printf("BuffGet pos = %d: %s\n", buff->start, data);
+    // printf("BuffGet pos = %d: %s\n", buff->start, data);
     buff->data[buff->start] = NULL;
     buff->start = (buff->start + 1) % (buff->cyclicBufferSize); /* update start pos */
     (buff->count)--; /* removed an item, decrease count */
@@ -75,7 +68,7 @@ char *BuffGet(CyclicBuffer buff){
 
 void BuffRemoved(CyclicBuffer buff){
     (buff->total)++; /* removed an item, decrease count */
-    printf("Buff->total = %d\n", buff->total);
+    // printf("Buff->total = %d\n", buff->total);
 }
 
 void BuffNull(CyclicBuffer buff, char *method){

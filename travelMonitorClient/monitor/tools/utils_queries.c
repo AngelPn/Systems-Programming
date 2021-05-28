@@ -182,18 +182,20 @@ void *fileParse_and_buildStructs(void *buff){
 
 	while (!needQuit()){
 	// while (true){
-
+		// printf("first block thread - ");
 		pthread_mutex_lock(&mtx); /* shared data area */
+		// printf("unblock\n");
 
 		/* If buffer is empty, wait for signal nonempty */
 		while (BuffEmpty(buffer)){
+			// printf("buffEmpty waiting...");
 			pthread_cond_wait(&nonempty, &mtx);
 		}
 
 		/* Get filepath from buffer */
 		char *filePath = BuffGet(buffer);
 		// printf("BuffGet: %s\n", filePath);
-		BuffNull(buffer, "BuffGet");
+		// BuffNull(buffer, "BuffGet");
 
 		pthread_mutex_unlock(&mtx);
 
@@ -212,17 +214,24 @@ void *fileParse_and_buildStructs(void *buff){
 		size_t len = 0;
 
 		// printf("BuffGet: %s\n", filePath);
+		// printf("second block thread - ");
+		pthread_mutex_lock(&mtx); /* shared data area */
+		// printf("unblock\n");
 		while (getline(&line, &len, frecords) != -1){
 			char *args[8];
 			args[0] = strtok(line, " ");
 			for (int i = 1; i < 8; i++)
 				args[i] = strtok(NULL, " \n");
 
-			pthread_mutex_lock(&mtx); /* shared data area */
+			
+			// pthread_mutex_lock(&mtx); /* shared data area */
+			
 			insertCitizen(args, ds.bloomSize, true);
-			pthread_mutex_unlock(&mtx);   
+			// pthread_mutex_unlock(&mtx);   
+			
 		}
-		pthread_mutex_lock(&mtx); /* shared data area */
+		/* The file is parsed, inform buffer */
+		
 		BuffRemoved(buffer);
 		pthread_mutex_unlock(&mtx);  
 
@@ -233,6 +242,7 @@ void *fileParse_and_buildStructs(void *buff){
 		free(filePath);
 		fclose(frecords);
 	}
+	printf("thread terminating\n");
 	return NULL;
 }
 
@@ -396,7 +406,7 @@ void send_vaccineStatus(int citizenID, int conn_fd, int bufferSize){
 }
 
 
-void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize){
+void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize, int total_filepaths){
 
 	virus v = NULL;
 	vaccinated vaccinated_citizen = NULL;
@@ -459,6 +469,7 @@ void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize){
 					continue;
 				}
 				list_insert_next(ds.parsed_files, NULL, filename);
+				total_filepaths++;
 
 				/* Create the path of file */
 				char filePath[strlen(subdirPath) + strlen(filename) + 2];
@@ -481,8 +492,8 @@ void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize){
 			/* Close the country subdir*/
 			closedir(countryDir);
 
-			/* Wait for buffer to empty, so all the files are parsed */
-			while (!BuffEmpty(buffer)) { }
+			/* Wait for all the filepaths to get parsed */
+			while (!BuffTotal(buffer, total_filepaths)) { }
 			send_bloomFilters(conn_fd, bufferSize, bloomSize);
 		}
 		else if (strcmp(query, "/searchVaccinationStatus") == 0){

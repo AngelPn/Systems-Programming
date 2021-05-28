@@ -19,7 +19,7 @@ void *fileParse_and_buildStructs(void *buff);
 void send_bloomFilters(int write_fd, int bufferSize, int bloomSize);
 
 /* Executes queries */
-void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize);
+void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize, int total_filepaths);
 
 /* Concatenate int to string */
 char *concat_int_to_str(const char str[], int i);
