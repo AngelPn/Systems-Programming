@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #include "dataStore.h"
 #include "ipc.h"
@@ -23,18 +24,16 @@
 #include "CyclicBuffer.h"
 #include "List.h"
 
+
 /* Global variables for our buffer mutexes and condition variables */
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mxq; /* mutex used as quit flag */
 pthread_cond_t nonempty = PTHREAD_COND_INITIALIZER;
 pthread_cond_t nonfull = PTHREAD_COND_INITIALIZER;
 
-/* Shared variable that keeps the structures needed for queries from client */
-dataStore ds;
+/* Shared variables */
+dataStore ds; 	/* keeps the structures needed for queries from client */
+int quit = 0; 	/* signals thread termination */
 
-void print_filepath(void *filepath){
-	printf("%s ", (char *)filepath);
-}
 
 int main(int argc, char **argv){
     fprintf(stderr, "child %d\n", getpid());
@@ -43,26 +42,14 @@ int main(int argc, char **argv){
     int port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize, subdirPaths_len;
 	char **subdirPaths;
     argsHandling(argc, argv, &port, &numThreads, &socketBufferSize, &cyclicBufferSize, &bloomSize, &subdirPaths, &subdirPaths_len);
-        
-
-	// printf("port: %d, numThreads: %d, socketBufferSize: %d, cyclicBufferSize: %d, bloomSize: %d\n", port, numThreads, socketBufferSize, cyclicBufferSize, bloomSize);
-	// for (int i = 0; i < paths_len; i++){
-	// 	printf("%s\n", paths[i]);
-	// }
 
 	/* Create the structs needed for queries */
 	create_structs(&ds, bloomSize);	
 
 	List filePaths = get_filepaths(subdirPaths, subdirPaths_len);
-	// list_print(filePaths, print_filepath); printf("\n\n");
     
 	/* Create a cyclic buffer to store the paths */
 	CyclicBuffer buffer = BuffCreate(cyclicBufferSize);
-
-  /* init and lock the mutex before creating the thread.  As long as the
-     mutex stays locked, the thread should keep running. */
-	pthread_mutex_init(&mxq, NULL);
-	pthread_mutex_lock(&mxq);
 
 	/* Allocate space to store the thread ids */
 	pthread_t *thread_ids = malloc(sizeof(pthread_t)*numThreads);
@@ -80,25 +67,21 @@ int main(int argc, char **argv){
 		}
 	}
 
-	/* While filepath exists that it has not been read */
+	/* Store the expected number of files to be read */
 	int total_filepaths = list_length(filePaths);
-	// printf("total: %d\n", total_filepaths);
 
+	/* While filepath exists that it has not been read */
 	while(list_length(filePaths)){
-		// printf("here\n");
+
 		pthread_mutex_lock(&mtx); /* shared data area */
 
 		/* If buffer is full, wait for signal nonfull */
 		while (BuffFull(buffer)) {
-			// printf("buffFull waiting...");
 			pthread_cond_wait(&nonfull, &mtx);
 		}
 
 		ListNode node = list_first(filePaths);
-		char *filePath = list_node_item(filePaths, node);
 		BuffInsert(buffer, list_node_item(filePaths, node));
-		// printf("BuffInsert: %s\n", filePath);
-		// BuffNull(buffer, "BuffInsert");
 		list_remove(filePaths, node);
 
 		pthread_mutex_unlock(&mtx);
@@ -110,12 +93,8 @@ int main(int argc, char **argv){
 	/* Wait for all the filepaths to get parsed */
 	while (!BuffTotal(buffer, total_filepaths)) { }
 
-	// fprintf(stderr, "COUNTRIES OF child %d\n", getpid());
-	// print_ht_countries(&ds);
-
 	/* Initialize our service */
 	struct sockaddr_in server, client, ip;
-	// socklen_t server_len = sizeof(struct sockaddr_in);
 	socklen_t client_len = sizeof(struct sockaddr_in);
 	struct sockaddr* serverptr = (struct sockaddr*) &server;
 	struct sockaddr* clientptr = (struct sockaddr*) &client;
@@ -134,11 +113,24 @@ int main(int argc, char **argv){
 	/* Assign IP, port */
 	server.sin_family = AF_INET; /* Internet domain */
 
+	char hostname[1024];
+	hostname[1023] = '\0';
+	gethostname(hostname, 1023);
 	struct hostent* host;
-	if ((host = gethostbyname("localhost")) == NULL) {
+	if ((host = gethostbyname(hostname)) == NULL) {
 		herror("Error in gethostbyname");
 		exit(EXIT_FAILURE);
 	}
+
+	char symbolicip [50];
+	struct in_addr **addr_list;
+
+	addr_list = (struct in_addr **)host->h_addr_list;
+	for (int i = 0; addr_list[i] != NULL; i++) {
+		strcpy (symbolicip, inet_ntoa(*addr_list[i]));
+		printf("IP Address is : %s" , symbolicip);
+	}
+
 	memcpy(&server.sin_addr, host->h_addr, host->h_length);
 	server.sin_port = htons(port);
 
@@ -154,8 +146,6 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
-	// printf("I am PID %d waiting for request at port %d\n",(int)getpid(), port);
-
 	/* Accept the connection */
 	int conn_fd;
 	if ((conn_fd = accept(sock_fd, clientptr, &client_len)) < 0) {
@@ -166,30 +156,26 @@ int main(int argc, char **argv){
 	socklen_t len = sizeof(ip);
 	getpeername(conn_fd, (struct sockaddr *) &ip, &len);
 
-	// printf("Accepted connection\n");
-
-	// send_data(conn_fd, socketBufferSize, "Hello World", 0);
-
 	/* Send bloom filters to parent process */
-	// printf("ABOUT TO SEND BLOOM FILTERS\n");
 	send_bloomFilters(conn_fd, socketBufferSize, bloomSize);
-	// printf("BLOOM FILTERS SENT\n");
 
 	/* Execute queries*/
 	queries(conn_fd, buffer, socketBufferSize, bloomSize, total_filepaths);
 
-
-	/* unlock mxq to tell the thread to terminate, then join the thread */
-	pthread_mutex_unlock(&mxq);
+	/* Unblock threads and signal their termination */
+	pthread_mutex_lock(&mtx);
+	quit = 1;
+	pthread_cond_broadcast(&nonempty);
+	pthread_mutex_unlock(&mtx);
+	
 	for (int i = 0; i < numThreads; i++) {
 		pthread_join(thread_ids[i], NULL);
 	} 
-	
 
-	// print_ht_citizens(&ds);
 	close(conn_fd);
 	close(sock_fd);
-	
+	pthread_cond_destroy(&nonempty); pthread_cond_destroy(&nonfull);
+	pthread_mutex_destroy(&mtx);	
 
     /* Deallocate memory */
 	free(subdirPaths);

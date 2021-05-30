@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #include "utils.h"
 #include "HashTable.h"
@@ -253,25 +254,31 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
     }
 	free(numThreads_str); free(socketBufferSize_str); 
 	free(cyclicBufferSize_str); free(bloomSize_str);
-    /*
-     * Try to connect to the address.  For this to
-     * succeed, the server must already have bound
-     * this address, and must have issued a listen()
-     * request.
-     *
-     * The third argument indicates the "length" of
-     * the structure, not just the length of the
-     * socket name.
-     */
 
+    /* 	Try to connect to the address.  For this to succeed, 
+		the server must already have bound this address, 
+		and must have issued a listen() request.
+    */
 	struct sockaddr_in server;
 	struct sockaddr* server_ptr = (struct sockaddr*)&server;
 
 	/* Find server address */
+	char hostname[1024];
+	hostname[1023] = '\0';
+	gethostname(hostname, 1023);	
 	struct hostent* host;
-	if ((host = gethostbyname("localhost")) == NULL) {
+	if ((host = gethostbyname(hostname)) == NULL) {
 		herror("Error in gethostbyname");
 		exit(EXIT_FAILURE);
+	}
+
+	char symbolicip [50];
+	struct in_addr **addr_list;
+
+	addr_list = (struct in_addr **)host->h_addr_list;
+	for (int i = 0; addr_list[i] != NULL; i++) {
+		strcpy (symbolicip, inet_ntoa(*addr_list[i]));
+		printf("IP Address is : %s\n" , symbolicip);
 	}
 	
 	server.sin_family = AF_INET; /* Internet domain */
@@ -280,11 +287,6 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	port = 9000;
 	int connectStatus = -1;
     for (int i = 0; i < numActiveMonitors; i++) {
-
-		// monitor_pid = i;
-		// m = HTSearch(monitors, &monitor_pid, compare_monitor);
-		// set_pid(m, monitors_pids[i]);
-
 		server.sin_port = htons(port++);
 		while (connectStatus < 0){
 			connectStatus = connect(socket_fd[i], server_ptr, sizeof(server));
@@ -294,8 +296,6 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	
     /* Get bloom filters from monitors */
 	get_bloom_filters(&monitors, monitors_pids, numActiveMonitors, socketBufferSize, bloomSize, socket_fd);
-
-	// printf("Got bloom filters\n");
 
 	/* Execute queries */
 	execute_queries(&monitors, socketBufferSize, bloomSize, monitors_pids, socket_fd, numActiveMonitors, input_dir);
@@ -338,7 +338,6 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
     /* Kill monitors and close sockets */
     for (int i = 0; i < numMonitors; i++){
-		// kill(monitors_pids[i], SIGKILL);
 		close(socket_fd[i]);
     }
 	
@@ -353,6 +352,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	HTDestroy(monitors);	
 }
 
+
 /* Gets bloom filters from specified file descriptor (fd_index) */
 void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, int *socket_fd){
 
@@ -365,8 +365,7 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 			free(virus_name);
 			break;
 		}
-		// printf("virus_name: %s\n", virus_name);
-		// printf("monitor with PID: %d\n", *(int *)get_monitor_pid(m));
+
 		/* Check if virus is already in hash table of viruses of monitor */
 		/* If not, insert virus_bloom (v) in hash table of viruses of monitor */
 		if ((v = HTSearch(get_monitor_viruses(m), virus_name, compare_virus_bloomName)) == NULL){
@@ -381,6 +380,7 @@ void read_bloom_filters(int fd_index, monitor m, int bufferSize, int bloomSize, 
 		free(virus_name);
 	}
 }
+
 
 void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveMonitors, int bufferSize, int bloomSize, int *socket_fd){
 
@@ -412,14 +412,8 @@ void get_bloom_filters(HashTable *monitors, pid_t *monitors_pids, int numActiveM
 				continue;
 
 			/* Get the monitor with specified PID */
-			// m = HTSearch(*monitors, &(monitors_pids[i]), compare_monitor);
 			monitor_pid = i;
 			m = HTSearch(*monitors, &monitor_pid, compare_monitor);
-			// printf("monitor with PID: %d\n", *(int *)get_monitor_pid(m));
-			// HashTable m_v = get_monitor_viruses(m);
-			// if (m_v == NULL){
-			// 	printf("NULL\n");
-			// }
 
 			/* Read the bloom filters from the pipe */
 			read_bloom_filters(i, m, bufferSize, bloomSize, socket_fd);

@@ -15,7 +15,7 @@ List get_filepaths(char **subdirPaths, int subdirPaths_len);
 /* Does file parsing and builds structs in dataStore */
 void *fileParse_and_buildStructs(void *buff);
 
-/* Sends bloom filter for each of the viruses via named pipe */
+/* Sends bloom filter for each of the viruses via socket */
 void send_bloomFilters(int write_fd, int bufferSize, int bloomSize);
 
 /* Executes queries */

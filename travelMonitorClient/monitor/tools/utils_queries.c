@@ -28,9 +28,9 @@
 #define RESET "\033[0m"
 
 extern pthread_mutex_t mtx;
-extern pthread_mutex_t mxq;
 extern pthread_cond_t nonempty;
 extern pthread_cond_t nonfull;
+extern int quit;
 extern dataStore ds;
 
 void argsHandling(int argc, char **argv, int *port, int *numThreads, int *socketBufferSize, int *cyclicBufferSize, int *bloomsize, char ***paths, int *paths_len){
@@ -122,7 +122,7 @@ List get_filepaths(char **subdirPaths, int subdirPaths_len){
 			perror(RED "Error opening country's subdirectory" RESET);
 			exit(EXIT_FAILURE);
 		}
-		// printf("subdirpath: %s\n", subdirPaths[i]);
+
 		/* Traverse all the files in the country subdir */
 		struct dirent *file;
 		while ((file = readdir(countryDir)) != NULL) {
@@ -158,44 +158,26 @@ List get_filepaths(char **subdirPaths, int subdirPaths_len){
 
 void insertCitizen(char *args[8], int bytes, bool fileparse);
 
-/* Returns 1 (true) if the mutex is unlocked, which is the
- * thread's signal to terminate. 
- */
-int needQuit(){
-	int trylock = pthread_mutex_trylock(&mxq);
-	/* If the mutex was locked, return 0 (false) */
-	if (trylock == EBUSY)
-		return 0;
-	/* If we got the lock, unlock and return 1 (true) */
-	else if (trylock == 0){
-		pthread_mutex_unlock(&mxq);
-		return 1;		
-	}
-	else
-		return 1;
-}
-
 /* Does file parsing and builds structs in dataStore */
 void *fileParse_and_buildStructs(void *buff){
 
 	CyclicBuffer buffer = buff;
 
-	while (!needQuit()){
-	// while (true){
-		// printf("first block thread - ");
+	while (true){
+
 		pthread_mutex_lock(&mtx); /* shared data area */
-		// printf("unblock\n");
 
 		/* If buffer is empty, wait for signal nonempty */
-		while (BuffEmpty(buffer)){
-			// printf("buffEmpty waiting...");
+		while (BuffEmpty(buffer) && !quit){
 			pthread_cond_wait(&nonempty, &mtx);
+		}
+		if (quit){
+			pthread_mutex_unlock(&mtx);
+			break;
 		}
 
 		/* Get filepath from buffer */
 		char *filePath = BuffGet(buffer);
-		// printf("BuffGet: %s\n", filePath);
-		// BuffNull(buffer, "BuffGet");
 
 		pthread_mutex_unlock(&mtx);
 
@@ -213,36 +195,24 @@ void *fileParse_and_buildStructs(void *buff){
 		char *line = NULL;
 		size_t len = 0;
 
-		// printf("BuffGet: %s\n", filePath);
-		// printf("second block thread - ");
 		pthread_mutex_lock(&mtx); /* shared data area */
-		// printf("unblock\n");
+
 		while (getline(&line, &len, frecords) != -1){
 			char *args[8];
 			args[0] = strtok(line, " ");
 			for (int i = 1; i < 8; i++)
 				args[i] = strtok(NULL, " \n");
-
-			
-			// pthread_mutex_lock(&mtx); /* shared data area */
 			
 			insertCitizen(args, ds.bloomSize, true);
-			// pthread_mutex_unlock(&mtx);   
-			
 		}
 		/* The file is parsed, inform buffer */
-		
-		BuffRemoved(buffer);
+		BuffTotal_increase(buffer);
 		pthread_mutex_unlock(&mtx);  
-
-		// /* The buffer is not full anymore */
-		// pthread_cond_signal(&nonfull);
 
 		free(line);
 		free(filePath);
 		fclose(frecords);
 	}
-	printf("thread terminating\n");
 	return NULL;
 }
 
@@ -452,7 +422,6 @@ void queries(int conn_fd, CyclicBuffer buffer, int bufferSize, int bloomSize, in
 				perror(RED "Error opening country's subdirectory" RESET);
 				exit(EXIT_FAILURE);
 			}
-			// printf("subdirpath: %s\n", subdirPaths[i]);
 
 			/* Traverse all the files in the country subdir */
 			struct dirent *file;
