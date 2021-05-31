@@ -173,7 +173,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 
 	for (int country_idx = 0; country_idx < numSubdirs; country_idx++){ /* For each of the countries in input_dir */
 
-		/* Check if monitor with PID is already in hash table of monitors */
+		/* Check if monitor with monitor_idx is already in hash table of monitors */
 		/* If not, insert monitor (m) in hash table of monitors */
 		monitor_pid = monitor_idx;
 		if ((m = HTSearch(monitors, &monitor_pid, compare_monitor)) == NULL ){
@@ -255,7 +255,7 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 	free(numThreads_str); free(socketBufferSize_str); 
 	free(cyclicBufferSize_str); free(bloomSize_str);
 
-    /* 	Try to connect to the address.  For this to succeed, 
+    /* 	Try to connect to the address. For this to succeed, 
 		the server must already have bound this address, 
 		and must have issued a listen() request.
     */

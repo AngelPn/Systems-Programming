@@ -128,8 +128,9 @@ int main(int argc, char **argv){
 	addr_list = (struct in_addr **)host->h_addr_list;
 	for (int i = 0; addr_list[i] != NULL; i++) {
 		strcpy (symbolicip, inet_ntoa(*addr_list[i]));
-		printf("IP Address is : %s" , symbolicip);
+		printf("IP Address is : %s\n" , symbolicip);
 	}
+	printf("\n");
 
 	memcpy(&server.sin_addr, host->h_addr, host->h_length);
 	server.sin_port = htons(port);

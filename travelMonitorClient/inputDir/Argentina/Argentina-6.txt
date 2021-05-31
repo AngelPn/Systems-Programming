@@ -1,2 +1,3 @@
-7660 qqrue uorcrm Argentina 55 virus1 NO
-8108 xznclgnl hlpiphwuzhwkeh Argentina 22 virus1 YES 03-06-2018
+7848 eikzmmogwsvp yummatrttbe Argentina 26 COVID-19 NO
+7660 qqrue uorcrm Argentina 55 H5N8 YES 24-12-2020
+7660 qqrue uorcrm Argentina 55 H5N1 YES 24-12-2020

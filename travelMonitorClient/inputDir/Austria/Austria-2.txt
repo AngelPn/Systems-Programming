@@ -1,6 +1,6 @@
 9784 vviuktkn zealq Austria 57 HEPATITIS YES 11-10-2019
-9784 vviuktkn zealq Austria 57 SENDAI NO 25-12-2018
+9784 vviuktkn zealq Austria 57 SENDAI NO
 4364 amshyugo yqvognokomnfl Austria 48 H5N8 YES 16-12-2018
 9521 giskxcfnljoa nwtbfvqmaov Austria 49 SMALLPOX NO
-9521 giskxcfnljoa nwtbfvqmaov Austria 49 ROTAVIRUS NO 04-04-2020
-7793 tlcgfypnbr tkybnr Austria 78 DENGUE NO 26-11-2018
+9521 giskxcfnljoa nwtbfvqmaov Austria 49 ROTAVIRUS NO
+7793 tlcgfypnbr tkybnr Austria 78 DENGUE NO
