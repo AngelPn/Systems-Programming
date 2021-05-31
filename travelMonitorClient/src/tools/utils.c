@@ -271,15 +271,6 @@ void aggregation(int numMonitors, int socketBufferSize, int cyclicBufferSize, in
 		herror("Error in gethostbyname");
 		exit(EXIT_FAILURE);
 	}
-
-	char symbolicip [50];
-	struct in_addr **addr_list;
-
-	addr_list = (struct in_addr **)host->h_addr_list;
-	for (int i = 0; addr_list[i] != NULL; i++) {
-		strcpy (symbolicip, inet_ntoa(*addr_list[i]));
-		printf("IP Address is : %s\n" , symbolicip);
-	}
 	
 	server.sin_family = AF_INET; /* Internet domain */
 	memcpy(&server.sin_addr, host->h_addr, host->h_length);
