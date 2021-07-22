@@ -1,7 +1,7 @@
 # Systems-Programming
 Systems Programming Assignments 2021 at DIT - UoA. Each assignment got a score of 100/100 marks.
 
-# vaccineMonitor
+# [vaccineMonitor](https://github.com/AngelPn/Systems-Programming/tree/main/vaccineMonitor)
 The task of [hw1-spring-2021](https://github.com/AngelPn/Systems-Programming/blob/main/vaccineMonitor/hw1-spring-2021.pdf) is the implementation of a program that accepts, processes, records and answers questions about citizens vaccinations. The citizens data come from files produced by [testFile](https://github.com/AngelPn/Systems-Programming/blob/main/vaccineMonitor/testFile.sh) bash script and are stored in **data structures** in main memory. The main data structures are [Bloom Filter](https://github.com/AngelPn/Systems-Programming/tree/main/vaccineMonitor/mylib/BloomFilter) and [Skip List](https://github.com/AngelPn/Systems-Programming/tree/main/vaccineMonitor/mylib/SkipList). Also, [Linked Lists](https://github.com/AngelPn/Systems-Programming/tree/main/vaccineMonitor/mylib/LinkedList) and [Hash Tables](https://github.com/AngelPn/Systems-Programming/tree/main/vaccineMonitor/mylib/HashTable) are used and each of the data structures are of generic type. 
 
 ## Application
@@ -35,7 +35,7 @@ When the program finishes reading the `citizenRecordsFile` and storing the citiz
 - /list-nonVaccinated-Persons virusName
 - /exit
 
-# travelMonitor
+# [travelMonitor](https://github.com/AngelPn/Systems-Programming/tree/main/travelMonitor)
 The purpose of [hw2-spring-2021](https://github.com/AngelPn/Systems-Programming/blob/main/travelMonitor/hw2-spring-2021.pdf) is the familiarization with the creation of **processes** using the system calls `fork/exec`, the process communication via **named pipes** and the use of low-level I/O. The [IPC](https://github.com/AngelPn/Systems-Programming/tree/main/travelMonitor/mylib/IPC) is determined by a prototype as the size of buffer for reading and writing via named pipes is specific and given by user.
 
 ## Application
@@ -68,7 +68,7 @@ When the program finishes reading the `input_dir` and storing the citizens data,
 - /searchVaccinationStatus citizenID
 - /exit
 
-# travelMonitorClient
+# [travelMonitorClient](https://github.com/AngelPn/Systems-Programming/tree/main/travelMonitorClient)
 The purpose of [hw3-spring-2021](https://github.com/AngelPn/Systems-Programming/blob/main/travelMonitorClient/hw3-spring-2021.pdf) is the familiarization with the creation of **threads** and **sockets**. The [IPC](https://github.com/AngelPn/Systems-Programming/tree/main/travelMonitorClient/mylib/IPC) is determined by a prototype as the size of buffer for reading and writing via named pipes is specific and given by user.
 
 ## Application
